@@ -34,14 +34,15 @@ Subtítulo:
 
 ## Referência à LAGEM
 
-A LAGEM deve estar presente de forma elegante e discreta.
+A LAGEM deve estar presente com destaque, mas sem competir com o conteúdo clínico.
 
 ### Preferência
 
-Usar o arquivo oficial fornecido pela Liga como marca d'água de fundo:
+Usar o arquivo oficial fornecido pela Liga como **silhueta flutuante de fundo** (decisão do responsável — a marca não precisa manter as cores originais no fundo):
 
-- opacidade aproximada entre 2% e 6%;
-- sem comprometer leitura;
+- silhueta monocromática derivada do arquivo oficial via filtros CSS e `mix-blend-mode: screen` (detalhes em `ASSETS.md`);
+- opacidade aproximada entre 7% e 13%, tamanho grande (até ~86vmin), com deriva lenta;
+- sem comprometer leitura do conteúdo em primeiro plano;
 - posicionamento variável conforme tela;
 - jamais distorcer a proporção do logo.
 
@@ -125,16 +126,24 @@ Não usar imagens médicas chocantes como decoração.
 
 Animações devem reforçar a narrativa.
 
-Exemplos:
+Implementado com CSS:
 
-- entrada de evidência com breve efeito de scanner;
-- cadeia DNA -> RNA -> proteína se montando;
-- contador de bases subindo;
-- pulso vermelho nos últimos 5 segundos;
-- transição de fase com 300 a 500 ms;
-- ranking reorganizando suavemente.
+- silhueta LAGEM e hemácias em deriva lenta no fundo;
+- entrada escalonada de evidências e alternativas;
+- anel de progresso do cronômetro com estado crítico pulsante;
+- contador de bases subindo (`ScoreTicker`);
+- manchete com entrada de elevação, título com batimento cardíaco, subtítulo datilografado;
+- ranking com entrada escalonada e brilho no campeão;
+- selo animado ao lacrar resposta.
 
-Respeitar `prefers-reduced-motion`.
+Implementado com Remotion (`@remotion/player`, compostições em `apps/web/src/remotion/`):
+
+- vinheta de mudança de fase no projetor (`PhaseStinger`);
+- cadeia `DNA -> RNA -> PROTEÍNA -> FUNÇÃO -> FENÓTIPO` montando-se na revelação (`RevealChain`).
+
+O Remotion é carregado por lazy import apenas nas superfícies que o usam; os celulares dos jogadores não baixam esse chunk. A licença do Remotion é gratuita para indivíduos e organizações sem fins lucrativos, o que cobre o uso acadêmico da Liga; reavaliar se o projeto mudar de natureza.
+
+Respeitar `prefers-reduced-motion`: o bloco global de redução continua valendo e as superfícies Remotion são substituídas por conteúdo estático quando a preferência está ativa.
 
 ## Haptics
 
