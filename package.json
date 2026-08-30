@@ -1,0 +1,28 @@
+{
+  "name": "hemocase-scape",
+  "private": true,
+  "type": "module",
+  "version": "0.1.0",
+  "workspaces": ["apps/*", "packages/*"],
+  "scripts": {
+    "dev": "npm run build -w @hemocase/shared && concurrently -k -n SERVER,WEB -c red,cyan \"npm run dev -w @hemocase/server\" \"npm run dev -w @hemocase/web\"",
+    "build": "npm run build -w @hemocase/shared && npm run build -w @hemocase/web && npm run build -w @hemocase/server",
+    "game": "npm run build && npm run start -w @hemocase/server",
+    "lint": "eslint .",
+    "typecheck": "npm run build -w @hemocase/shared && npm run typecheck --workspaces --if-present",
+    "test": "npm run test --workspaces --if-present",
+    "test:integration": "node tests/session-flow.mjs",
+    "test:e2e": "npm run test:e2e -w @hemocase/web"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "concurrently": "^9.2.1",
+    "eslint": "^10.9.1",
+    "eslint-plugin-react-hooks": "^7.1.1",
+    "globals": "^17.11.0",
+    "typescript": "^5.9.2",
+    "typescript-eslint": "^8.68.0",
+    "vitest": "^3.2.4"
+  },
+  "engines": { "node": ">=20" }
+}

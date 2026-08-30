@@ -13,8 +13,11 @@ Antes de alterar código ou arquitetura, leia:
 5. `docs/ANTI_CHEAT.md`
 6. `docs/UX_BRAND.md`
 7. `docs/TEST_PLAN.md`
+8. `docs/IMPLEMENTATION_STATUS.md`
+9. `docs/DEVELOPMENT.md`
+10. `docs/API_PROTOCOL.md`
 
-Para a primeira implementação, leia também `docs/CODEX_BOOTSTRAP_PROMPT.md`.
+`docs/CODEX_BOOTSTRAP_PROMPT.md` é histórico da primeira implementação; não o trate como estado atual quando houver divergência com código e documentação técnica.
 
 ## Fonte de verdade
 
@@ -24,6 +27,9 @@ Para a primeira implementação, leia também `docs/CODEX_BOOTSTRAP_PROMPT.md`.
 - Interface, design e marca: `docs/UX_BRAND.md`
 - Arquitetura: `ARCHITECTURE.md`
 - Critérios de validação: `docs/TEST_PLAN.md`
+- Estado entregue e limitações: `docs/IMPLEMENTATION_STATUS.md`
+- Contratos de rede: `docs/API_PROTOCOL.md`
+- Operação em sala: `docs/CLASSROOM_RUNBOOK.md`
 
 Em caso de conflito, pare e peça esclarecimento em vez de inventar comportamento.
 

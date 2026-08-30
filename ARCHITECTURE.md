@@ -1,10 +1,14 @@
 # Arquitetura do HEMOCASE
 
+## Estado
+
+Esta arquitetura está implementada na versão `0.1.0`. Diferenças entre especificação, implementação parcial e backlog estão registradas em `docs/IMPLEMENTATION_STATUS.md`. Contratos de rede estão em `docs/API_PROTOCOL.md`.
+
 ## Objetivo arquitetural
 
 Executar o jogo em uma única máquina anfitriã, dentro da sala de aula, com celulares conectando-se pela rede local através de QR Code. O sistema deve continuar funcional mesmo que a internet externa esteja indisponível.
 
-## Stack recomendada para o MVP
+## Stack implementada
 
 ### Backend
 
@@ -20,24 +24,23 @@ Executar o jogo em uma única máquina anfitriã, dentro da sala de aula, com ce
 - React
 - Vite
 - TypeScript
-- Tailwind CSS
+- CSS local com tokens e responsividade
 - Lucide Icons
 
 ### Testes
 
 - Vitest
-- Testing Library
 - Playwright
 
 ### Persistência
 
-Para o MVP, o estado da partida pode permanecer em memória no servidor. Ao encerrar a sessão, permitir exportar relatório em JSON e CSV.
+O estado da partida permanece em memória no servidor. Ao encerrar a sessão, o Host pode exportar relatório em JSON e CSV.
 
 Se houver necessidade posterior de histórico entre execuções, introduzir SQLite em uma etapa separada.
 
 ## Por que uma aplicação de origem única
 
-A versão de produção deve compilar o frontend e ser servida pelo próprio backend no mesmo host e porta. Isso reduz problemas de CORS, simplifica o QR Code e facilita a execução em sala.
+A versão de produção compila o frontend e é servida pelo próprio backend no mesmo host e porta. Isso reduz problemas de CORS, simplifica o QR Code e facilita a execução em sala.
 
 Exemplo:
 
@@ -72,20 +75,20 @@ CELULAR N --->         |
 
 ## Inicialização da partida
 
-O comando de produção deve ser simples, por exemplo:
+O comando de produção é:
 
 ```bash
 npm run game
 ```
 
-Fluxo esperado:
+Fluxo implementado:
 
-1. buildar o frontend se necessário;
+1. compilar shared, frontend e backend;
 2. iniciar servidor em `0.0.0.0`;
 3. detectar interfaces IPv4 privadas válidas;
-4. escolher automaticamente a melhor interface quando houver somente uma opção;
-5. caso haja mais de uma opção plausível, mostrar seleção no painel Host;
-6. criar a sessão;
+4. priorizar Wi-Fi/Ethernet e rebaixar interfaces virtuais;
+5. permitir override por `HOST_IP` ou `PUBLIC_URL`;
+6. criar a sessão no painel Host;
 7. exibir URL local e QR Code;
 8. permitir ao facilitador testar a conectividade antes de liberar a turma.
 
@@ -105,14 +108,13 @@ Estados mínimos:
 - `FINISHED`
 - `PAUSED`
 
-Cada estado deve possuir:
+O estado interno registra:
 
-- timestamp de início;
-- duração prevista;
-- duração restante calculada no servidor;
-- conjunto de ações permitidas;
-- regras de pontuação;
-- política de foco ativa ou inativa.
+- timestamp e duração quando há relógio ativo;
+- duração restante preservada durante `PAUSED`;
+- índice da questão atual;
+- política de integridade da sessão;
+- respostas, score e incidentes sob autoridade do servidor.
 
 ## Relógio
 
@@ -122,7 +124,7 @@ O cliente recebe sincronizações periódicas e apenas renderiza a contagem regr
 
 ## Comunicação em tempo real
 
-Use Socket.IO para:
+Socket.IO é usado para:
 
 - entrada e saída de equipes;
 - progresso das equipes;
@@ -134,7 +136,7 @@ Use Socket.IO para:
 - penalidades;
 - reconexão.
 
-Toda mensagem recebida deve ser validada com Zod.
+Toda mensagem de ação recebida por Socket.IO é validada com Zod. O protocolo completo está em `docs/API_PROTOCOL.md`.
 
 ## Identidade de equipe
 
@@ -146,7 +148,7 @@ Ao entrar, o servidor gera:
 
 O `teamToken` é armazenado localmente no aparelho e permite reconexão.
 
-O token não deve conter pontuação ou informações de resposta.
+O token não contém pontuação ou informações de resposta.
 
 ## Autoridade do servidor
 
@@ -164,37 +166,31 @@ O cliente envia apenas ações e respostas.
 
 ## Distribuição de casos
 
-O servidor deve distribuir os quatro trilhos de caso de forma equilibrada entre as equipes:
+O servidor distribui os quatro trilhos de caso de forma equilibrada entre as equipes:
 
 - A: anemia falciforme
 - B: beta-talassemia
 - C: hemofilia A ou B
 - D: von Willebrand versus Bernard-Soulier
 
-Se houver mais de quatro equipes, repetir os trilhos de forma balanceada.
+Se houver mais de quatro equipes, os trilhos são repetidos de forma balanceada.
 
-A variante do Caso C pode ser sorteada por sessão ou configurada pelo Host.
+A variante do Caso C é sorteada por sessão. Configuração manual pelo Host permanece no backlog.
 
 ## Conteúdo externo à lógica
 
-Criar uma pasta semelhante a:
+O conteúdo executável está em:
 
 ```text
 content/
   game.pt-BR.json
-  cases/
-    sickle-cell.json
-    beta-thalassemia.json
-    hemophilia.json
-    vwd-bss.json
-  blitz.json
 ```
 
-O código não deve depender de strings específicas das doenças.
+O código não depende de strings médicas específicas. Regras editoriais estão em `docs/CONTENT_AUTHORING.md`.
 
 ## Painel Host
 
-Deve permitir:
+O painel permite:
 
 - criar sessão;
 - exibir QR Code;
@@ -203,16 +199,16 @@ Deve permitir:
 - avançar ou voltar fase quando seguro;
 - visualizar respostas e pontuações;
 - visualizar eventos de integridade;
-- aplicar ou desfazer penalidade;
+- acompanhar e desfazer penalidade automática;
 - ajustar pontos manualmente com justificativa;
 - encerrar sessão;
 - exportar resultados.
 
-A área Host precisa de segredo temporário gerado ao iniciar o servidor ou autenticação local equivalente.
+A área Host usa um segredo aleatório por sessão, guardado em `sessionStorage`.
 
 ## Tela do projetor
 
-Não pode revelar respostas antes da fase apropriada.
+A tela não revela respostas antes da fase apropriada.
 
 Exibe:
 
@@ -239,29 +235,36 @@ A política de penalidade por desconexão está em `docs/ANTI_CHEAT.md`.
 
 ## Segurança local
 
-- bind somente nas interfaces locais desejadas;
-- painel Host protegido por token;
-- sanitização de nome de equipe;
-- rate limit para tentativas de entrada;
-- limite de tamanho de payload;
-- validação de Origin quando aplicável;
-- sem execução de HTML fornecido pelos jogadores;
-- sem APIs de terceiros durante a partida.
+Implementado:
+
+- bind em `0.0.0.0` para permitir acesso pela LAN;
+- painel Host protegido por token aleatório;
+- sanitização e limite de nome de equipe;
+- payload HTTP e Socket.IO limitado a 64 KiB;
+- React escapa nomes fornecidos pelos jogadores;
+- nenhuma API de terceiros durante a partida;
+- resposta correta removida do payload da questão.
+
+Pendente:
+
+- rate limit específico por IP;
+- validação explícita de Origin;
+- seleção de interfaces permitidas em vez de bind global.
 
 ## Compatibilidade mínima
 
-Priorizar:
+Compatibilidade priorizada:
 
 - Chrome recente em Android
 - Safari recente em iOS
 - Chrome ou Edge recente no computador Host
 
-Recursos como fullscreen e Wake Lock devem ser implementados com detecção de suporte e fallback, nunca como requisito absoluto para o jogo funcionar.
+Fullscreen e Wake Lock usam detecção de suporte e fallback e não são requisitos para o jogo funcionar.
 
-## Estrutura sugerida do repositório
+## Estrutura do repositório
 
 ```text
-hemocase_game/
+hemocase_scape/
   AGENTS.md
   ARCHITECTURE.md
   README.md
@@ -274,6 +277,7 @@ hemocase_game/
   content/
   docs/
   tests/
+  assets/
 ```
 
-O Codex pode ajustar detalhes internos sem alterar os limites de produto descritos acima.
+Mudanças de arquitetura devem preservar os limites de produto descritos em `AGENTS.md`.

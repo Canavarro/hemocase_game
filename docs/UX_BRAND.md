@@ -1,5 +1,7 @@
 # UX, Interface e Identidade Visual
 
+> Ativos em uso e procedimento de substituição: `docs/ASSETS.md`. Comportamento das telas: `docs/USER_GUIDE.md`.
+
 ## Princípio central
 
 O design é parte do jogo, não acabamento posterior.
@@ -9,9 +11,10 @@ A interface deve transmitir:
 - investigação genética;
 - ambiente de laboratório;
 - hematologia;
-- urgência controlada;
-- tecnologia;
-- credibilidade acadêmica.
+- confinamento e urgência;
+- tecnologia analógica degradada;
+- suspense psicológico;
+- credibilidade acadêmica sob uma camada cinematográfica.
 
 Evitar aparência de formulário escolar, quiz genérico ou template administrativo.
 
@@ -42,7 +45,11 @@ Usar o arquivo oficial fornecido pela Liga como marca d'água de fundo:
 - posicionamento variável conforme tela;
 - jamais distorcer a proporção do logo.
 
-### Se o logo ainda não tiver sido fornecido
+### Ativo oficial disponível
+
+O ativo fornecido pela Liga está em `apps/web/public/assets/lagem-logo.png`. Ele deve ser exibido sem distorção, com recorte circular não destrutivo e baixa opacidade no fundo animado compartilhado entre Host, projetor e celulares.
+
+### Se o logo precisar ser substituído no futuro
 
 Não inventar símbolo oficial.
 
@@ -63,19 +70,21 @@ O Codex deve perguntar ao responsável pelo projeto:
 
 Tema principal:
 
-`laboratório clínico futurista + genética + código vermelho`
+`escape room clínico + Jogos Mortais + genética + código vermelho`
+
+As referências autorizadas à série podem ser diretas na abertura, na voz, no vídeo, na linguagem de Jigsaw e nas transições. A interface funcional deve continuar original, legível e adequada ao contexto acadêmico, sem depender de gore para produzir tensão.
 
 ### Paleta sugerida
 
 Definir tokens, não cores espalhadas nos componentes.
 
-- `--bg-0`: quase preto azulado
-- `--bg-1`: azul petróleo muito escuro
-- `--surface`: azul grafite
-- `--text`: branco frio
-- `--text-muted`: cinza azulado
-- `--accent-red`: vermelho hematologia
-- `--accent-cyan`: ciano molecular
+- `--bg-0`: preto de sala sem iluminação
+- `--bg-1`: grafite industrial
+- `--surface`: metal escuro e vidro de monitor
+- `--text`: branco envelhecido
+- `--text-muted`: cinza de fita analógica
+- `--accent-red`: vermelho sangue e emergência
+- `--accent-signal`: verde dessaturado de monitor
 - `--accent-green`: status conectado
 - `--accent-yellow`: alerta de integridade
 
@@ -97,12 +106,13 @@ Se uma fonte for incluída posteriormente, armazenar legalmente no projeto ou em
 
 ## Elementos gráficos
 
-Usar de forma sutil:
+Usar de forma controlada:
 
 - hélice de DNA;
 - pares de bases;
 - pulsos de monitor;
-- partículas moleculares;
+- ruído de fita e falhas breves de transmissão;
+- metal, azulejo clínico e mecanismos de contenção;
 - células sanguíneas abstratas;
 - linhas de sequenciamento;
 - cartões de evidência;
@@ -149,6 +159,21 @@ Elementos:
 - indicador de rede local;
 - referência discreta à LAGEM;
 - versão da aplicação.
+
+## Abertura audiovisual pública
+
+A primeira tela deve funcionar como o início da narrativa, antes do lobby:
+
+- vídeo em tela cheia, nunca dentro de um cartão decorativo;
+- ação explícita `Reproduzir a fita` para liberar áudio conforme as políticas do navegador;
+- vídeo e áudio servidos localmente, sem CDN ou streaming externo;
+- controles discretos para silenciar e pular disponíveis ao Host;
+- tentativa de fullscreen com fallback silencioso;
+- aviso breve sobre áudio e luzes intermitentes;
+- transição ao briefing somente quando o vídeo terminar ou o Host o pular;
+- cronômetro oficial iniciado apenas após a entrada na missão.
+
+Se o vídeo falhar, a tela deve permitir nova tentativa e o Host deve conseguir prosseguir sem reiniciar a aplicação.
 
 ## Lobby público
 

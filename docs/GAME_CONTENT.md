@@ -1,5 +1,7 @@
 # Conteúdo do Jogo
 
+> Esta é a fonte editorial. O conteúdo executável está em `content/game.pt-BR.json`; regras de sincronização estão em `docs/CONTENT_AUTHORING.md`.
+
 ## Regra editorial
 
 O jogo deve contemplar a aula do professor e usar os artigos científicos como aprofundamento. Não transformar a atividade em uma revisão exaustiva de todos os slides.

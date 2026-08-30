@@ -1,5 +1,7 @@
 # Especificação de Produto
 
+> Estado de implementação e diferenças do MVP: `docs/IMPLEMENTATION_STATUS.md`. Guia das telas: `docs/USER_GUIDE.md`.
+
 ## Nome
 
 **HEMOCASE: Código Vermelho**
@@ -8,7 +10,7 @@ Subtítulo: **Do DNA ao Fenótipo**
 
 ## Contexto
 
-O jogo é uma atividade da Liga de Genética Médica, LAGEM, aplicada imediatamente após uma aula sobre proteínas de interesse médico, hemoglobinopatias e coagulopatias.
+O jogo é uma atividade da Liga de Genética Médica, LAGEM, aplicada imediatamente após uma aula sobre proteínas de interesse médico, hemoglobinopatias e coagulopatias. Sua apresentação é um escape room audiovisual com referências autorizadas à série *Jogos Mortais*.
 
 A duração total disponível é de 30 minutos, incluindo entrada dos jogadores.
 
@@ -24,7 +26,15 @@ A experiência deve integrar o conteúdo da aula e usar os artigos científicos 
 
 ## Objetivo de experiência
 
-O aluno deve sentir que participa de uma investigação clínica e genética em tempo real.
+O aluno deve sentir que foi colocado dentro de uma investigação clínica e genética em tempo real, conduzida por uma transmissão de Jigsaw. Casos e perguntas são tratados como mecanismos, pistas e códigos necessários para escapar.
+
+A narrativa deve:
+
+- começar com uma fita em vídeo e áudio antes do cronômetro competitivo;
+- usar suspense psicológico, urgência e consequências de jogo;
+- transformar cada resposta em uma ação sobre a sala, e não apenas em pontuação;
+- manter o raciocínio científico como única forma de avançar;
+- evitar violência gráfica como elemento obrigatório para compreender ou resolver desafios.
 
 O produto deve ser:
 
@@ -63,6 +73,14 @@ Projetor com cronômetro, narrativa e ranking.
 ## Fluxo de 30 minutos
 
 A duração abaixo é referência e deve ser configurável no painel Host.
+
+### Prelúdio, transmissão inicial
+
+- A tela pública apresenta `HEMOCASE: Código Vermelho` e o comando `Reproduzir a fita`.
+- O comando inicia o vídeo com áudio fornecido pelo projeto e tenta ativar fullscreen quando suportado.
+- A reprodução não inicia automaticamente, devido às políticas de áudio dos navegadores.
+- Ao terminar ou ser pulada pelo Host, a transmissão revela a missão e libera o lobby.
+- O cronômetro de 30 minutos ainda não está correndo nesta etapa.
 
 ### 00:00 a 02:30, entrada por QR Code
 

@@ -1,0 +1,163 @@
+{
+  "warmup": [
+    {
+      "id": "W1", "phase": "WARMUP", "title": "Sequência de ativação",
+      "prompt": "Qual sequência representa corretamente o caminho da informação genética ao quadro clínico?",
+      "choices": [
+        {"id":"A","text":"DNA → RNA → proteína → função → fenótipo"},
+        {"id":"B","text":"Proteína → DNA → fenótipo → RNA → função"},
+        {"id":"C","text":"Fenótipo → proteína → RNA → DNA → função"},
+        {"id":"D","text":"RNA → função → DNA → proteína → fenótipo"}
+      ],
+      "correctChoiceId":"A", "explanation":"A informação no DNA é transcrita em RNA, traduzida em proteína e afeta função e fenótipo.", "points":5, "durationSec":40
+    },
+    {
+      "id":"W2", "phase":"WARMUP", "title":"Estrutura sob pressão",
+      "prompt":"Qual combinação corresponde à hemoglobina adulta HbA?",
+      "choices":[
+        {"id":"A","text":"α2β2"}, {"id":"B","text":"α2γ2"}, {"id":"C","text":"ζ2γ2"}, {"id":"D","text":"α2ε2"}
+      ],
+      "correctChoiceId":"A", "explanation":"A HbA predominante no adulto é formada por duas cadeias alfa e duas beta.", "points":5, "durationSec":35
+    }
+  ],
+  "cases": {
+    "A": [
+      {
+        "id":"A1", "phase":"CASE_INVESTIGATION", "track":"A", "title":"A paciente", "prompt":"O conjunto de achados sugere principalmente qual processo?",
+        "evidence":["Dor intensa recorrente", "Icterícia discreta", "Anemia desde a infância"],
+        "choices":[{"id":"A","text":"Hemólise e alteração das hemácias"},{"id":"B","text":"Deficiência isolada de plaquetas"},{"id":"C","text":"Excesso de fator VIII"},{"id":"D","text":"Falha de imunoglobulinas"}],
+        "correctChoiceId":"A", "explanation":"Anemia crônica, icterícia e crises dolorosas apontam para hemólise e falcização.", "points":8, "durationSec":60
+      },
+      {
+        "id":"A2", "phase":"CASE_INVESTIGATION", "track":"A", "title":"O sangue fala", "prompt":"Em baixa oxigenação, qual alteração explica a forma das hemácias?",
+        "evidence":["Hemácias alongadas e curvas", "Reticulócitos aumentados"],
+        "choices":[{"id":"A","text":"Polimerização da HbS"},{"id":"B","text":"Ausência de GPIb"},{"id":"C","text":"Redução de fator IX"},{"id":"D","text":"Aumento de vWF"}],
+        "correctChoiceId":"A", "explanation":"A desoxigenação favorece a polimerização da HbS e a falcização.", "points":8, "durationSec":55
+      },
+      {
+        "id":"A3", "phase":"CASE_INVESTIGATION", "track":"A", "title":"A proteína suspeita", "prompt":"Qual cadeia conecta corretamente a alteração molecular ao sintoma?",
+        "choices":[{"id":"A","text":"Beta-globina alterada → HbS → falcização → vaso-oclusão"},{"id":"B","text":"F8 → albumina → trombocitopenia → epistaxe"},{"id":"C","text":"VWF → HbF → hemólise → dor"},{"id":"D","text":"GPIb → protrombina → trombose → anemia"}],
+        "correctChoiceId":"A", "explanation":"A HbS altera as propriedades da hemoglobina e leva à falcização e vaso-oclusão.", "points":10, "durationSec":60
+      },
+      {
+        "id":"A4", "phase":"CASE_INVESTIGATION", "track":"A", "title":"O DNA entrega a resposta", "prompt":"Na posição 6 da cadeia beta, glutamato foi substituído por valina. Qual o diagnóstico?",
+        "choices":[{"id":"A","text":"Beta-talassemia"},{"id":"B","text":"Hemofilia A"},{"id":"C","text":"Anemia falciforme"},{"id":"D","text":"Doença de von Willebrand"}],
+        "correctChoiceId":"C", "explanation":"A substituição Glu6Val na beta-globina origina a HbS.", "points":14, "durationSec":55
+      },
+      {
+        "id":"A5", "phase":"CASE_INVESTIGATION", "track":"A", "title":"Fechadura molecular", "prompt":"Qual é o elo funcional imediatamente anterior à vaso-oclusão?",
+        "choices":[{"id":"A","text":"Falcização das hemácias"},{"id":"B","text":"Produção de anticorpos"},{"id":"C","text":"Adesão por GPIb"},{"id":"D","text":"Deficiência de fator VIII"}],
+        "correctChoiceId":"A", "explanation":"A falcização favorece obstrução microvascular e crises dolorosas.", "points":10, "durationSec":45
+      }
+    ],
+    "B": [
+      {
+        "id":"B1", "phase":"CASE_INVESTIGATION", "track":"B", "title":"A fábrica produz pouco", "prompt":"Microcitose e hipocromia apontam necessariamente para deficiência de ferro?",
+        "evidence":["Anemia persistente", "VCM reduzido", "Hipocromia"],
+        "choices":[{"id":"A","text":"Sim, sempre"},{"id":"B","text":"Não, hemoglobinopatias quantitativas também causam esse padrão"}],
+        "correctChoiceId":"B", "explanation":"Talassemias reduzem a síntese de cadeias globínicas e podem causar microcitose e hipocromia.", "points":8, "durationSec":55
+      },
+      {
+        "id":"B2", "phase":"CASE_INVESTIGATION", "track":"B", "title":"A síntese falha", "prompt":"Qual conceito melhor se relaciona ao caso?",
+        "choices":[{"id":"A","text":"Excesso de anticorpos"},{"id":"B","text":"Redução da síntese de uma cadeia de globina"},{"id":"C","text":"Deficiência de GPIb"},{"id":"D","text":"Aumento de protrombina"}],
+        "correctChoiceId":"B", "explanation":"O problema central das talassemias é quantitativo.", "points":8, "durationSec":50
+      },
+      {
+        "id":"B3", "phase":"CASE_INVESTIGATION", "track":"B", "title":"A proteína incompleta", "prompt":"Na beta-talassemia, qual é o defeito central?",
+        "choices":[{"id":"A","text":"Produção reduzida de beta-globina"},{"id":"B","text":"Ausência de fator IX"},{"id":"C","text":"Excesso de vWF"},{"id":"D","text":"Mutação da protrombina"}],
+        "correctChoiceId":"A", "explanation":"Há redução ou ausência da produção de cadeias beta.", "points":10, "durationSec":50
+      },
+      {
+        "id":"B4", "phase":"CASE_INVESTIGATION", "track":"B", "title":"O RNA denuncia", "prompt":"Mutação na beta-globina reduziu a quantidade de mRNA. Qual diagnóstico é mais compatível?",
+        "choices":[{"id":"A","text":"Anemia falciforme"},{"id":"B","text":"Beta-talassemia"},{"id":"C","text":"Bernard-Soulier"},{"id":"D","text":"Hemofilia B"}],
+        "correctChoiceId":"B", "explanation":"Menos mRNA pode reduzir a síntese de beta-globina e produzir beta-talassemia.", "points":14, "durationSec":55
+      },
+      {
+        "id":"B5", "phase":"CASE_INVESTIGATION", "track":"B", "title":"Diferença molecular", "prompt":"Qual frase diferencia beta-talassemia de doença falciforme?",
+        "choices":[{"id":"A","text":"Talassemia é quantitativa; falciforme altera a estrutura da beta-globina"},{"id":"B","text":"Ambas são deficiências plaquetárias"},{"id":"C","text":"Talassemia reduz FVIII; falciforme reduz FIX"},{"id":"D","text":"Não há diferença molecular"}],
+        "correctChoiceId":"A", "explanation":"Uma reduz a produção; a outra produz uma variante estrutural, HbS.", "points":10, "durationSec":60
+      }
+    ],
+    "C": [
+      {
+        "id":"C1", "phase":"CASE_INVESTIGATION", "track":"C", "title":"O coágulo que nunca termina", "prompt":"Hematomas profundos e hemartroses sugerem alteração de:",
+        "evidence":["Menino", "Joelho doloroso após trauma mínimo", "Hematomas profundos"],
+        "choices":[{"id":"A","text":"Hemostasia secundária"},{"id":"B","text":"Transporte de bilirrubina"},{"id":"C","text":"Imunidade humoral"},{"id":"D","text":"Síntese de albumina"}],
+        "correctChoiceId":"A", "explanation":"Sangramento profundo e hemartrose são típicos de defeitos da coagulação.", "points":8, "durationSec":55
+      },
+      {
+        "id":"C2", "phase":"CASE_INVESTIGATION", "track":"C", "title":"Laboratório", "prompt":"Plaquetas normais, TP normal e TTPa prolongado sugerem:",
+        "choices":[{"id":"A","text":"Deficiência de fator da coagulação"},{"id":"B","text":"Redução isolada de plaquetas"},{"id":"C","text":"Trombofilia por protrombina"},{"id":"D","text":"Deficiência de HbF"}],
+        "correctChoiceId":"A", "explanation":"O TTPa prolongado direciona para a via intrínseca, incluindo FVIII e FIX.", "points":8, "durationSec":50
+      },
+      {
+        "id":"C3", "phase":"CASE_INVESTIGATION", "track":"C", "title":"A família", "prompt":"Pai saudável e tio materno afetado sugerem qual herança?",
+        "choices":[{"id":"A","text":"Autossômica dominante"},{"id":"B","text":"Recessiva ligada ao X"},{"id":"C","text":"Mitocondrial"},{"id":"D","text":"Ligada ao Y"}],
+        "correctChoiceId":"B", "explanation":"Hemofilias A e B seguem padrão recessivo ligado ao X.", "points":10, "durationSec":50
+      },
+      {
+        "id":"C4A", "phase":"CASE_INVESTIGATION", "track":"C", "title":"O fator ausente", "prompt":"FVIII em 2% e FIX normal indicam:",
+        "choices":[{"id":"A","text":"Hemofilia A moderada"},{"id":"B","text":"Hemofilia A grave"},{"id":"C","text":"Hemofilia B moderada"},{"id":"D","text":"Doença de von Willebrand tipo 1"}],
+        "correctChoiceId":"A", "explanation":"FVIII reduzido identifica hemofilia A; 1% a 5% corresponde à forma moderada no recorte da aula.", "points":14, "durationSec":55
+      },
+      {
+        "id":"C4B", "phase":"CASE_INVESTIGATION", "track":"C", "title":"O fator ausente", "prompt":"FVIII normal e FIX em 3% indicam:",
+        "choices":[{"id":"A","text":"Hemofilia A moderada"},{"id":"B","text":"Hemofilia B moderada"},{"id":"C","text":"Hemofilia B grave"},{"id":"D","text":"Bernard-Soulier"}],
+        "correctChoiceId":"B", "explanation":"FIX reduzido identifica hemofilia B; 3% corresponde à forma moderada no recorte da aula.", "points":14, "durationSec":55
+      },
+      {
+        "id":"C5A", "phase":"CASE_INVESTIGATION", "track":"C", "title":"Código do cromossomo", "prompt":"Qual cadeia corresponde à hemofilia A?",
+        "choices":[{"id":"A","text":"F8 → FVIII → hemostasia secundária → hemartrose"},{"id":"B","text":"VWF → HbS → hemólise → dor"},{"id":"C","text":"HBB → GPIb → plaqueta → epistaxe"},{"id":"D","text":"F9 → albumina → imunidade → eczema"}],
+        "correctChoiceId":"A", "explanation":"F8 codifica o fator VIII, essencial à hemostasia secundária.", "points":10, "durationSec":55
+      },
+      {
+        "id":"C5B", "phase":"CASE_INVESTIGATION", "track":"C", "title":"Código do cromossomo", "prompt":"Qual cadeia corresponde à hemofilia B?",
+        "choices":[{"id":"A","text":"F9 → FIX → hemostasia secundária → hemartrose"},{"id":"B","text":"VWF → HbS → hemólise → dor"},{"id":"C","text":"HBB → GPIb → plaqueta → epistaxe"},{"id":"D","text":"F8 → albumina → imunidade → eczema"}],
+        "correctChoiceId":"A", "explanation":"F9 codifica o fator IX, essencial à hemostasia secundária.", "points":10, "durationSec":55
+      }
+    ],
+    "D": [
+      {
+        "id":"D1", "phase":"CASE_INVESTIGATION", "track":"D", "title":"A plaqueta não consegue segurar", "prompt":"Epistaxe, sangramento gengival e após procedimentos formam padrão:",
+        "evidence":["Epistaxes recorrentes", "Sangramento gengival", "Sangramento prolongado"],
+        "choices":[{"id":"A","text":"Mucocutâneo"},{"id":"B","text":"Exclusivamente articular"},{"id":"C","text":"Tromboembólico"},{"id":"D","text":"Neurológico"}],
+        "correctChoiceId":"A", "explanation":"O padrão mucocutâneo sugere defeito de hemostasia primária.", "points":8, "durationSec":50
+      },
+      {
+        "id":"D2", "phase":"CASE_INVESTIGATION", "track":"D", "title":"A interação", "prompt":"Colágeno → vWF → GPIb-IX-V → plaqueta participa de qual função?",
+        "choices":[{"id":"A","text":"Adesão plaquetária à lesão"},{"id":"B","text":"Transporte de oxigênio"},{"id":"C","text":"Produção de anticorpos"},{"id":"D","text":"Síntese de protrombina"}],
+        "correctChoiceId":"A", "explanation":"O vWF liga o colágeno ao receptor plaquetário GPIb-IX-V.", "points":8, "durationSec":50
+      },
+      {
+        "id":"D3", "phase":"CASE_INVESTIGATION", "track":"D", "title":"Dois pacientes", "prompt":"X tem vWF reduzido. Y tem macrotrombocitopenia e GPIb reduzida. Qual associação está correta?",
+        "choices":[{"id":"A","text":"X = von Willebrand; Y = Bernard-Soulier"},{"id":"B","text":"X = Bernard-Soulier; Y = von Willebrand"},{"id":"C","text":"X = Hemofilia A; Y = Hemofilia B"},{"id":"D","text":"X = talassemia; Y = falciforme"}],
+        "correctChoiceId":"A", "explanation":"O ligante está reduzido em von Willebrand; o receptor está alterado em Bernard-Soulier.", "points":10, "durationSec":65
+      },
+      {
+        "id":"D4", "phase":"CASE_INVESTIGATION", "track":"D", "title":"Ligante e receptor", "prompt":"Por que alterações diferentes causam sangramento mucocutâneo semelhante?",
+        "choices":[{"id":"A","text":"Ligante e receptor atuam na mesma etapa de adesão"},{"id":"B","text":"Ambos transportam oxigênio"},{"id":"C","text":"Ambos aumentam protrombina"},{"id":"D","text":"São a mesma proteína"}],
+        "correctChoiceId":"A", "explanation":"vWF e GPIb-IX-V são parceiros funcionais na adesão plaquetária.", "points":14, "durationSec":55
+      },
+      {
+        "id":"D5", "phase":"CASE_INVESTIGATION", "track":"D", "title":"Cadeia do receptor", "prompt":"Qual cadeia representa Bernard-Soulier?",
+        "choices":[{"id":"A","text":"Gene do complexo GPIb → receptor deficiente → adesão prejudicada → sangramento"},{"id":"B","text":"F8 → HbS → falcização → hemartrose"},{"id":"C","text":"HBB → FVIII → trombose → anemia"},{"id":"D","text":"VWF → beta-globina → microcitose → eczema"}],
+        "correctChoiceId":"A", "explanation":"Bernard-Soulier decorre de defeitos no complexo receptor GPIb-IX-V.", "points":10, "durationSec":60
+      }
+    ]
+  },
+  "blitz": [
+    {"id":"R1","phase":"BLITZ","title":"Código relâmpago 01","prompt":"Menino com microtrombocitopenia, eczema e imunodeficiência.","choices":[{"id":"A","text":"Wiskott-Aldrich"},{"id":"B","text":"Hemofilia A"},{"id":"C","text":"Talassemia"},{"id":"D","text":"G20210A"}],"correctChoiceId":"A","explanation":"A tríade é característica da síndrome de Wiskott-Aldrich.","points":3,"durationSec":25},
+    {"id":"R2","phase":"BLITZ","title":"Código relâmpago 02","prompt":"Epistaxe crônica, hemorragia digestiva e malformações vasculares autossômicas dominantes.","choices":[{"id":"A","text":"Bernard-Soulier"},{"id":"B","text":"Osler-Weber-Rendu"},{"id":"C","text":"Hemofilia B"},{"id":"D","text":"Beta-talassemia"}],"correctChoiceId":"B","explanation":"O quadro descreve telangiectasia hemorrágica hereditária.","points":3,"durationSec":25},
+    {"id":"R3","phase":"BLITZ","title":"Código relâmpago 03","prompt":"Variante associada a maior produção de protrombina e tendência à coagulação.","choices":[{"id":"A","text":"F8 Xq28"},{"id":"B","text":"G20210A da protrombina"},{"id":"C","text":"VWF"},{"id":"D","text":"HbS"}],"correctChoiceId":"B","explanation":"A variante G20210A está associada a níveis elevados de protrombina e trombofilia.","points":3,"durationSec":25},
+    {"id":"R4","phase":"BLITZ","title":"Classifique a pista","prompt":"F8 em Xq28 corresponde a:","choices":[{"id":"A","text":"DNA / gene"},{"id":"B","text":"Proteína"},{"id":"C","text":"Fenótipo"}],"correctChoiceId":"A","explanation":"F8 e sua localização cromossômica descrevem o nível genético.","points":3,"durationSec":20},
+    {"id":"R5","phase":"BLITZ","title":"Classifique a pista","prompt":"FVIII reduzido corresponde a:","choices":[{"id":"A","text":"DNA / gene"},{"id":"B","text":"Proteína / fator"},{"id":"C","text":"Fenótipo"}],"correctChoiceId":"B","explanation":"FVIII é o produto proteico funcional.","points":3,"durationSec":20},
+    {"id":"R6","phase":"BLITZ","title":"Classifique a pista","prompt":"Hemartrose corresponde a:","choices":[{"id":"A","text":"DNA / gene"},{"id":"B","text":"Proteína"},{"id":"C","text":"Fenótipo"}],"correctChoiceId":"C","explanation":"Hemartrose é uma manifestação clínica.","points":2,"durationSec":20},
+    {"id":"R7","phase":"BLITZ","title":"Último pulso","prompt":"Qual combinação corresponde à HbA?","choices":[{"id":"A","text":"α2β2"},{"id":"B","text":"α2γ2"},{"id":"C","text":"ζ2γ2"},{"id":"D","text":"α2ε2"}],"correctChoiceId":"A","explanation":"HbA é α2β2.","points":3,"durationSec":20}
+  ],
+  "finalChains": [
+    {"id":"F1","phase":"FINAL_CHAIN","title":"Mecanismo final","prompt":"Escolha a cadeia correta para anemia falciforme.","choices":[{"id":"A","text":"Beta-globina alterada → HbS → falcização → vaso-oclusão"},{"id":"B","text":"F8 → FVIII aumentado → trombose → hemartrose"},{"id":"C","text":"VWF → albumina → microcitose → epistaxe"}],"correctChoiceId":"A","explanation":"A alteração estrutural da beta-globina produz HbS e falcização.","points":20,"durationSec":90},
+    {"id":"F2","phase":"FINAL_CHAIN","title":"Mecanismo final","prompt":"Escolha a cadeia correta para beta-talassemia.","choices":[{"id":"A","text":"Mutação beta-globina → menos síntese → desequilíbrio de globinas → anemia microcítica"},{"id":"B","text":"GPIb → HbS → hemólise → trombose"},{"id":"C","text":"F9 → vWF → adesão → eczema"}],"correctChoiceId":"A","explanation":"A redução quantitativa da cadeia beta causa desequilíbrio e anemia.","points":20,"durationSec":90},
+    {"id":"F3","phase":"FINAL_CHAIN","title":"Mecanismo final","prompt":"Escolha a cadeia correta para hemofilia A.","choices":[{"id":"A","text":"F8 → FVIII reduzido → hemostasia secundária comprometida → hemartrose"},{"id":"B","text":"HBB → HbA → adesão plaquetária → epistaxe"},{"id":"C","text":"VWF → protrombina → falcização → anemia"}],"correctChoiceId":"A","explanation":"A deficiência de FVIII compromete a coagulação e causa sangramentos profundos.","points":20,"durationSec":90},
+    {"id":"F4","phase":"FINAL_CHAIN","title":"Mecanismo final","prompt":"Escolha a cadeia correta para Bernard-Soulier.","choices":[{"id":"A","text":"Genes GPIb-IX-V → receptor alterado → adesão prejudicada → sangramento mucocutâneo"},{"id":"B","text":"F8 → beta-globina → falcização → hemartrose"},{"id":"C","text":"HBB → FVIII → trombose → microcitose"}],"correctChoiceId":"A","explanation":"O receptor plaquetário defeituoso impede adesão eficiente.","points":20,"durationSec":90}
+  ]
+}

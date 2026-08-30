@@ -1,5 +1,7 @@
 # Integridade da Partida e Modo de Foco
 
+> Eventos e payloads implementados estão em `docs/API_PROTOCOL.md`; limitações atuais estão em `docs/IMPLEMENTATION_STATUS.md`.
+
 ## Objetivo
 
 Reduzir a possibilidade de uma equipe abandonar a página do jogo para pesquisar respostas durante uma rodada competitiva e criar uma regra clara, auditável e justa quando isso ocorrer.

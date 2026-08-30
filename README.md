@@ -2,15 +2,17 @@
 
 ## Do DNA ao Fenótipo
 
-HEMOCASE é um jogo educacional presencial com interface web, criado para uma atividade da Liga de Genética Médica, LAGEM, após a aula de Proteínas de Interesse Médico, Hemoglobinopatias e Coagulopatias.
+HEMOCASE é um escape room educacional presencial com interface web, criado para uma atividade da Liga de Genética Médica, LAGEM, após a aula de Proteínas de Interesse Médico, Hemoglobinopatias e Coagulopatias. A experiência assume referências narrativas e audiovisuais autorizadas da série *Jogos Mortais*.
 
 O jogo foi desenhado para uma janela total de 30 minutos. Um computador funciona como servidor e painel do facilitador. Cada equipe usa um único celular, entra na sessão por QR Code e recebe evidências, questões e desafios em tempo real.
 
 ## Estado atual do repositório
 
-Este repositório começa pela especificação do produto e pelas instruções para desenvolvimento com Codex. Ainda não há aplicação implementada.
+O MVP está implementado como aplicação TypeScript de origem única, com servidor local, WebSocket, painel Host, projetor, entrada por QR Code, experiência mobile, reconexão, pontuação autoritativa, integridade e exportação.
 
-Leia primeiro:
+Mapa completo: `docs/README.md`.
+
+Leitura inicial:
 
 1. `AGENTS.md`
 2. `ARCHITECTURE.md`
@@ -19,11 +21,12 @@ Leia primeiro:
 5. `docs/ANTI_CHEAT.md`
 6. `docs/UX_BRAND.md`
 7. `docs/TEST_PLAN.md`
-8. `docs/CODEX_BOOTSTRAP_PROMPT.md`
+8. `docs/IMPLEMENTATION_STATUS.md`
+9. `docs/DEVELOPMENT.md`
 
 ## Visão do produto
 
-O HEMOCASE deve parecer uma experiência de investigação genética e hematológica, e não um formulário de perguntas.
+O HEMOCASE deve parecer um escape room de investigação genética e hematológica conduzido por uma transmissão ameaçadora, e não um formulário de perguntas. A tensão vem da narrativa, do tempo e das consequências das escolhas; o conteúdo médico continua sendo o mecanismo real de progressão.
 
 O eixo conceitual é:
 
@@ -31,9 +34,9 @@ O eixo conceitual é:
 
 O jogador recebe pistas progressivas e precisa relacionar clínica, laboratório, proteína, gene e padrão hereditário.
 
-## Arquitetura pretendida
+## Arquitetura implementada
 
-A primeira versão deve rodar inteiramente em rede local:
+O MVP roda inteiramente em rede local:
 
 - computador do facilitador: servidor + painel Host;
 - projetor: tela pública de missão, cronômetro e placar;
@@ -53,20 +56,44 @@ Importante: uma aplicação web não consegue garantir tecnicamente que o partic
 
 ## Identidade LAGEM
 
-A identidade visual deve trazer referência discreta à LAGEM, preferencialmente com a marca oficial em baixa opacidade no fundo das telas. Se o arquivo oficial da marca ainda não estiver disponível, o sistema deve usar apenas um placeholder neutro com o texto `LAGEM`. Não inventar uma logomarca oficial.
+A marca oficial fornecida aparece em baixa opacidade no fundo animado de todas as superfícies, acompanhada por uma hélice de DNA construída em CSS. Os ativos e o procedimento de substituição estão em `docs/ASSETS.md`.
 
-## Desenvolvimento com Codex
+## Manutenção com agentes de código
 
 O repositório possui um `AGENTS.md` curto, usado como mapa, e documentação detalhada em `docs/` como fonte de verdade.
 
-Para iniciar a implementação:
+O MVP já está implementado. `docs/CODEX_BOOTSTRAP_PROMPT.md` permanece apenas como briefing histórico. Novas alterações devem seguir `AGENTS.md`, `docs/DEVELOPMENT.md`, `docs/API_PROTOCOL.md` e as fontes de verdade da área modificada.
 
-1. conecte o repositório ao Codex;
-2. abra `docs/CODEX_BOOTSTRAP_PROMPT.md`;
-3. copie o prompt da seção `Prompt principal`;
-4. execute a tarefa no Codex;
-5. responda às perguntas de esclarecimento que forem realmente necessárias;
-6. revise a implementação e os testes antes de usar em sala.
+## Executar localmente
+
+Requisitos: Node.js 20 ou superior e computadores/celulares na mesma rede local.
+
+```bash
+npm install
+npm run game
+```
+
+Abra `http://127.0.0.1:3000/host`. O terminal também mostra o endereço IPv4 que deve ser acessível pelos celulares.
+
+Para desenvolvimento com recarga automática:
+
+```bash
+npm run dev
+```
+
+Validação completa:
+
+```bash
+npm run lint
+npm run typecheck
+npm test
+npm run build
+npm run test:integration
+```
+
+O roteiro de preparação e contingência está em `docs/CLASSROOM_RUNBOOK.md`. O funcionamento de cada tela e controle está em `docs/USER_GUIDE.md`.
+
+Referência técnica: `docs/API_PROTOCOL.md`. Estado e limitações: `docs/IMPLEMENTATION_STATUS.md`. Validação executada: `docs/TEST_REPORT.md`.
 
 ## Princípios
 

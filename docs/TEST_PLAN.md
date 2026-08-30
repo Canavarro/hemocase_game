@@ -1,5 +1,7 @@
 # Plano de Testes e Critérios de Aceite
 
+> Resultados da última validação e pendências manuais: `docs/TEST_REPORT.md`.
+
 ## Objetivo
 
 Validar que o HEMOCASE funciona de ponta a ponta em uma sala real, com um computador servidor, projetor e vários celulares conectados pela mesma rede local.
@@ -150,16 +152,27 @@ Em ambiente de teste com tempos curtos:
 - tentar ação administrativa sem token;
 - servidor rejeita.
 
+### E2E 5: abertura audiovisual
+
+- abrir a tela pública sem interação e confirmar que o vídeo não iniciou;
+- tocar `Reproduzir a fita` e confirmar reprodução com áudio;
+- validar que falha ou recusa de fullscreen não impede o vídeo;
+- silenciar e reativar o áudio pelos controles do Host;
+- pular a transmissão e confirmar transição ao briefing;
+- repetir deixando o vídeo chegar ao fim;
+- confirmar que o cronômetro oficial permanece em 30:00 até `Entrar na sala`;
+- simular arquivo indisponível e avançar por `Continuar sem vídeo`.
+
 ## Matriz manual de navegadores
 
 Antes de uso em sala, testar em aparelhos reais.
 
-| Plataforma | Navegador | Entrada QR | WebSocket | Visibility | Fullscreen | Wake Lock | Reconexão |
-|---|---|---|---|---|---|---|---|
-| Android | Chrome recente | | | | | | |
-| iOS | Safari recente | | | | | | |
-| Windows Host | Chrome/Edge | N/A | | N/A | N/A | N/A | |
-| macOS Host | Chrome | N/A | | N/A | N/A | N/A | |
+| Plataforma | Navegador | Vídeo/áudio | Entrada QR | WebSocket | Visibility | Fullscreen | Wake Lock | Reconexão |
+|---|---|---|---|---|---|---|---|---|
+| Android | Chrome recente | | | | | | | |
+| iOS | Safari recente | | | | | | | |
+| Windows Host | Chrome/Edge | | N/A | | N/A | N/A | N/A | |
+| macOS Host | Chrome | | N/A | | N/A | N/A | N/A | |
 
 ## Teste manual do FocusGuard
 
@@ -238,28 +251,29 @@ Anotar qualquer etapa que exija explicação verbal adicional.
 
 O MVP está pronto para piloto quando todos forem verdadeiros:
 
-- [ ] servidor sobe com um comando documentado;
-- [ ] QR usa IP local válido;
+- [x] servidor sobe com um comando documentado;
+- [ ] abertura reproduz vídeo e áudio localmente e possui fallback;
+- [x] QR usa IP local válido;
 - [ ] pelo menos quatro celulares entram sem cadastro;
 - [ ] Host e Screen recebem atualizações em tempo real;
 - [ ] todas as fases do modo 30 min funcionam;
 - [ ] conteúdo não futuro não vaza para o cliente;
-- [ ] score é autoritativo no servidor;
+- [x] score é autoritativo no servidor;
 - [ ] troca de aba/app gera evento de integridade;
-- [ ] ZERO_ROUND funciona;
-- [ ] Host consegue desfazer penalidade;
-- [ ] reconexão restaura equipe;
-- [ ] build funciona sem CDN em runtime;
+- [x] ZERO_ROUND funciona;
+- [x] Host consegue desfazer penalidade;
+- [x] reconexão restaura equipe;
+- [x] build funciona sem CDN em runtime;
 - [ ] interface é utilizável em 360 px;
 - [ ] fluxo completo cabe em 30 minutos;
-- [ ] resultados podem ser exportados;
-- [ ] documentação de execução está atualizada.
+- [x] resultados podem ser exportados;
+- [x] documentação de execução está atualizada.
 
 ## Critérios para sala real
 
 Além do MVP técnico:
 
-- [ ] logo oficial da LAGEM inserido ou placeholder aprovado;
+- [x] logo oficial da LAGEM inserido ou placeholder aprovado;
 - [ ] professor revisou as perguntas;
 - [ ] imagens utilizadas possuem permissão ou foram redesenhadas;
 - [ ] teste feito na mesma rede/sala ou em ambiente equivalente;
