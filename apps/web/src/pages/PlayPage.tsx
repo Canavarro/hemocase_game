@@ -1,11 +1,13 @@
-import { useEffect, useRef, useState } from "react";
+import { Suspense, lazy, useEffect, useRef, useState } from "react";
 import { Check, Focus, LockKeyhole, ShieldCheck, TriangleAlert } from "lucide-react";
 import { ScoreTicker } from "../components/ScoreTicker";
 import { ConnectionStatus } from "../components/Status";
 import { TimerRing } from "../components/TimerRing";
 import { formatTime, useSession } from "../lib/socket";
 
-const competitive = new Set(["WARMUP", "CASE_INVESTIGATION", "BLITZ", "FINAL_CHAIN"]);
+const EscapeGame = lazy(() => import("../escape/EscapeGame"));
+
+const competitive = new Set(["WARMUP", "CASE_INVESTIGATION", "BLITZ", "FINAL_CHAIN", "ESCAPE"]);
 
 export function PlayPage({ code }: { code: string }) {
   const token = localStorage.getItem(`hemocase:team:${code}`) ?? undefined;
@@ -70,7 +72,7 @@ export function PlayPage({ code }: { code: string }) {
   return (
     <main className="mobile-shell play-screen">
       <header className="mobile-statusbar">
-        <div><strong>{snapshot?.teamName ?? "Equipe"}</strong><span>{snapshot?.track ? `Trilho ${snapshot.track}` : `Sessão ${code}`}</span></div>
+        <div><strong>{snapshot?.teamName ?? "Equipe"}</strong><span>{snapshot?.mode === "ESCAPE" ? snapshot.escape?.patientLabel ?? `Sessão ${code}` : snapshot?.track ? `Trilho ${snapshot.track}` : `Sessão ${code}`}</span></div>
         <ConnectionStatus connected={connected} />
       </header>
 
@@ -79,9 +81,15 @@ export function PlayPage({ code }: { code: string }) {
           <div className="waiting-signal"><i /><i /><i /></div>
           <p className="eyebrow">Conexão estabelecida</p>
           <h1>AGUARDE A TRANSMISSÃO</h1>
-          <p>O Host ainda está reunindo as equipes. Não feche esta página.</p>
-          <div className="score-line"><span>Bases recuperadas</span><strong>{snapshot.score ?? 0}</strong></div>
+          <p>{snapshot.mode === "ESCAPE" ? "O laboratório será selado em instantes. Não fechem esta página." : "O Host ainda está reunindo as equipes. Não feche esta página."}</p>
+          <div className="score-line"><span>{snapshot.mode === "ESCAPE" ? "Bases da equipe" : "Bases recuperadas"}</span><strong>{snapshot.score ?? 0}</strong></div>
         </section>
+      )}
+
+      {snapshot?.mode === "ESCAPE" && snapshot.phase !== "LOBBY" && snapshot.phase !== "PAUSED" && (
+        <Suspense fallback={<section className="waiting-state"><p className="eyebrow">Carregando o laboratório...</p></section>}>
+          <EscapeGame code={code} token={token} snapshot={snapshot} socket={socket} />
+        </Suspense>
       )}
 
       {snapshot?.phase === "FOCUS_CHECK" && (
@@ -117,7 +125,7 @@ export function PlayPage({ code }: { code: string }) {
 
       {snapshot?.phase === "PAUSED" && <section className="waiting-state"><p className="eyebrow">Tempo suspenso</p><h1>O HOST INTERROMPEU O MECANISMO.</h1><p>Permaneça nesta tela. A contagem continuará do ponto exato.</p><strong className="large-timer">{formatTime(snapshot.remainingMs)}</strong></section>}
 
-      {(snapshot?.phase === "REVEAL" || snapshot?.phase === "FINISHED") && (
+      {snapshot?.mode !== "ESCAPE" && (snapshot?.phase === "REVEAL" || snapshot?.phase === "FINISHED") && (
         <section className="finish-screen"><p className="eyebrow">Protocolo concluído</p><h1 className="headline-rise">VOCÊS SEGUIRAM A CADEIA.</h1><p>Do gene ao fenótipo, cada pista fazia parte do mesmo mecanismo.</p><strong className="final-score"><ScoreTicker value={snapshot.score ?? 0} /><span>bases</span></strong><ol>{snapshot.teams.map((team, index) => <li style={{ "--i": index } as React.CSSProperties} key={team.id}><span>{index + 1}. {team.name}</span><strong>{team.score}</strong></li>)}</ol></section>
       )}
     </main>

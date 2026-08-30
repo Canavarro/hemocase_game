@@ -22,10 +22,10 @@ Versão documentada: `0.1.0`.
 | Painel Host | Completo | Avançar, voltar, pausar, retomar, resetar, encerrar e ajustar score. |
 | Projetor | Completo | Abertura, lobby, missão, progresso, revelação e ranking. |
 | Mobile | Completo | Entrada, foco, pergunta, espera, pausa e resultado. |
-| Motion design | Completo | Transições Remotion sob demanda, cronômetro circular e animações com redução de movimento. |
+| Motion design | Completo | Vinheta de fase e cadeia de revelação em Remotion (lazy, só no projetor), cronômetro circular, contador de bases, entradas escalonadas e redução de movimento. |
 | Exportação | Completo | JSON detalhado e CSV resumido. |
 | Offline | Completo | Sem dependências de runtime externas. |
-| Identidade LAGEM/DNA | Completo | Fundo global animado e redução de movimento. |
+| Identidade LAGEM/DNA | Completo | Silhueta LAGEM flutuante derivada por CSS do ativo oficial, hélice de DNA, hemácias em deriva e vinheta de fundo. |
 
 ## Parcial
 
@@ -36,6 +36,19 @@ Versão documentada: `0.1.0`.
 | Validação de conteúdo | JSON é parseado e tipado, sem schema runtime completo. | Schema Zod de `GameContent` com mensagens editoriais. |
 | Registro de ajustes | Ajustes entram na exportação JSON. | Exibir histórico de ajustes no painel. |
 | FocusGuard | Detecta sinais disponíveis no navegador. | Testes ampliados em aparelhos reais e telemetria de heartbeat. |
+
+## Modo Escape (M1 entregue)
+
+| Área | Estado | Observação |
+|---|---|---|
+| Seleção de modalidade | Completo | Host escolhe Rodadas ao vivo ou Escape na criação, com duração e checklist de tópicos. |
+| Gating de conteúdo | Completo | Casos e enigmas opcionais filtrados no servidor pelos tópicos liberados; nada fora deles chega ao cliente. |
+| Motor de cenas 2.5D | Completo | Uma vista por sala com parallax (toque/giroscópio), hotspots, vista de detalhe e mãos animadas. |
+| Caso jogável | Completo | Anemia falciforme (A17), 6 salas, 13 enigmas obrigatórios + 3 arquivos de emergência. |
+| Validação de enigmas | Completo | Sempre no servidor; gabarito nunca vai ao cliente; penalidades e trava do cofre. |
+| Dicas e prontuário | Completo | 3 níveis com custo; prontuário digital obrigatório para abrir portas R1–R4; exportado em JSON. |
+| Host e projetor | Completo | Mapa do laboratório, destravar porta, +5 min, planta com progresso e feed da SENTINELA. |
+| Backlog M2/M3 | Pendente | Mais casos, múltiplas vistas por sala, áudio ambiente, cutscenes de porta, voz da SENTINELA, modo multi-aparelho. Ver `ESCAPE_MODE_SPEC.md`. |
 
 ## Não implementado no MVP
 

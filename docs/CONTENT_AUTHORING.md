@@ -103,3 +103,15 @@ A equipe recebe uma cadeia diferente de seu trilho principal. A seleção usa de
 ## Limitação atual
 
 O JSON é tipado após carregamento, mas ainda não passa por schema Zod completo em runtime. JSON inválido impede a inicialização; inconsistências semânticas devem ser detectadas por revisão e testes até a validação estrutural de conteúdo ser implementada.
+
+## Conteúdo do modo Escape
+
+Casos ficam em `content/escape/cases/*.json` seguindo o tipo `EscapeCase` de `@hemocase/shared`:
+
+- `topicTags`: tags obrigatórias do caso (vocabulário `escapeTopics`). O caso só é sorteado se o professor liberar todas;
+- `rooms`: seis salas `R0`–`R5`, cada uma com `steps` na ordem de resolução. Passos com `optional: true` são arquivos de emergência e são filtrados pelas tags liberadas;
+- cada passo referencia um `object` da cenografia do cliente (`apps/web/src/escape/scenes.tsx`) e declara exatamente 3 `hints` progressivas;
+- `answers`: gabarito por `stepId`, separado dos passos — nunca é enviado ao cliente. Tipos ordenados (`chain-fill`, `mechanism-fill`, `dial-safe`, `code`) comparam em ordem; `board-select` e `assemble` comparam como conjunto/multiconjunto;
+- `debrief`: diagnóstico e rota molecular exibidos ao escapar.
+
+Regras editoriais: mesmas do quiz (linguagem pt-BR, precisão científica revisada pelo professor). Um caso novo não exige mudança de código, desde que use os tipos de enigma existentes e objetos de cena já mapeados.

@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { ArrowLeft, Download, ExternalLink, Pause, Play, Plus, RotateCcw, ShieldAlert, SlidersHorizontal, Square, SkipForward } from "lucide-react";
-import type { HostAction, IntegrityPolicy } from "@hemocase/shared";
+import { ArrowLeft, DoorOpen, Download, ExternalLink, Pause, Play, Plus, RotateCcw, ShieldAlert, SlidersHorizontal, Square, SkipForward, Timer } from "lucide-react";
+import { escapeTopicLabels, escapeTopics, type EscapeTopic, type GameMode, type HostAction, type IntegrityPolicy } from "@hemocase/shared";
 import { ConnectionStatus } from "../components/Status";
 import { formatTime, useSession } from "../lib/socket";
 
@@ -9,18 +9,34 @@ const storedToken = sessionStorage.getItem("hemocase:host-token") ?? undefined;
 type WithoutHostAuth<T> = T extends unknown ? Omit<T, "code" | "hostToken"> : never;
 type HostActionPayload = WithoutHostAuth<HostAction>;
 
+const topicPresets: Record<string, EscapeTopic[]> = {
+  "Aula completa": [...escapeTopics],
+  "Hemoglobinopatias": ["proteinas-funcoes", "hemoglobina-estrutura", "anemia-falciforme", "talassemias", "mutacoes-ponto", "heranca-autossomica", "splicing-promotor"],
+  "Coagulopatias": ["proteinas-funcoes", "hemostasia-primaria", "hemostasia-secundaria", "hemofilias", "von-willebrand", "bernard-soulier", "heranca-ligada-x", "trombofilias"],
+};
+
 export function HostPage() {
   const [code, setCode] = useState(storedCode);
   const [token, setToken] = useState(storedToken);
   const [busy, setBusy] = useState(false);
   const [notice, setNotice] = useState<string>();
+  const [mode, setMode] = useState<GameMode>("QUIZ");
+  const [topics, setTopics] = useState<EscapeTopic[]>(topicPresets["Hemoglobinopatias"]!);
+  const [durationMin, setDurationMin] = useState(35);
   const { socket, snapshot, connected, error } = useSession("host", code, token);
+
+  function toggleTopic(topic: EscapeTopic) {
+    setTopics((current) => current.includes(topic) ? current.filter((item) => item !== topic) : [...current, topic]);
+  }
 
   async function createSession() {
     setBusy(true);
     setNotice(undefined);
     try {
-      const response = await fetch("/api/sessions", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ integrityPolicy: "ZERO_ROUND" }) });
+      const body = mode === "ESCAPE"
+        ? { mode, integrityPolicy: "ZERO_ROUND", allowedTopics: topics, durationMin }
+        : { mode, integrityPolicy: "ZERO_ROUND" };
+      const response = await fetch("/api/sessions", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(body) });
       const data = await response.json() as { code: string; hostToken: string; error?: string };
       if (!response.ok) throw new Error(data.error ?? "Não foi possível criar a sessão.");
       sessionStorage.setItem("hemocase:host-code", data.code);
@@ -65,7 +81,47 @@ export function HostPage() {
           <h1 className="title-pulse headline-rise">HEMOCASE</h1>
           <p className="blood-title blood-title--typed">Código Vermelho</p>
           <p>Prepare a transmissão, conecte as equipes e assuma o controle do protocolo.</p>
-          <button className="button button--danger" onClick={createSession} disabled={busy}><Plus size={19} /> {busy ? "Criando..." : "Criar sessão"}</button>
+
+          <div className="mode-picker" role="radiogroup" aria-label="Modalidade da sessão">
+            <button className={`mode-card ${mode === "QUIZ" ? "is-active" : ""}`} role="radio" aria-checked={mode === "QUIZ"} onClick={() => setMode("QUIZ")}>
+              <strong>Rodadas ao vivo</strong>
+              <span>Fases sincronizadas, perguntas cronometradas e placar no projetor.</span>
+            </button>
+            <button className={`mode-card ${mode === "ESCAPE" ? "is-active" : ""}`} role="radio" aria-checked={mode === "ESCAPE"} onClick={() => setMode("ESCAPE")}>
+              <strong>Escape: Protocolo Hélix</strong>
+              <span>Laboratório selado em primeira pessoa. Cada equipe investiga no seu ritmo.</span>
+            </button>
+          </div>
+
+          {mode === "ESCAPE" && (
+            <div className="escape-setup">
+              <div className="setup-row">
+                <label className="field-label">Duração da corrida
+                  <select value={durationMin} onChange={(event) => setDurationMin(Number(event.target.value))}>
+                    <option value={25}>25 minutos</option>
+                    <option value={35}>35 minutos</option>
+                    <option value={45}>45 minutos</option>
+                  </select>
+                </label>
+                <label className="field-label">Predefinição de tópicos
+                  <select defaultValue="Hemoglobinopatias" onChange={(event) => setTopics(topicPresets[event.target.value] ?? [])}>
+                    {Object.keys(topicPresets).map((preset) => <option key={preset} value={preset}>{preset}</option>)}
+                  </select>
+                </label>
+              </div>
+              <fieldset className="topic-grid">
+                <legend>Conteúdos já vistos pela turma (nada fora disso entra no jogo)</legend>
+                {escapeTopics.map((topic) => (
+                  <label key={topic} className={`topic-chip ${topics.includes(topic) ? "is-on" : ""}`}>
+                    <input type="checkbox" checked={topics.includes(topic)} onChange={() => toggleTopic(topic)} />
+                    {escapeTopicLabels[topic]}
+                  </label>
+                ))}
+              </fieldset>
+            </div>
+          )}
+
+          <button className="button button--danger" onClick={createSession} disabled={busy}><Plus size={19} /> {busy ? "Criando..." : mode === "ESCAPE" ? "Selar o laboratório" : "Criar sessão"}</button>
           {notice && <p className="alert-text">{notice}</p>}
         </section>
       </main>
@@ -97,22 +153,53 @@ export function HostPage() {
         <button className="button button--danger" onClick={() => action({ action: "advance" })} disabled={snapshot?.phase === "PAUSED" || snapshot?.phase === "FINISHED"}><SkipForward size={18} /> Avançar</button>
         <button className="button button--quiet" onClick={() => action({ action: "reset" })}><RotateCcw size={18} /> Reiniciar</button>
         <button className="button button--quiet" onClick={() => window.open(`/screen/${code}`, "hemocase-screen")}><ExternalLink size={18} /> Abrir projetor</button>
+        {snapshot?.mode === "ESCAPE" && snapshot.phase === "ESCAPE" && (
+          <button className="button button--quiet" onClick={() => action({ action: "extendTime", minutes: 5 })}><Timer size={17} /> +5 min</button>
+        )}
         <button className="button button--quiet" onClick={() => { if (window.confirm("Encerrar o protocolo e exibir o resultado final?")) action({ action: "finish" }); }} disabled={snapshot?.phase === "FINISHED"}><Square size={17} /> Encerrar</button>
       </nav>
 
       <div className="host-grid">
         <section className="host-section">
-          <div className="section-heading"><div><p className="eyebrow">Monitor de equipes</p><h2>Estado da sala</h2></div><code>{snapshot?.joinUrl}</code></div>
-          <div className="team-table" role="table">
-            <div className="team-row team-row--head" role="row"><span>Equipe</span><span>Trilho</span><span>Resposta</span><span>Bases</span></div>
-            {snapshot?.teams.map((team) => (
-              <div className="team-row" role="row" key={team.id}>
-                <span><i className={team.connected ? "online-dot" : "offline-dot"} />{team.name}</span>
-                <span>{team.track}</span><span>{team.answered ? "Registrada" : "Pendente"}</span><strong className="score-control">{team.score}<button className="icon-button icon-button--small" title={`Ajustar pontos de ${team.name}`} onClick={() => adjustScore(team.id)}><SlidersHorizontal size={15} /></button></strong>
+          <div className="section-heading"><div><p className="eyebrow">Monitor de equipes</p><h2>{snapshot?.mode === "ESCAPE" ? "Mapa do laboratório" : "Estado da sala"}</h2></div><code>{snapshot?.joinUrl}</code></div>
+          {snapshot?.mode === "ESCAPE" ? (
+            <>
+              <div className="team-table" role="table">
+                <div className="team-row team-row--escape team-row--head" role="row"><span>Equipe</span><span>Sala</span><span>Progresso</span><span>Dicas</span><span>Bases</span></div>
+                {snapshot.escapeHost?.map((row) => {
+                  const connected = snapshot.teams.find((team) => team.id === row.teamId)?.connected ?? false;
+                  return (
+                    <div className="team-row team-row--escape" role="row" key={row.teamId}>
+                      <span><i className={connected ? "online-dot" : "offline-dot"} />{row.name}{row.finishedAt ? " · ESCAPOU" : ""}</span>
+                      <span>{row.roomId} · {row.roomName}</span>
+                      <span className="room-progress"><i style={{ width: `${row.mandatoryCount ? Math.round((row.stepIndex / row.mandatoryCount) * 100) : 0}%` }} />{row.stepIndex}/{row.mandatoryCount}</span>
+                      <span>{row.hintsCount}</span>
+                      <strong className="score-control">{row.bases}
+                        <button className="icon-button icon-button--small" title={`Destravar a porta de ${row.name}`} onClick={() => { if (window.confirm(`Destravar a porta atual de ${row.name}?`)) action({ action: "unlockDoor", teamId: row.teamId }); }}><DoorOpen size={15} /></button>
+                        <button className="icon-button icon-button--small" title={`Ajustar pontos de ${row.name}`} onClick={() => adjustScore(row.teamId)}><SlidersHorizontal size={15} /></button>
+                      </strong>
+                    </div>
+                  );
+                })}
+                {!snapshot.escapeHost?.length && <p className="empty-state">Aguardando as equipes escanearem o código.</p>}
               </div>
-            ))}
-            {!snapshot?.teams.length && <p className="empty-state">Aguardando as equipes escanearem o código.</p>}
-          </div>
+              <div className="event-feed">
+                {snapshot.escapeEvents?.slice(0, 8).map((event) => <p key={event.at + event.text}><span>{new Date(event.at).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })}</span>{event.text}</p>)}
+                {!snapshot.escapeEvents?.length && <p className="empty-state">Sem eventos ainda.</p>}
+              </div>
+            </>
+          ) : (
+            <div className="team-table" role="table">
+              <div className="team-row team-row--head" role="row"><span>Equipe</span><span>Trilho</span><span>Resposta</span><span>Bases</span></div>
+              {snapshot?.teams.map((team) => (
+                <div className="team-row" role="row" key={team.id}>
+                  <span><i className={team.connected ? "online-dot" : "offline-dot"} />{team.name}</span>
+                  <span>{team.track}</span><span>{team.answered ? "Registrada" : "Pendente"}</span><strong className="score-control">{team.score}<button className="icon-button icon-button--small" title={`Ajustar pontos de ${team.name}`} onClick={() => adjustScore(team.id)}><SlidersHorizontal size={15} /></button></strong>
+                </div>
+              ))}
+              {!snapshot?.teams.length && <p className="empty-state">Aguardando as equipes escanearem o código.</p>}
+            </div>
+          )}
         </section>
 
         <aside className="host-section integrity-panel">

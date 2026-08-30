@@ -1,0 +1,462 @@
+{
+  "id": "falciforme-a17",
+  "title": "Código Vermelho: Paciente A17",
+  "patientLabel": "Paciente A17 · lactente, 8 meses",
+  "briefing": "Uma alteração genética foi registrada no Paciente A17 e nenhum diagnóstico foi entregue. O laboratório permanecerá selado até que a rota molecular esteja completa: gene, proteína, mecanismo, fenótipo e herança. O relógio de expurgo já está correndo.",
+  "topicTags": ["proteinas-funcoes", "hemoglobina-estrutura", "anemia-falciforme", "mutacoes-ponto", "heranca-autossomica"],
+  "rooms": [
+    {
+      "id": "R0",
+      "name": "Antecâmara de Contenção",
+      "intro": "SENTINELA: Contenção ativada. Identifiquem-se e provem competência mínima para entrar na ala clínica.",
+      "unlockText": "Credencial validada. A porta da Ala de Triagem está aberta.",
+      "steps": [
+        {
+          "id": "R0-S1",
+          "roomId": "R0",
+          "type": "use-item",
+          "object": "armario-epi",
+          "title": "O crachá do plantonista",
+          "prompt": "O armário de EPI está entreaberto. Dentro dele, um crachá esquecido pelo plantonista anterior. Peguem o crachá e passem no leitor da porta.",
+          "grantsItem": "Crachá do plantonista",
+          "points": 2,
+          "tags": ["proteinas-funcoes"],
+          "hints": [
+            "Toquem no armário entreaberto à direita.",
+            "Com o crachá em mãos, toquem no leitor vermelho ao lado da porta.",
+            "Peguem o crachá no armário de EPI e usem no leitor da porta."
+          ]
+        },
+        {
+          "id": "R0-S2",
+          "roomId": "R0",
+          "type": "chain-fill",
+          "object": "painel-sentinela",
+          "title": "Calibração de competência",
+          "prompt": "O leitor recusou: 'Credencial sem registro de competência.' O painel exige completar o caminho da informação genética.",
+          "slots": ["DNA", "?", "PROTEÍNA", "?", "FENÓTIPO"],
+          "slotChoices": [
+            [],
+            [
+              { "id": "rna", "text": "RNA" },
+              { "id": "ribossomo", "text": "RIBOSSOMO" },
+              { "id": "lipidio", "text": "LIPÍDIO" }
+            ],
+            [],
+            [
+              { "id": "funcao", "text": "FUNÇÃO" },
+              { "id": "nucleo", "text": "NÚCLEO" },
+              { "id": "membrana", "text": "MEMBRANA" }
+            ],
+            []
+          ],
+          "points": 4,
+          "tags": ["proteinas-funcoes"],
+          "hints": [
+            "O caminho começa na transcrição.",
+            "Entre o DNA e a proteína existe uma molécula mensageira; entre a proteína e o fenótipo existe o que ela faz.",
+            "DNA → RNA → PROTEÍNA → FUNÇÃO → FENÓTIPO."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "R1",
+      "name": "Ala de Triagem",
+      "intro": "SENTINELA: O paciente está atrás do vidro. O prontuário está bloqueado. Comecem pelo que os olhos alcançam: o fenótipo.",
+      "unlockText": "Quadro clínico validado. A guia de exames foi impressa com o código do elevador de serviço.",
+      "steps": [
+        {
+          "id": "R1-S1",
+          "roomId": "R1",
+          "type": "code",
+          "object": "impressora",
+          "title": "A folha travada",
+          "prompt": "O computador do prontuário pede uma senha numérica. Há uma folha presa na impressora com o carimbo 'ACESSO TEMPORÁRIO'. Puxem a folha com cuidado e digitem a senha.",
+          "evidence": ["Folha da impressora: ACESSO TEMPORÁRIO · senha 7264 · válida apenas para o plantão noturno."],
+          "codeLength": 4,
+          "points": 2,
+          "tags": ["proteinas-funcoes"],
+          "hints": [
+            "A senha está impressa em algum lugar da sala.",
+            "Olhem a folha presa na impressora, ao lado do balcão.",
+            "A senha é 7264."
+          ]
+        },
+        {
+          "id": "R1-S2",
+          "roomId": "R1",
+          "type": "board-select",
+          "object": "quadro-branco",
+          "title": "Montar o quadro clínico",
+          "prompt": "O prontuário abriu: lactente de 8 meses, palidez intensa, choro à manipulação das mãos e dos pés, fígado e baço palpáveis. Os pais relatam doença falcêmica na família. Marquem no quadro branco APENAS os 4 achados que pertencem a este paciente.",
+          "evidence": [
+            "Hemoglobina: 7,5 g/dL",
+            "Reticulócitos: 12%",
+            "Bilirrubina indireta discretamente elevada"
+          ],
+          "choices": [
+            { "id": "dor", "text": "Crises de dor em mãos e pés" },
+            { "id": "palidez", "text": "Palidez cutaneomucosa intensa" },
+            { "id": "ictericia", "text": "Icterícia discreta" },
+            { "id": "familia", "text": "História familiar de doença falcêmica" },
+            { "id": "hematomas", "text": "Hematomas musculares profundos" },
+            { "id": "epistaxe", "text": "Epistaxes de repetição" },
+            { "id": "gengiva", "text": "Sangramento gengival ao escovar" },
+            { "id": "plaquetas", "text": "Plaquetas gigantes no esfregaço" }
+          ],
+          "selectCount": 4,
+          "points": 8,
+          "tags": ["anemia-falciforme"],
+          "hints": [
+            "O padrão deste paciente é de anemia com hemólise, não de sangramento.",
+            "Descartem tudo que aponta para hemostasia: hematomas, epistaxe, gengiva e plaquetas gigantes.",
+            "Dor em mãos e pés, palidez, icterícia discreta e história familiar."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "R2",
+      "name": "Laboratório de Hematologia",
+      "intro": "SENTINELA: O sangue fala. Escutem com as lentes e com os números antes de abrir qualquer porta fria.",
+      "unlockText": "Amostra-mestre liberada. O cartão de acesso à Bancada de Proteínas estava dentro da geladeira.",
+      "steps": [
+        {
+          "id": "R2-S1",
+          "roomId": "R2",
+          "type": "microscope",
+          "object": "microscopio",
+          "title": "O sangue fala",
+          "prompt": "Três lâminas estão na estante, identificadas por paciente. Coloquem a lâmina CORRETA no microscópio e ajustem o foco.",
+          "choices": [
+            { "id": "B22", "text": "Lâmina B22" },
+            { "id": "A17", "text": "Lâmina A17" },
+            { "id": "D09", "text": "Lâmina D09" }
+          ],
+          "evidence": ["Ao focar: numerosas hemácias alongadas, em forma de foice, entre hemácias normais."],
+          "points": 4,
+          "tags": ["anemia-falciforme"],
+          "hints": [
+            "O paciente desta investigação tem uma identificação.",
+            "O prontuário da Triagem pertence ao Paciente A17.",
+            "Usem a lâmina A17 e girem o foco até a imagem ficar nítida."
+          ]
+        },
+        {
+          "id": "R2-S2",
+          "roomId": "R2",
+          "type": "board-select",
+          "object": "analisador",
+          "title": "Interpretar antes de abrir",
+          "prompt": "O analisador imprimiu o painel do Paciente A17. Marquem APENAS os exames ALTERADOS.",
+          "choices": [
+            { "id": "hb", "text": "Hemoglobina 7,5 g/dL" },
+            { "id": "retic", "text": "Reticulócitos 12%" },
+            { "id": "bili", "text": "Bilirrubina indireta elevada" },
+            { "id": "vcm", "text": "VCM 84 fL" },
+            { "id": "plaq", "text": "Plaquetas 260.000/µL" },
+            { "id": "ttpa", "text": "TTPa 31 s" }
+          ],
+          "selectCount": 3,
+          "points": 8,
+          "tags": ["anemia-falciforme"],
+          "hints": [
+            "Três valores fogem da normalidade; três são tranquilizadores.",
+            "VCM, plaquetas e TTPa estão dentro da faixa normal.",
+            "Alterados: hemoglobina baixa, reticulócitos altos e bilirrubina indireta elevada — o retrato da hemólise."
+          ]
+        },
+        {
+          "id": "R2-S3",
+          "roomId": "R2",
+          "type": "code",
+          "object": "geladeira",
+          "title": "O cadeado da câmara fria",
+          "prompt": "A geladeira de amostras tem um cadeado de 4 dígitos. A luz UV revela no vidro: '1º dígito: nº de exames ALTERADOS no painel. 2º: primeiro algarismo da hemoglobina. 3º: dezena dos reticulócitos. 4º: nº de lâminas na estante.'",
+          "codeLength": 4,
+          "points": 6,
+          "tags": ["anemia-falciforme"],
+          "hints": [
+            "Cada dígito vem de algo que vocês já leram nesta sala.",
+            "Exames alterados: 3. Hemoglobina: 7,5. Reticulócitos: 12%. Lâminas: 3.",
+            "O código é 3713."
+          ]
+        },
+        {
+          "id": "R2-F1",
+          "roomId": "R2",
+          "type": "family-question",
+          "object": "arquivo-morto",
+          "title": "Arquivo de emergência: o paciente que não sangra",
+          "prompt": "Um arquivo antigo caiu atrás do analisador: 'Paciente com trombose venosa de repetição. Identificada variante que AUMENTA a produção de protrombina.' Qual é a variante?",
+          "choices": [
+            { "id": "g20210a", "text": "Mutação G20210A da protrombina" },
+            { "id": "glu6val", "text": "Glu6Val da beta-globina" },
+            { "id": "f8", "text": "Inversão do íntron 22 do F8" },
+            { "id": "vwf", "text": "Deleção do VWF" }
+          ],
+          "optional": true,
+          "points": 5,
+          "tags": ["trombofilias"],
+          "hints": [
+            "O problema é o oposto do sangramento.",
+            "A variante fica na região 3' não traduzida do gene da protrombina.",
+            "G20210A da protrombina."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "R3",
+      "name": "Bancada de Proteínas",
+      "intro": "SENTINELA: A proteína suspeita está suspensa diante de vocês. Montem-na, e ela confessa.",
+      "unlockText": "Mecanismo registrado. A chave magnética da Câmara de Sequenciamento foi ejetada da bancada.",
+      "steps": [
+        {
+          "id": "R3-S1",
+          "roomId": "R3",
+          "type": "assemble",
+          "object": "modelo-molecular",
+          "title": "Montar o tetrâmero",
+          "prompt": "O modelo molecular da hemoglobina adulta (HbA) está desmontado. Encaixem as QUATRO cadeias corretas nos quatro suportes.",
+          "choices": [
+            { "id": "alfa", "text": "Cadeia α" },
+            { "id": "beta", "text": "Cadeia β" },
+            { "id": "gama", "text": "Cadeia γ" },
+            { "id": "delta", "text": "Cadeia δ" }
+          ],
+          "slots": ["Suporte 1", "Suporte 2", "Suporte 3", "Suporte 4"],
+          "points": 6,
+          "tags": ["hemoglobina-estrutura"],
+          "hints": [
+            "A HbA predominante do adulto tem duas cadeias de cada tipo.",
+            "γ pertence à hemoglobina fetal; δ, à HbA2 minoritária.",
+            "α, α, β, β — o tetrâmero α2β2."
+          ]
+        },
+        {
+          "id": "R3-S2",
+          "roomId": "R3",
+          "type": "mechanism-fill",
+          "object": "quadro-negro",
+          "title": "A frase-mecanismo",
+          "prompt": "No quadro-negro, completem a frase que conecta a proteína ao fenótipo deste paciente.",
+          "slots": ["A proteína", "está", "e, em baixa oxigenação,"],
+          "slotChoices": [
+            [
+              { "id": "hb", "text": "hemoglobina" },
+              { "id": "albumina", "text": "albumina" },
+              { "id": "fviii", "text": "fator VIII" }
+            ],
+            [
+              { "id": "qualitativa", "text": "estruturalmente alterada" },
+              { "id": "reduzida", "text": "produzida em quantidade reduzida" },
+              { "id": "ausente", "text": "totalmente ausente" }
+            ],
+            [
+              { "id": "polimeriza", "text": "polimeriza e deforma a hemácia" },
+              { "id": "coagula", "text": "ativa a cascata de coagulação" },
+              { "id": "adere", "text": "impede a adesão plaquetária" }
+            ]
+          ],
+          "points": 8,
+          "tags": ["anemia-falciforme", "hemoglobina-estrutura"],
+          "hints": [
+            "O esfregaço mostrou a consequência celular do mecanismo.",
+            "O problema aqui é de qualidade da proteína, não de quantidade.",
+            "Hemoglobina · estruturalmente alterada · polimeriza e deforma a hemácia."
+          ]
+        },
+        {
+          "id": "R3-F1",
+          "roomId": "R3",
+          "type": "family-question",
+          "object": "balanca",
+          "title": "Arquivo de emergência: a balança que não equilibra",
+          "prompt": "A balança de dois pratos guarda um cartão: 'Outro paciente produz cadeias β em quantidade insuficiente, com cadeias α em excesso precipitando na célula.' Qual é o grupo de doenças?",
+          "choices": [
+            { "id": "talassemia", "text": "Talassemias (defeito quantitativo)" },
+            { "id": "falciforme", "text": "Anemia falciforme (defeito qualitativo)" },
+            { "id": "hemofilia", "text": "Hemofilias" },
+            { "id": "bernard", "text": "Bernard-Soulier" }
+          ],
+          "optional": true,
+          "points": 5,
+          "tags": ["talassemias"],
+          "hints": [
+            "A pergunta fala de quantidade, não de estrutura.",
+            "Compare com o caso principal: lá a proteína é anormal; aqui ela é normal, porém escassa.",
+            "Talassemias."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "R4",
+      "name": "Câmara de Sequenciamento",
+      "intro": "SENTINELA: O DNA entrega a resposta. Encontrem a troca, expliquem a herança, respondam à família.",
+      "unlockText": "Rota genética confirmada. O corredor do Cofre do Diagnóstico está aberto.",
+      "steps": [
+        {
+          "id": "R4-S1",
+          "roomId": "R4",
+          "type": "sequence-spot",
+          "object": "terminal",
+          "title": "Encontrar a troca",
+          "prompt": "O terminal alinhou o início da cadeia β do paciente com a referência. Toquem no CÓDON divergente.",
+          "sequence": {
+            "label": "Códons 4–9 da beta-globina",
+            "reference": ["ACT", "CCT", "GAG", "GAG", "AAG", "TCT"],
+            "sample": ["ACT", "CCT", "GTG", "GAG", "AAG", "TCT"]
+          },
+          "evidence": ["Cromatograma: troca de A por T no segundo nucleotídeo do códon 6 (GAG → GTG)."],
+          "points": 8,
+          "tags": ["mutacoes-ponto", "anemia-falciforme"],
+          "hints": [
+            "Comparem letra por letra, códon por códon.",
+            "A divergência está no terceiro códon exibido.",
+            "GAG virou GTG: glutamato → valina na posição 6."
+          ]
+        },
+        {
+          "id": "R4-S2",
+          "roomId": "R4",
+          "type": "inheritance",
+          "object": "heredograma",
+          "title": "O heredograma da parede",
+          "prompt": "O heredograma desenhado no vidro mostra: pais saudáveis (ambos com traço falcêmico), paciente afetado, um tio materno afetado. Qual padrão de herança explica a família?",
+          "choices": [
+            { "id": "ar", "text": "Autossômica recessiva" },
+            { "id": "ad", "text": "Autossômica dominante" },
+            { "id": "xr", "text": "Recessiva ligada ao X" },
+            { "id": "mito", "text": "Herança mitocondrial" }
+          ],
+          "points": 6,
+          "tags": ["heranca-autossomica"],
+          "hints": [
+            "Os pais são saudáveis e o filho é afetado.",
+            "Meninas e meninos podem ser igualmente afetados; o gene HBB fica no cromossomo 11.",
+            "Autossômica recessiva."
+          ]
+        },
+        {
+          "id": "R4-S3",
+          "roomId": "R4",
+          "type": "family-question",
+          "object": "interfone",
+          "title": "A família pergunta",
+          "prompt": "Pelo interfone, a mãe pergunta: 'Nós dois temos o traço. Qual a chance de um próximo filho nascer com a doença?'",
+          "choices": [
+            { "id": "p25", "text": "25%" },
+            { "id": "p50", "text": "50%" },
+            { "id": "p100", "text": "100%" },
+            { "id": "p0", "text": "Nenhuma chance" }
+          ],
+          "points": 6,
+          "tags": ["heranca-autossomica"],
+          "hints": [
+            "Montem o quadrado de Punnett com dois heterozigotos.",
+            "Aa × Aa: quantos aa aparecem em quatro combinações?",
+            "1 em 4 — 25%."
+          ]
+        },
+        {
+          "id": "R4-F1",
+          "roomId": "R4",
+          "type": "family-question",
+          "object": "freezer",
+          "title": "Arquivo de emergência: o menino do eczema",
+          "prompt": "Etiqueta esquecida no freezer −80 °C: 'Menino com plaquetas PEQUENAS e baixas, eczema e infecções de repetição.' Qual é a síndrome?",
+          "choices": [
+            { "id": "wiskott", "text": "Síndrome de Wiskott-Aldrich" },
+            { "id": "bernard", "text": "Bernard-Soulier" },
+            { "id": "vwd", "text": "Doença de von Willebrand" },
+            { "id": "thh", "text": "Telangiectasia hemorrágica hereditária" }
+          ],
+          "optional": true,
+          "points": 5,
+          "tags": ["imunodeficiencias-plaquetarias"],
+          "hints": [
+            "A tríade é hematológica, cutânea e imunológica.",
+            "Bernard-Soulier tem plaquetas GIGANTES; aqui elas são pequenas.",
+            "Wiskott-Aldrich, ligada ao X."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "R5",
+      "name": "Cofre do Diagnóstico",
+      "intro": "SENTINELA: Cinco seletores. Uma rota molecular. Errar custa bases e tempo. Girem quando tiverem certeza.",
+      "unlockText": "Rota molecular completa. O prontuário foi carimbado e a porta do laboratório está aberta.",
+      "steps": [
+        {
+          "id": "R5-S1",
+          "roomId": "R5",
+          "type": "dial-safe",
+          "object": "cofre",
+          "title": "A combinação final",
+          "prompt": "Girem cada seletor até a posição correta para o Paciente A17. A combinação completa abre o laboratório.",
+          "slots": ["GENE", "PROTEÍNA", "MECANISMO", "FENÓTIPO", "HERANÇA"],
+          "slotChoices": [
+            [
+              { "id": "hbb", "text": "HBB (11p)" },
+              { "id": "f8", "text": "F8 (Xq28)" },
+              { "id": "vwf", "text": "VWF (12p13.3)" }
+            ],
+            [
+              { "id": "hbs", "text": "HbS" },
+              { "id": "fviii", "text": "Fator VIII" },
+              { "id": "fvw", "text": "Fator de von Willebrand" }
+            ],
+            [
+              { "id": "polimerizacao", "text": "Polimerização e falcização" },
+              { "id": "coagulacao", "text": "Falha da hemostasia secundária" },
+              { "id": "adesao", "text": "Falha de adesão plaquetária" }
+            ],
+            [
+              { "id": "hemolise", "text": "Anemia hemolítica + crises vaso-oclusivas" },
+              { "id": "hemartrose", "text": "Hemartroses e hematomas profundos" },
+              { "id": "mucocutaneo", "text": "Sangramento mucocutâneo" }
+            ],
+            [
+              { "id": "ar", "text": "Autossômica recessiva" },
+              { "id": "xr", "text": "Recessiva ligada ao X" },
+              { "id": "ad", "text": "Autossômica dominante" }
+            ]
+          ],
+          "points": 12,
+          "tags": ["anemia-falciforme", "heranca-autossomica"],
+          "hints": [
+            "Tudo o que vocês registraram no prontuário digital aponta a combinação.",
+            "Gene no cromossomo 11; proteína vista na eletroforese; mecanismo visto no microscópio.",
+            "HBB · HbS · polimerização e falcização · anemia hemolítica com crises vaso-oclusivas · autossômica recessiva."
+          ]
+        }
+      ]
+    }
+  ],
+  "answers": {
+    "R0-S1": ["usar"],
+    "R0-S2": ["rna", "funcao"],
+    "R1-S1": ["7264"],
+    "R1-S2": ["dor", "palidez", "ictericia", "familia"],
+    "R2-S1": ["A17"],
+    "R2-S2": ["hb", "retic", "bili"],
+    "R2-S3": ["3713"],
+    "R2-F1": ["g20210a"],
+    "R3-S1": ["alfa", "alfa", "beta", "beta"],
+    "R3-S2": ["hb", "qualitativa", "polimeriza"],
+    "R3-F1": ["talassemia"],
+    "R4-S1": ["2"],
+    "R4-S2": ["ar"],
+    "R4-S3": ["p25"],
+    "R4-F1": ["wiskott"],
+    "R5-S1": ["hbb", "hbs", "polimerizacao", "hemolise", "ar"]
+  },
+  "debrief": {
+    "diagnosis": "Anemia falciforme",
+    "route": "HBB com troca Glu6Val → HbS → polimerização em baixa oxigenação → falcização e hemólise → anemia + crises vaso-oclusivas → herança autossômica recessiva"
+  }
+}

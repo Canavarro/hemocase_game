@@ -180,3 +180,45 @@ Campos principais de `SessionSnapshot`:
 - projetor: `sessionStorage` marca a transmissão já assistida por sessão.
 
 Limpar esses valores remove a credencial local, mas não altera a sessão no servidor.
+
+## Modo Escape (Protocolo Hélix)
+
+### Criação de sessão
+
+`POST /api/sessions` aceita corpo validado por `createSessionSchema`:
+
+```json
+{ "mode": "ESCAPE", "integrityPolicy": "ZERO_ROUND", "allowedTopics": ["anemia-falciforme", "..."], "durationMin": 35 }
+```
+
+- `mode` padrão é `QUIZ` (fluxo antigo inalterado);
+- em `ESCAPE`, o servidor sorteia um caso elegível: todas as `topicTags` obrigatórias do caso precisam estar em `allowedTopics`, senão responde `422` listando os tópicos exigidos;
+- enigmas opcionais com tags não liberadas são removidos da cópia da sessão e nunca chegam a nenhum cliente.
+
+### Fases
+
+`LOBBY -> BRIEFING (75 s) -> ESCAPE (durationMin) -> DEBRIEF (240 s) -> FINISHED`. O `tick` também encerra `ESCAPE` quando todas as equipes escapam.
+
+### Cliente para servidor
+
+- `escape:attempt` `{ code, teamToken, stepId, answer: string[] }` — resposta validada no servidor (`answers` do caso nunca vão ao cliente). Erro comum: −2 bases; erro no cofre (`dial-safe`): −5 bases e trava de 45 s. Ack: `{ ok, correct }`.
+- `escape:hint` `{ code, teamToken, stepId, level: 1|2|3 }` — dicas sequenciais com custo 0/−3/−8 bases. Ack: `{ ok, hint, cost }`.
+- `escape:note` `{ code, teamToken, roomId, text }` — prontuário da sala atual; salas R1–R4 exigem nota antes de a porta abrir.
+
+### Ações Host adicionais
+
+- `unlockDoor` `{ teamId }`: marca os enigmas obrigatórios da sala atual como resolvidos e avança a equipe (contingência).
+- `extendTime` `{ minutes: 1..20 }`: estende o relógio da fase `ESCAPE`.
+
+### Snapshot
+
+Campos adicionais de `SessionSnapshot` no modo Escape:
+
+- `mode`, `allowedTopics`, `durationMin`;
+- `escape` (somente para a própria equipe): sala atual, passo atual sem gabarito, inventário, dicas reveladas, notas, trava do cofre, debrief após escapar;
+- `escapeHost` (Host e projetor): sala, progresso, dicas e bases por equipe;
+- `escapeEvents` (Host e projetor): últimos 30 eventos da SENTINELA.
+
+### Integridade
+
+Durante a fase `ESCAPE`, incidente confirmado sob política `ZERO_ROUND` deduz 10 bases (não existe "rodada" a zerar). Demais políticas apenas registram.

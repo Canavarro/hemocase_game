@@ -6,17 +6,23 @@ import fastifyStatic from "@fastify/static";
 import QRCode from "qrcode";
 import { Server as SocketServer, type Socket } from "socket.io";
 import {
-  answerSchema, hostActionSchema, integritySchema, joinSessionSchema, watchSessionSchema,
-  type GameContent, type IntegrityPolicy,
+  answerSchema, createSessionSchema, escapeAttemptSchema, escapeHintSchema, escapeNoteSchema,
+  hostActionSchema, integritySchema, joinSessionSchema, watchSessionSchema,
+  type EscapeCase, type GameContent,
 } from "@hemocase/shared";
 import { GameEngine, type SessionState } from "./game-engine.js";
 import { findPrivateIpv4 } from "./network.js";
 
 const rootDir = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../../..");
 const contentPath = path.resolve(rootDir, "content/game.pt-BR.json");
+const escapeCasesDir = path.resolve(rootDir, "content/escape/cases");
 const webDist = path.resolve(rootDir, "apps/web/dist");
 const content = JSON.parse(fs.readFileSync(contentPath, "utf8")) as GameContent;
-const engine = new GameEngine(content);
+const escapeCases: EscapeCase[] = fs.existsSync(escapeCasesDir)
+  ? fs.readdirSync(escapeCasesDir).filter((file) => file.endsWith(".json"))
+    .map((file) => JSON.parse(fs.readFileSync(path.join(escapeCasesDir, file), "utf8")) as EscapeCase)
+  : [];
+const engine = new GameEngine(content, escapeCases);
 const app = Fastify({ logger: true, bodyLimit: 64 * 1024 });
 const io = new SocketServer(app.server, { maxHttpBufferSize: 64 * 1024 });
 const port = Number(process.env.PORT ?? 3000);
@@ -36,10 +42,20 @@ declare module "socket.io" {
 
 app.get("/api/health", async () => ({ ok: true, lanIp, port }));
 
-app.post<{ Body: { integrityPolicy?: IntegrityPolicy } }>("/api/sessions", async (request, reply) => {
-  const session = engine.createSession(publicBaseUrl, request.body?.integrityPolicy ?? "ZERO_ROUND");
-  reply.code(201);
-  return { code: session.code, hostToken: session.hostToken, joinUrl: session.joinUrl, screenUrl: `${publicBaseUrl}/screen/${session.code}` };
+app.post<{ Body: unknown }>("/api/sessions", async (request, reply) => {
+  const parsed = createSessionSchema.safeParse(request.body ?? {});
+  if (!parsed.success) return reply.code(400).send({ error: "Parâmetros de sessão inválidos." });
+  try {
+    const session = engine.createSession(publicBaseUrl, parsed.data.integrityPolicy, {
+      mode: parsed.data.mode,
+      allowedTopics: parsed.data.allowedTopics,
+      durationMin: parsed.data.durationMin,
+    });
+    reply.code(201);
+    return { code: session.code, hostToken: session.hostToken, joinUrl: session.joinUrl, mode: session.mode, screenUrl: `${publicBaseUrl}/screen/${session.code}` };
+  } catch (error) {
+    return reply.code(422).send({ error: message(error) });
+  }
 });
 
 app.get<{ Params: { code: string } }>("/api/sessions/:code/public", async (request, reply) => {
@@ -118,6 +134,39 @@ io.on("connection", (socket) => {
       await broadcast(result.session);
     } catch (error) {
       acknowledge?.({ ok: false, error: message(error) });
+    }
+  });
+
+  socket.on("escape:attempt", async (raw, acknowledge) => {
+    try {
+      const payload = escapeAttemptSchema.parse(raw);
+      const result = engine.escapeAttempt(payload.code, payload.teamToken, payload.stepId, payload.answer);
+      acknowledge({ ok: true, correct: result.correct });
+      await broadcast(result.session);
+    } catch (error) {
+      acknowledge({ ok: false, error: message(error) });
+    }
+  });
+
+  socket.on("escape:hint", async (raw, acknowledge) => {
+    try {
+      const payload = escapeHintSchema.parse(raw);
+      const result = engine.escapeHint(payload.code, payload.teamToken, payload.stepId, payload.level);
+      acknowledge({ ok: true, hint: result.hint, cost: result.cost });
+      await broadcast(result.session);
+    } catch (error) {
+      acknowledge({ ok: false, error: message(error) });
+    }
+  });
+
+  socket.on("escape:note", async (raw, acknowledge) => {
+    try {
+      const payload = escapeNoteSchema.parse(raw);
+      const result = engine.escapeNote(payload.code, payload.teamToken, payload.roomId, payload.text);
+      acknowledge({ ok: true });
+      await broadcast(result.session);
+    } catch (error) {
+      acknowledge({ ok: false, error: message(error) });
     }
   });
 

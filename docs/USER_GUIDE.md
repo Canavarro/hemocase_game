@@ -128,3 +128,16 @@ As durações competitivas vêm de `content/game.pt-BR.json`.
 ## Fundo e acessibilidade
 
 Todas as superfícies usam logo LAGEM e DNA animado em baixa opacidade. Sistemas com `prefers-reduced-motion` reduzem animações e transições. Informação importante nunca depende apenas de vibração, cor ou movimento.
+
+## Modo Escape: Protocolo Hélix
+
+Ao criar a sessão, o facilitador escolhe entre **Rodadas ao vivo** (fluxo clássico) e **Escape: Protocolo Hélix**. No modo Escape:
+
+1. o facilitador marca a duração (25/35/45 min) e os **tópicos já vistos pela turma** — nada fora deles entra no jogo;
+2. as equipes entram pelo mesmo QR Code; ao avançar, veem o briefing da SENTINELA e depois o laboratório em primeira pessoa;
+3. cada sala tem objetos interativos (hotspots). Tocar aproxima a câmera e abre o enigma; as mãos do personagem aparecem nas interações;
+4. as salas seguem a rota fenótipo -> laboratório -> proteína -> gene -> diagnóstico. Salas 1 a 4 exigem registrar a hipótese no **prontuário digital** antes de a porta abrir;
+5. dicas custam 0/−3/−8 bases; tentativas erradas custam 2 bases; errar o cofre final custa 5 bases e trava o cofre por 45 s;
+6. o painel Host mostra o **mapa do laboratório** (sala, progresso, dicas e bases por equipe), permite destravar porta, dar +5 min, pausar e encerrar;
+7. o projetor exibe a planta com o avanço das equipes, o cronômetro de expurgo e o registro de eventos da SENTINELA;
+8. a equipe que abre o cofre escapa e ganha bônus pelo tempo restante; a exportação JSON inclui prontuários, dicas e eventos.

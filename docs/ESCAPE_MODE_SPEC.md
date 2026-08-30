@@ -2,7 +2,7 @@
 
 Planejamento completo da segunda modalidade do HEMOCASE. Este documento é a fonte de verdade do modo Escape enquanto ele não estiver implementado. Nada aqui substitui `PRODUCT_SPEC.md` para o modo Quiz, que permanece inalterado.
 
-Status: **planejamento aguardando aprovação do responsável**. A implementação só começa após validação deste documento.
+Status: **aprovado pelo responsável (formato 2.5D em primeira pessoa) e M1 implementado**. Escopo entregue no M1: seleção de modalidade, gating de tópicos, motor de cenas 2.5D com uma vista por sala, caso da anemia falciforme completo (6 salas), prontuário digital, dicas, mapa do Host e planta no projetor. Deltas conhecidos em relação a este documento (ficam para M2): 2–4 vistas por sala, áudio ambiente, cutscenes de porta em Remotion e voz da SENTINELA (hoje em texto). Estado detalhado: `IMPLEMENTATION_STATUS.md`.
 
 ---
 

@@ -19,9 +19,9 @@ Este diretório reúne produto, conteúdo científico, implementação, operaç�
 - `IMPLEMENTATION_STATUS.md`: funcionalidades entregues, limitações conhecidas e backlog técnico.
 - `TEST_REPORT.md`: testes existentes, comandos, cobertura e pendências de validação.
 
-## Planejamento aprovável
+## Modo Escape
 
-- `ESCAPE_MODE_SPEC.md`: planejamento completo da segunda modalidade (escape room "Protocolo Hélix"): salas, enigmas, curadoria de conteúdo pelo professor, viabilidade, riscos e roadmap. Aguarda aprovação antes da implementação.
+- `ESCAPE_MODE_SPEC.md`: especificação da segunda modalidade (escape room "Protocolo Hélix"): salas, enigmas, curadoria de conteúdo pelo professor, viabilidade, riscos e roadmap. M1 implementado; deltas e backlog anotados no cabeçalho do documento.
 
 ## Direção visual e histórica
 

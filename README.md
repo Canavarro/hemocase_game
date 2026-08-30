@@ -56,7 +56,16 @@ Importante: uma aplicação web não consegue garantir tecnicamente que o partic
 
 ## Identidade LAGEM
 
-A marca oficial fornecida aparece em baixa opacidade no fundo animado de todas as superfícies, acompanhada por uma hélice de DNA construída em CSS. Os ativos e o procedimento de substituição estão em `docs/ASSETS.md`.
+A marca oficial fornecida aparece como silhueta flutuante de destaque no fundo animado de todas as superfícies — derivada do ativo oficial apenas com filtros CSS, sem redesenho — acompanhada por uma hélice de DNA e hemácias em deriva construídas em CSS. Vinhetas de fase e a cadeia molecular da revelação são animadas com Remotion no projetor. Os ativos e o procedimento de substituição estão em `docs/ASSETS.md`.
+
+## Duas modalidades
+
+Ao criar a sessão, o organizador escolhe entre:
+
+- **Rodadas ao vivo** (`QUIZ`): o fluxo clássico de fases sincronizadas com perguntas cronometradas;
+- **Escape: Protocolo Hélix** (`ESCAPE`): escape room imersivo em primeira pessoa 2.5D — seis salas de laboratório, enigmas validados no servidor, mãos animadas, prontuário digital e cronômetro de expurgo. O professor marca os tópicos já vistos pela turma e nada fora deles entra no jogo.
+
+A especificação completa do modo Escape (salas, enigmas, riscos e roadmap M2/M3) está em `docs/ESCAPE_MODE_SPEC.md`.
 
 ## Manutenção com agentes de código
 

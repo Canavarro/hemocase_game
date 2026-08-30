@@ -3,11 +3,13 @@ import { z } from "zod";
 export const phases = [
   "LOBBY", "FOCUS_CHECK", "WARMUP", "CASE_INVESTIGATION", "BLITZ",
   "FINAL_CHAIN", "REVEAL", "FINISHED", "PAUSED",
+  "BRIEFING", "ESCAPE", "DEBRIEF",
 ] as const;
 
 export type Phase = (typeof phases)[number];
 export type IntegrityPolicy = "OBSERVE_ONLY" | "WARNING" | "ZERO_ROUND" | "MANUAL_REVIEW";
 export type TrackId = "A" | "B" | "C" | "D";
+export type GameMode = "QUIZ" | "ESCAPE";
 
 export interface Choice { id: string; text: string }
 export interface Question {
@@ -57,6 +59,7 @@ export type ClientQuestion = Omit<Question, "correctChoiceId" | "explanation">;
 
 export interface SessionSnapshot {
   code: string;
+  mode: GameMode;
   phase: Phase;
   phaseLabel: string;
   pausedFrom?: Phase;
@@ -75,7 +78,175 @@ export interface SessionSnapshot {
   incidents?: IntegrityIncident[];
   joinUrl: string;
   reveal?: Array<{ title: string; explanation: string }>;
+  allowedTopics?: string[];
+  durationMin?: number;
+  escape?: EscapeTeamView;
+  escapeHost?: EscapeHostTeamRow[];
+  escapeEvents?: EscapeEvent[];
 }
+
+/* ===================== MODO ESCAPE: "Protocolo Hélix" ===================== */
+
+export const escapeRoomIds = ["R0", "R1", "R2", "R3", "R4", "R5"] as const;
+export type EscapeRoomId = (typeof escapeRoomIds)[number];
+
+export const escapeTopics = [
+  "proteinas-funcoes", "hemoglobina-estrutura", "anemia-falciforme", "talassemias",
+  "hemostasia-primaria", "hemostasia-secundaria", "hemofilias", "von-willebrand",
+  "bernard-soulier", "heranca-ligada-x", "heranca-autossomica", "mutacoes-ponto",
+  "splicing-promotor", "trombofilias", "imunodeficiencias-plaquetarias",
+] as const;
+export type EscapeTopic = (typeof escapeTopics)[number];
+
+export type EscapePuzzleType =
+  | "use-item"        // usar item do inventário em um alvo da cena
+  | "chain-fill"      // completar a cadeia com peças (slots ordenados)
+  | "board-select"    // selecionar o conjunto correto entre opções
+  | "microscope"      // escolher a lâmina correta e focar
+  | "code"            // código numérico deduzido das evidências
+  | "assemble"        // montar estrutura com peças (multiconjunto)
+  | "mechanism-fill"  // frase-mecanismo com lacunas
+  | "sequence-spot"   // apontar o códon divergente
+  | "inheritance"     // padrão de herança
+  | "family-question" // pergunta da família
+  | "dial-safe";      // cofre final com seletores
+
+export interface EscapeChoice { id: string; text: string }
+
+export interface EscapeStep {
+  id: string;
+  roomId: EscapeRoomId;
+  type: EscapePuzzleType;
+  object: string;
+  title: string;
+  prompt: string;
+  evidence?: string[];
+  choices?: EscapeChoice[];
+  selectCount?: number;
+  slots?: string[];
+  slotChoices?: EscapeChoice[][];
+  sequence?: { label: string; reference: string[]; sample: string[] };
+  codeLength?: number;
+  grantsItem?: string;
+  requiresItem?: string;
+  optional?: boolean;
+  points: number;
+  tags: EscapeTopic[];
+  hints: [string, string, string];
+}
+
+export interface EscapeRoomContent {
+  id: EscapeRoomId;
+  name: string;
+  intro: string;
+  unlockText: string;
+  steps: EscapeStep[];
+}
+
+export interface EscapeCase {
+  id: string;
+  title: string;
+  patientLabel: string;
+  briefing: string;
+  topicTags: EscapeTopic[];
+  rooms: EscapeRoomContent[];
+  answers: Record<string, string[]>;
+  debrief: { diagnosis: string; route: string };
+}
+
+export type EscapeClientStep = Omit<EscapeStep, "hints">;
+
+export interface EscapeTeamView {
+  caseTitle: string;
+  patientLabel: string;
+  briefing: string;
+  roomId: EscapeRoomId;
+  roomName: string;
+  roomIntro: string;
+  roomUnlockText: string;
+  roomCount: number;
+  roomIndex: number;
+  stepIndex: number;
+  mandatoryCount: number;
+  step?: EscapeClientStep;
+  optionalStep?: EscapeClientStep;
+  solvedStepIds: string[];
+  inventory: string[];
+  revealedHints: Partial<Record<string, string[]>>;
+  notes: Partial<Record<EscapeRoomId, string>>;
+  noteRequired: boolean;
+  lockedUntilMs?: number;
+  finishedAt?: number;
+  debrief?: { diagnosis: string; route: string };
+}
+
+export interface EscapeHostTeamRow {
+  teamId: string;
+  name: string;
+  roomId: EscapeRoomId;
+  roomName: string;
+  stepIndex: number;
+  mandatoryCount: number;
+  bases: number;
+  hintsCount: number;
+  finishedAt?: number;
+}
+
+export interface EscapeEvent { at: number; text: string }
+
+export const escapeAttemptSchema = z.object({
+  code: z.string().trim().min(4).max(8).transform((value) => value.toUpperCase()),
+  teamToken: z.string().min(16),
+  stepId: z.string().min(1).max(24),
+  answer: z.array(z.string().trim().min(1).max(80)).min(1).max(8),
+});
+
+export const escapeHintSchema = z.object({
+  code: z.string().trim().min(4).max(8).transform((value) => value.toUpperCase()),
+  teamToken: z.string().min(16),
+  stepId: z.string().min(1).max(24),
+  level: z.number().int().min(1).max(3),
+});
+
+export const escapeNoteSchema = z.object({
+  code: z.string().trim().min(4).max(8).transform((value) => value.toUpperCase()),
+  teamToken: z.string().min(16),
+  roomId: z.enum(escapeRoomIds),
+  text: z.string().trim().min(3).max(280),
+});
+
+export const createSessionSchema = z.object({
+  mode: z.enum(["QUIZ", "ESCAPE"]).default("QUIZ"),
+  integrityPolicy: z.enum(["OBSERVE_ONLY", "WARNING", "ZERO_ROUND", "MANUAL_REVIEW"]).default("ZERO_ROUND"),
+  allowedTopics: z.array(z.enum(escapeTopics)).max(escapeTopics.length).optional(),
+  durationMin: z.number().int().min(15).max(60).default(35),
+});
+
+export const escapeHintCosts = [0, 3, 8] as const;
+export const ESCAPE_START_BASES = 100;
+export const ESCAPE_WRONG_ATTEMPT_COST = 2;
+export const ESCAPE_SAFE_WRONG_COST = 5;
+export const ESCAPE_SAFE_LOCK_MS = 45_000;
+
+export const escapeTopicLabels: Record<EscapeTopic, string> = {
+  "proteinas-funcoes": "Proteínas e funções",
+  "hemoglobina-estrutura": "Estrutura da hemoglobina",
+  "anemia-falciforme": "Anemia falciforme",
+  "talassemias": "Talassemias",
+  "hemostasia-primaria": "Hemostasia primária",
+  "hemostasia-secundaria": "Hemostasia secundária",
+  "hemofilias": "Hemofilias A e B",
+  "von-willebrand": "Doença de von Willebrand",
+  "bernard-soulier": "Bernard-Soulier",
+  "heranca-ligada-x": "Herança ligada ao X",
+  "heranca-autossomica": "Herança autossômica",
+  "mutacoes-ponto": "Mutações de ponto",
+  "splicing-promotor": "Splicing e promotor",
+  "trombofilias": "Trombofilias",
+  "imunodeficiencias-plaquetarias": "Imunodeficiências com plaquetopenia",
+};
+
+/* ========================================================================= */
 
 export const joinSessionSchema = z.object({
   code: z.string().trim().min(4).max(8).transform((value) => value.toUpperCase()),
@@ -114,6 +285,8 @@ export const hostActionSchema = z.discriminatedUnion("action", [
   z.object({ code: z.string(), hostToken: z.string(), action: z.literal("adjustScore"), teamId: z.string(), delta: z.number().int().min(-100).max(100), reason: z.string().trim().min(3).max(120) }),
   z.object({ code: z.string(), hostToken: z.string(), action: z.literal("setPolicy"), policy: z.enum(["OBSERVE_ONLY", "WARNING", "ZERO_ROUND", "MANUAL_REVIEW"]) }),
   z.object({ code: z.string(), hostToken: z.string(), action: z.literal("reverseIncident"), incidentId: z.string(), reason: z.string().trim().min(3).max(120) }),
+  z.object({ code: z.string(), hostToken: z.string(), action: z.literal("unlockDoor"), teamId: z.string() }),
+  z.object({ code: z.string(), hostToken: z.string(), action: z.literal("extendTime"), minutes: z.number().int().min(1).max(20) }),
 ]);
 
 export type HostAction = z.infer<typeof hostActionSchema>;
@@ -128,4 +301,7 @@ export const phaseLabels: Record<Phase, string> = {
   REVEAL: "A verdade",
   FINISHED: "Protocolo encerrado",
   PAUSED: "Tempo suspenso",
+  BRIEFING: "Briefing da SENTINELA",
+  ESCAPE: "Laboratório selado",
+  DEBRIEF: "Debriefing",
 };

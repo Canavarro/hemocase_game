@@ -49,7 +49,8 @@ export function ScreenPage({ code }: { code: string }) {
   if (!introDone) return <IntroTransmission onFinished={finishIntro} />;
   if (error) return <main className="centered-screen"><p className="eyebrow">Sinal interrompido</p><h1>Sessão indisponível</h1><p>{error}</p></main>;
 
-  const showRanking = phase === "REVEAL" || phase === "FINISHED";
+  const showRanking = phase === "REVEAL" || phase === "DEBRIEF" || phase === "FINISHED";
+  const cinemaPhase = phase === "REVEAL" || phase === "DEBRIEF";
   return (
     <main className="public-screen shell">
       {stinger && <Suspense fallback={null}><StingerOverlay label={stinger.label} sub={stinger.sub} /></Suspense>}
@@ -78,7 +79,35 @@ export function ScreenPage({ code }: { code: string }) {
         </section>
       )}
 
-      {phase && phase !== "LOBBY" && phase !== "REVEAL" && phase !== "FINISHED" && (
+      {snapshot?.mode === "ESCAPE" && (phase === "BRIEFING" || phase === "ESCAPE" || phase === "PAUSED") && (
+        <section className="escape-screen">
+          <div className="escape-screen-main">
+            <p className="eyebrow">{snapshot.phaseLabel}</p>
+            <h1 className="headline-rise">{phase === "BRIEFING" ? "O LABORATÓRIO SERÁ SELADO." : phase === "ESCAPE" ? "CINCO ALAS. UMA ROTA MOLECULAR." : "QUEM ESCAPOU, ESCAPOU PELO MECANISMO."}</h1>
+            <strong className="projector-timer projector-timer--escape">{formatTime(snapshot.remainingMs)}</strong>
+            <div className="escape-lanes">
+              {snapshot.escapeHost?.map((row) => (
+                <div key={row.teamId} className={`escape-lane ${row.finishedAt ? "is-out" : ""}`}>
+                  <span>{row.name}{row.finishedAt ? " · ESCAPOU" : ""}</span>
+                  <div className="lane-track">
+                    {["R0", "R1", "R2", "R3", "R4", "R5"].map((roomId, index) => (
+                      <i key={roomId} className={`lane-cell ${row.finishedAt || roomId < row.roomId ? "is-done" : roomId === row.roomId ? "is-here" : ""}`} title={roomId}>{index + 1}</i>
+                    ))}
+                  </div>
+                  <b>{row.bases} bases</b>
+                </div>
+              ))}
+            </div>
+          </div>
+          <aside className="escape-screen-feed">
+            <p className="eyebrow">Registro da SENTINELA</p>
+            {snapshot.escapeEvents?.slice(0, 10).map((event) => <p key={event.at + event.text}>{event.text}</p>)}
+            {!snapshot.escapeEvents?.length && <p className="empty-state">O laboratório está silencioso.</p>}
+          </aside>
+        </section>
+      )}
+
+      {snapshot?.mode !== "ESCAPE" && phase && phase !== "LOBBY" && phase !== "REVEAL" && phase !== "FINISHED" && (
         <section className="mission-screen">
           <div className="mission-meta"><span>{snapshot?.questionCount ? `Mecanismo ${snapshot.questionIndex + 1} de ${snapshot.questionCount}` : "Protocolo coletivo"}</span><strong className="projector-timer">{formatTime(snapshot?.remainingMs ?? null)}</strong></div>
           <div className="mission-copy" key={`${phase}-${snapshot?.questionIndex ?? 0}`}>
@@ -96,7 +125,7 @@ export function ScreenPage({ code }: { code: string }) {
         <section className="reveal-screen">
           <div>
             <p className="eyebrow">A verdade estava na cadeia</p>
-            {phase === "REVEAL" && !reduceMotion
+            {cinemaPhase && !reduceMotion
               ? <Suspense fallback={<h1 className="headline-rise">DNA → RNA → PROTEÍNA → FUNÇÃO → FENÓTIPO</h1>}><RevealCinema /></Suspense>
               : <h1 className="headline-rise">{phase === "FINISHED" ? "PROTOCOLO ENCERRADO" : "DNA → RNA → PROTEÍNA → FUNÇÃO → FENÓTIPO"}</h1>}
             <div className="reveal-list">{snapshot?.reveal?.map((row, index) => <div style={{ "--i": index } as React.CSSProperties} key={row.title}><strong>{row.title}</strong><span>{row.explanation}</span></div>)}</div>
