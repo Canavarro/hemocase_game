@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#050505" />
+    <title>HEMOCASE | Transmissao</title>
+    <style>
+      * { box-sizing: border-box; }
+      html, body { min-height: 100%; margin: 0; }
+      body {
+        display: grid;
+        place-items: center;
+        padding: 24px;
+        overflow-x: hidden;
+        color: #e8e4dc;
+        background: #050505;
+        font-family: "Courier New", monospace;
+      }
+      body::before {
+        position: fixed;
+        inset: 0;
+        z-index: -1;
+        content: "";
+        opacity: .14;
+        background:
+          repeating-linear-gradient(0deg, transparent 0 3px, rgba(255,255,255,.04) 4px),
+          radial-gradient(circle at 50% 45%, rgba(137, 16, 22, .35), transparent 45%);
+        animation: signal 5s steps(2, end) infinite;
+      }
+      main { width: min(100%, 960px); }
+      header {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 14px;
+        color: #d7d2c9;
+        font-size: 12px;
+        text-transform: uppercase;
+      }
+      .signal {
+        width: 10px;
+        aspect-ratio: 1;
+        border-radius: 50%;
+        background: #d22f35;
+        box-shadow: 0 0 12px #d22f35;
+        animation: pulse 1.6s ease-in-out infinite;
+      }
+      video {
+        display: block;
+        width: 100%;
+        max-height: 80vh;
+        background: #000;
+        border: 1px solid #252525;
+        box-shadow: 0 18px 60px rgba(0, 0, 0, .7);
+      }
+      footer {
+        margin-top: 12px;
+        color: #77736c;
+        font-size: 11px;
+        text-align: right;
+      }
+      @keyframes pulse { 50% { opacity: .45; } }
+      @keyframes signal { 50% { opacity: .19; } }
+      @media (prefers-reduced-motion: reduce) {
+        body::before, .signal { animation: none; }
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <header><span class="signal" aria-hidden="true"></span>Transmissao recebida</header>
+      <video controls playsinline preload="metadata">
+        <source src="./apps/web/public/assets/intro.mp4" type="video/mp4" />
+        Seu navegador nao oferece suporte a reproducao deste video.
+      </video>
+      <footer>HEMOCASE 3.0 | LAGEM</footer>
+    </main>
+  </body>
+</html>
