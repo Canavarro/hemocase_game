@@ -95,6 +95,9 @@ Arquivos principais:
 - `apps/web/src/pages/JoinPage.tsx`: entrada da equipe;
 - `apps/web/src/pages/PlayPage.tsx`: experiência competitiva e FocusGuard;
 - `apps/web/src/components/BrandBackground.tsx`: fundo animado LAGEM/DNA;
+- `apps/web/src/components/StingerOverlay.tsx`: transição curta entre fases;
+- `apps/web/src/components/RevealCinema.tsx`: player da revelação final;
+- `apps/web/src/remotion/compositions.tsx`: composições Remotion locais;
 - `content/game.pt-BR.json`: conteúdo consumido pelo motor.
 
 ## Fluxo de uma alteração

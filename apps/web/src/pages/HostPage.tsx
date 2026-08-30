@@ -62,8 +62,8 @@ export function HostPage() {
         <header className="masthead"><span>LAGEM</span><small>Console do facilitador</small></header>
         <section className="start-copy">
           <p className="eyebrow">Protocolo de sala</p>
-          <h1>HEMOCASE</h1>
-          <p className="blood-title">Código Vermelho</p>
+          <h1 className="title-pulse headline-rise">HEMOCASE</h1>
+          <p className="blood-title blood-title--typed">Código Vermelho</p>
           <p>Prepare a transmissão, conecte as equipes e assuma o controle do protocolo.</p>
           <button className="button button--danger" onClick={createSession} disabled={busy}><Plus size={19} /> {busy ? "Criando..." : "Criar sessão"}</button>
           {notice && <p className="alert-text">{notice}</p>}

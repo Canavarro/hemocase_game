@@ -1,13 +1,45 @@
-import { useState } from "react";
+import { Suspense, lazy, useEffect, useRef, useState } from "react";
 import { Activity, CheckCircle2, Users } from "lucide-react";
+import type { Phase } from "@hemocase/shared";
 import { IntroTransmission } from "../components/IntroTransmission";
 import { ConnectionStatus } from "../components/Status";
 import { formatTime, useSession } from "../lib/socket";
+
+const StingerOverlay = lazy(() => import("../components/StingerOverlay"));
+const RevealCinema = lazy(() => import("../components/RevealCinema"));
+
+const reduceMotion = typeof window.matchMedia === "function"
+  && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+const stingerSubtitles: Partial<Record<Phase, string>> = {
+  FOCUS_CHECK: "A sala observa quem desvia o olhar",
+  WARMUP: "Provem que merecem as evidências",
+  CASE_INVESTIGATION: "Quatro pacientes. Quatro mecanismos.",
+  BLITZ: "Respondam antes que o sinal caia",
+  FINAL_CHAIN: "Fechem a rota molecular",
+  REVEAL: "DNA → RNA → proteína → função → fenótipo",
+  FINISHED: "O protocolo lembra de tudo",
+};
 
 export function ScreenPage({ code }: { code: string }) {
   const introKey = `hemocase:intro:${code}`;
   const [introDone, setIntroDone] = useState(sessionStorage.getItem(introKey) === "done");
   const { snapshot, connected, error } = useSession("screen", code);
+  const [stinger, setStinger] = useState<{ label: string; sub?: string } | null>(null);
+  const previousPhase = useRef<Phase>(undefined);
+
+  const phase = snapshot?.phase;
+  const phaseLabel = snapshot?.phaseLabel;
+
+  useEffect(() => {
+    if (!phase || !phaseLabel) return;
+    const changed = previousPhase.current !== undefined && previousPhase.current !== phase;
+    previousPhase.current = phase;
+    if (!changed || phase === "LOBBY" || phase === "PAUSED" || reduceMotion) return;
+    setStinger({ label: phaseLabel, sub: stingerSubtitles[phase] });
+    const timer = setTimeout(() => setStinger(null), 2700);
+    return () => clearTimeout(timer);
+  }, [phase, phaseLabel]);
 
   function finishIntro() {
     sessionStorage.setItem(introKey, "done");
@@ -17,10 +49,10 @@ export function ScreenPage({ code }: { code: string }) {
   if (!introDone) return <IntroTransmission onFinished={finishIntro} />;
   if (error) return <main className="centered-screen"><p className="eyebrow">Sinal interrompido</p><h1>Sessão indisponível</h1><p>{error}</p></main>;
 
-  const phase = snapshot?.phase;
   const showRanking = phase === "REVEAL" || phase === "FINISHED";
   return (
     <main className="public-screen shell">
+      {stinger && <Suspense fallback={null}><StingerOverlay label={stinger.label} sub={stinger.sub} /></Suspense>}
       <header className="projector-header">
         <div className="projector-brand"><strong>HEMOCASE</strong><span>Código Vermelho</span></div>
         <div className="phase-chip"><Activity size={16} /> {snapshot?.phaseLabel ?? "Sincronizando"}</div>
@@ -31,7 +63,7 @@ export function ScreenPage({ code }: { code: string }) {
         <section className="lobby-layout">
           <div className="lobby-copy">
             <p className="eyebrow">Sala de contenção aberta</p>
-            <h1>ENTREM.<br />O TEMPO AINDA NÃO COMEÇOU.</h1>
+            <h1 className="headline-rise">ENTREM.<br />O TEMPO AINDA NÃO COMEÇOU.</h1>
             <p>Escaneie o código, dê um nome à equipe e mantenha um único celular conectado.</p>
             <div className="session-code"><span>Código da sessão</span><strong>{code}</strong></div>
           </div>
@@ -41,7 +73,7 @@ export function ScreenPage({ code }: { code: string }) {
             <span><Users size={18} /> {snapshot?.teams.length ?? 0} equipes conectadas</span>
           </div>
           <div className="lobby-teams">
-            {snapshot?.teams.map((team) => <span key={team.id}><i className={team.connected ? "online-dot" : "offline-dot"} />{team.name}</span>)}
+            {snapshot?.teams.map((team) => <span className="team-chip-enter" key={team.id}><i className={team.connected ? "online-dot" : "offline-dot"} />{team.name}</span>)}
           </div>
         </section>
       )}
@@ -49,9 +81,9 @@ export function ScreenPage({ code }: { code: string }) {
       {phase && phase !== "LOBBY" && phase !== "REVEAL" && phase !== "FINISHED" && (
         <section className="mission-screen">
           <div className="mission-meta"><span>{snapshot?.questionCount ? `Mecanismo ${snapshot.questionIndex + 1} de ${snapshot.questionCount}` : "Protocolo coletivo"}</span><strong className="projector-timer">{formatTime(snapshot?.remainingMs ?? null)}</strong></div>
-          <div className="mission-copy">
+          <div className="mission-copy" key={`${phase}-${snapshot?.questionIndex ?? 0}`}>
             <p className="eyebrow">{snapshot?.phaseLabel}</p>
-            <h1>{phase === "FOCUS_CHECK" ? "A SALA OBSERVA QUEM DESVIA O OLHAR." : snapshot?.question?.title ?? "AS EQUIPES ESTÃO SOB TESTE."}</h1>
+            <h1 className="headline-rise">{phase === "FOCUS_CHECK" ? "A SALA OBSERVA QUEM DESVIA O OLHAR." : snapshot?.question?.title ?? "AS EQUIPES ESTÃO SOB TESTE."}</h1>
             <p>{phase === "FOCUS_CHECK" ? "Ativem o modo de foco. Sair da página durante uma rodada deixa um registro." : snapshot?.question?.prompt ?? "Cada equipe recebeu evidências diferentes. O próximo mecanismo só será liberado quando o Host decidir."}</p>
           </div>
           <div className="progress-board">
@@ -64,11 +96,13 @@ export function ScreenPage({ code }: { code: string }) {
         <section className="reveal-screen">
           <div>
             <p className="eyebrow">A verdade estava na cadeia</p>
-            <h1>{phase === "FINISHED" ? "PROTOCOLO ENCERRADO" : "DNA → RNA → PROTEÍNA → FUNÇÃO → FENÓTIPO"}</h1>
-            <div className="reveal-list">{snapshot?.reveal?.map((row) => <div key={row.title}><strong>{row.title}</strong><span>{row.explanation}</span></div>)}</div>
+            {phase === "REVEAL" && !reduceMotion
+              ? <Suspense fallback={<h1 className="headline-rise">DNA → RNA → PROTEÍNA → FUNÇÃO → FENÓTIPO</h1>}><RevealCinema /></Suspense>
+              : <h1 className="headline-rise">{phase === "FINISHED" ? "PROTOCOLO ENCERRADO" : "DNA → RNA → PROTEÍNA → FUNÇÃO → FENÓTIPO"}</h1>}
+            <div className="reveal-list">{snapshot?.reveal?.map((row, index) => <div style={{ "--i": index } as React.CSSProperties} key={row.title}><strong>{row.title}</strong><span>{row.explanation}</span></div>)}</div>
           </div>
           <ol className="ranking">
-            {snapshot?.teams.map((team, index) => <li key={team.id}><span>{index + 1}</span><strong>{team.name}</strong><b>{team.score} bases</b></li>)}
+            {snapshot?.teams.map((team, index) => <li style={{ "--i": index } as React.CSSProperties} className={index === 0 ? "is-champion" : undefined} key={team.id}><span>{index + 1}</span><strong>{team.name}</strong><b>{team.score} bases</b></li>)}
           </ol>
         </section>
       )}

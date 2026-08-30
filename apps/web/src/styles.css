@@ -26,9 +26,15 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
 
 .brand-background { position: fixed; inset: 0; z-index: 0; overflow: hidden; background: var(--black); pointer-events: none; }
 .brand-background::before { content: ""; position: absolute; inset: 0; background: rgba(7, 10, 10, .72); }
-.brand-watermark { position: absolute; width: min(58vw, 650px); aspect-ratio: 1; right: -7vw; bottom: -20%; opacity: .055; animation: watermark-breathe 12s ease-in-out infinite; clip-path: circle(48.3% at 50% 50%); }
-.brand-watermark img { display: block; width: 100%; height: 100%; object-fit: cover; }
+/* Logo LAGEM em silhueta: invert + grayscale transforma o interior branco em preto (some no blend screen) e os glifos escuros em traço claro. O clip circular preserva o recorte do arquivo oficial. */
+.brand-silhouette { position: absolute; aspect-ratio: 1; mix-blend-mode: screen; clip-path: circle(48.3% at 50% 50%); }
+.brand-silhouette img { display: block; width: 100%; height: 100%; object-fit: cover; filter: invert(1) grayscale(1) sepia(.55) saturate(2.4) hue-rotate(-38deg) brightness(1.05); }
+.brand-silhouette--primary { width: min(86vmin, 940px); right: -10vmin; top: 50%; opacity: .13; animation: silhouette-float 52s ease-in-out infinite alternate; }
+.brand-silhouette--ghost { width: min(44vmin, 460px); left: -8vmin; top: -10vmin; opacity: .07; animation: silhouette-float-ghost 64s ease-in-out infinite alternate; }
 .dna-helix { position: absolute; top: -10vh; left: 5vw; width: 150px; height: 125vh; opacity: .11; transform: rotate(13deg); animation: helix-drift 18s ease-in-out infinite alternate; }
+.cell-field { position: absolute; inset: 0; }
+.cell-drift { position: absolute; left: calc(6% + var(--i) * 11%); bottom: -70px; width: calc(22px + var(--i) * 3px); aspect-ratio: 1; border-radius: 50%; background: radial-gradient(circle at 50% 50%, transparent 26%, rgba(167, 16, 23, .5) 42%, rgba(167, 16, 23, .16) 68%, transparent 72%); opacity: 0; animation: cell-rise calc(26s + var(--i) * 7s) linear infinite; animation-delay: calc(var(--i) * -5.3s); }
+.bg-vignette { position: absolute; inset: 0; background: radial-gradient(ellipse at 50% 42%, transparent 52%, rgba(0, 0, 0, .55) 100%); }
 .dna-rung { position: absolute; top: calc(var(--i) * 5.6%); left: 0; display: grid; grid-template-columns: 13px 1fr 13px; align-items: center; width: 100%; transform: scaleX(.52); }
 .dna-rung:nth-child(4n + 1) { transform: scaleX(.9); }
 .dna-rung:nth-child(4n + 2) { transform: scaleX(.68); }
@@ -210,7 +216,59 @@ select { padding: 0 12px; }
 .centered-mobile > svg { color: var(--blood-bright); }
 .centered-screen { width: min(900px, 100%); margin: auto; }
 
-@keyframes watermark-breathe { 0%,100% { opacity: .035; transform: scale(.98); } 50% { opacity: .065; transform: scale(1.02); } }
+/* Cinemática Remotion */
+.stinger-overlay { position: fixed; inset: 0; z-index: 40; animation: stinger-in 180ms ease-out; }
+.reveal-cinema { width: 100%; aspect-ratio: 1920 / 560; max-height: 42vh; margin-bottom: 26px; }
+
+/* Anel do cronômetro */
+.timer-ring { position: relative; display: inline-grid; place-items: center; width: 74px; height: 74px; }
+.timer-ring svg { position: absolute; inset: 0; width: 100%; height: 100%; transform: rotate(-90deg); }
+.timer-ring-track { fill: none; stroke: rgba(52, 55, 53, .9); stroke-width: 4; }
+.timer-ring-fill { fill: none; stroke: var(--signal); stroke-width: 4; stroke-linecap: round; transition: stroke-dashoffset 950ms linear, stroke 400ms ease; }
+.timer-ring .timer { font-size: 1.05rem; }
+.timer-ring.is-critical .timer-ring-fill { stroke: var(--blood-bright); filter: drop-shadow(0 0 6px rgba(223, 48, 53, .8)); }
+.timer-ring.is-critical .timer { color: var(--blood-bright); animation: critical-pulse 1s steps(1) infinite; }
+
+/* Contador de bases */
+.score-ticker { display: inline-block; font-variant-numeric: tabular-nums; }
+.score-ticker.is-bumping { animation: score-bump 700ms ease; color: var(--signal); }
+
+/* Entradas animadas */
+.headline-rise { animation: headline-rise 600ms cubic-bezier(.2, .9, .25, 1) both; }
+.evidence-list li { animation: slide-fade 420ms ease both; animation-delay: calc(140ms + var(--i, 0) * 110ms); }
+.choice { animation: slide-fade 420ms ease both; animation-delay: calc(220ms + var(--i, 0) * 90ms); }
+.choice { position: relative; overflow: hidden; transition: border-color 150ms ease, background 150ms ease, transform 150ms ease; }
+.choice:active:not(:disabled) { transform: scale(.985); }
+.choice.is-selected { box-shadow: 0 0 18px rgba(25, 167, 166, .22) inset; }
+.seal-pop { animation: seal-pop 450ms cubic-bezier(.2, 1.4, .4, 1); }
+.reveal-list > div { animation: slide-fade 500ms ease both; animation-delay: calc(200ms + var(--i, 0) * 140ms); }
+.ranking li { animation: rank-enter 550ms cubic-bezier(.2, .9, .3, 1) both; animation-delay: calc(300ms + var(--i, 0) * 160ms); }
+.ranking li.is-champion { color: var(--paper); }
+.ranking li.is-champion strong { text-shadow: 0 0 18px rgba(223, 48, 53, .55); animation: champion-glow 2.4s ease-in-out infinite; }
+.finish-screen li { animation: slide-fade 500ms ease both; animation-delay: calc(250ms + var(--i, 0) * 130ms); }
+.team-chip-enter { animation: chip-pop 380ms cubic-bezier(.2, 1.3, .4, 1) both; }
+.title-pulse { animation: title-heartbeat 3.4s ease-in-out 1.2s infinite; }
+.blood-title--typed { display: block; width: fit-content; max-width: 16ch; overflow: hidden; white-space: nowrap; border-right: 2px solid var(--blood-bright); animation: type-in 1.5s steps(15) .5s both, caret-blink 1s steps(1) 2s 5; }
+
+/* Botão com brilho varrendo no hover */
+.button--danger::after { content: ""; position: absolute; top: 0; bottom: 0; left: -80%; width: 45%; background: linear-gradient(105deg, transparent, rgba(255, 255, 255, .22), transparent); transform: skewX(-18deg); transition: left 500ms ease; pointer-events: none; }
+.button--danger { position: relative; overflow: hidden; }
+.button--danger:hover:not(:disabled)::after { left: 125%; }
+
+@keyframes silhouette-float { 0% { transform: translateY(-58%) rotate(-4deg) scale(.99); } 50% { transform: translateY(-46%) rotate(1deg) scale(1.03); } 100% { transform: translateY(-54%) rotate(5deg) scale(1); } }
+@keyframes silhouette-float-ghost { from { transform: translate(0, 0) rotate(8deg); } to { transform: translate(6vmin, 9vmin) rotate(-6deg); } }
+@keyframes cell-rise { 0% { transform: translateY(0) translateX(0); opacity: 0; } 8% { opacity: .5; } 85% { opacity: .4; } 100% { transform: translateY(calc(-100vh - 140px)) translateX(6vw); opacity: 0; } }
+@keyframes stinger-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes headline-rise { from { opacity: 0; transform: translateY(26px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes slide-fade { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes seal-pop { 0% { transform: scale(.94); } 55% { transform: scale(1.04); } 100% { transform: scale(1); } }
+@keyframes score-bump { 0% { transform: scale(1); } 40% { transform: scale(1.35); } 100% { transform: scale(1); } }
+@keyframes rank-enter { from { opacity: 0; transform: translateX(46px); } to { opacity: 1; transform: translateX(0); } }
+@keyframes champion-glow { 0%, 100% { text-shadow: 0 0 14px rgba(223, 48, 53, .4); } 50% { text-shadow: 0 0 26px rgba(223, 48, 53, .85); } }
+@keyframes chip-pop { from { opacity: 0; transform: scale(.7); } to { opacity: 1; transform: scale(1); } }
+@keyframes title-heartbeat { 0%, 100% { text-shadow: 5px 5px 0 rgba(167, 16, 23, .42); } 6% { text-shadow: 5px 5px 0 rgba(167, 16, 23, .42), 0 0 46px rgba(223, 48, 53, .5); } 12% { text-shadow: 5px 5px 0 rgba(167, 16, 23, .42); } 18% { text-shadow: 5px 5px 0 rgba(167, 16, 23, .42), 0 0 34px rgba(223, 48, 53, .38); } 26% { text-shadow: 5px 5px 0 rgba(167, 16, 23, .42); } }
+@keyframes type-in { from { max-width: 0; } to { max-width: 16ch; } }
+@keyframes caret-blink { 50% { border-color: transparent; } }
 @keyframes helix-drift { from { transform: rotate(13deg) translateY(-2%); } to { transform: rotate(10deg) translateY(4%); } }
 @keyframes scan { from { transform: translateY(0); } to { transform: translateY(100vh); } }
 @keyframes blink { 50% { opacity: .22; } }
@@ -233,8 +291,13 @@ select { padding: 0 12px; }
 }
 
 @media (max-width: 600px) {
-  .brand-watermark { width: 88vw; right: -28vw; bottom: -5vh; }
+  .brand-silhouette--primary { width: 118vmin; right: -34vmin; top: 58%; opacity: .1; }
+  .brand-silhouette--ghost { display: none; }
+  .cell-drift { opacity: 0; animation-duration: calc(34s + var(--i) * 8s); }
   .dna-helix { left: -30px; width: 105px; opacity: .09; }
+  .timer-ring { width: 62px; height: 62px; }
+  .timer-ring .timer { font-size: .9rem; }
+  .reveal-cinema { max-height: 30vh; }
   .host-topbar > div:first-child span { display: none; }
   .host-topbar .connection-status { display: none; }
   .host-summary > div { min-height: 82px; padding: 16px 18px; }

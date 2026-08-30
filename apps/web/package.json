@@ -12,9 +12,11 @@
   },
   "dependencies": {
     "@hemocase/shared": "0.1.0",
+    "@remotion/player": "^4.0.518",
     "lucide-react": "^0.542.0",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
+    "remotion": "^4.0.518",
     "socket.io-client": "^4.8.1"
   },
   "devDependencies": {

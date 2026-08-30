@@ -35,10 +35,20 @@ O bitmap foi preparado com a ferramenta ImageGen embutida a partir da imagem ofi
 
 A transparência produzida não ficou confiável. Por isso, o arquivo final é exibido com `clip-path: circle(...)` em `styles.css`, recortando apenas a área externa. Não remova esse recorte sem substituir o arquivo por PNG com alpha validado.
 
+### Tratamento em silhueta
+
+Por solicitação do responsável, o logo aparece como silhueta flutuante de destaque no fundo de todas as superfícies. O efeito é feito inteiramente em CSS sobre o arquivo oficial, sem gerar novo ativo:
+
+- `filter: invert(1) grayscale(1) sepia(...) hue-rotate(...)` converte o interior branco em preto e os glifos escuros em traço claro com leve tom sanguíneo;
+- `mix-blend-mode: screen` faz o interior preto desaparecer sobre o fundo escuro, restando apenas a silhueta dos glifos e do anel;
+- o `clip-path` circular continua removendo a área externa não confiável do PNG.
+
+Classes: `.brand-silhouette--primary` (grande, à direita, deriva lenta) e `.brand-silhouette--ghost` (menor, no canto oposto, oculta em telas pequenas). Este tratamento depende do fundo escuro; se o tema um dia ganhar superfícies claras, será necessário PNG com alpha real.
+
 Uso visual:
 
-- baixa opacidade;
-- animação lenta de respiração;
+- silhueta com opacidade discreta (≈ 7 % a 13 %), maior que a marca d'água anterior por decisão do responsável;
+- animação lenta de flutuação e rotação sutil;
 - sem distorção de aspecto;
 - nunca sobre conteúdo clínico de alta prioridade;
 - presente em Host, projetor, entrada e jogo mobile.
@@ -46,6 +56,12 @@ Uso visual:
 ## DNA animado
 
 O DNA é construído por HTML/CSS em `BrandBackground.tsx` e `styles.css`. Não é parte do logo. A animação usa baixa opacidade, deslocamento lento e fallback por `prefers-reduced-motion`.
+
+## Motion design de interface
+
+As transições cinematográficas de fase e a cadeia da revelação usam `@remotion/player` e composições locais em `apps/web/src/remotion/compositions.tsx`. Os players são carregados sob demanda pela tela pública para não pesar na entrada Host ou no celular.
+
+O cronômetro circular e o contador de bases são componentes React/CSS próprios. Nenhuma animação busca mídia ou código externo durante a partida. Em dispositivos com `prefers-reduced-motion`, a revelação animada é substituída pelo título estático e as animações CSS são reduzidas.
 
 ## Direitos e distribuição
 

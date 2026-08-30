@@ -22,6 +22,7 @@ Versão documentada: `0.1.0`.
 | Painel Host | Completo | Avançar, voltar, pausar, retomar, resetar, encerrar e ajustar score. |
 | Projetor | Completo | Abertura, lobby, missão, progresso, revelação e ranking. |
 | Mobile | Completo | Entrada, foco, pergunta, espera, pausa e resultado. |
+| Motion design | Completo | Transições Remotion sob demanda, cronômetro circular e animações com redução de movimento. |
 | Exportação | Completo | JSON detalhado e CSV resumido. |
 | Offline | Completo | Sem dependências de runtime externas. |
 | Identidade LAGEM/DNA | Completo | Fundo global animado e redução de movimento. |
@@ -35,7 +36,6 @@ Versão documentada: `0.1.0`.
 | Validação de conteúdo | JSON é parseado e tipado, sem schema runtime completo. | Schema Zod de `GameContent` com mensagens editoriais. |
 | Registro de ajustes | Ajustes entram na exportação JSON. | Exibir histórico de ajustes no painel. |
 | FocusGuard | Detecta sinais disponíveis no navegador. | Testes ampliados em aparelhos reais e telemetria de heartbeat. |
-| E2E visual | Arquivo Playwright criado. | Executar em Chromium/WebKit e registrar screenshots. |
 
 ## Não implementado no MVP
 
@@ -68,6 +68,6 @@ Versão documentada: `0.1.0`.
 2. Ensaio real de 30 minutos.
 3. Teste do vídeo e áudio no computador do evento.
 4. Teste de QR em Android e iPhone na rede escolhida.
-5. Execução Playwright quando os navegadores estiverem instalados.
+5. Repetição do Playwright na máquina que será usada no evento.
 6. Conferência do firewall e do IPv4 exibido.
 7. Exportação de uma sessão simulada.

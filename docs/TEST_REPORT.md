@@ -12,7 +12,7 @@ Data da última execução documentada: 30 de agosto de 2026.
 | `npm run build` | Passou |
 | `npm audit --omit=dev` | Passou, 0 vulnerabilidades |
 | `npm run test:integration` | Passou |
-| `npm run test:e2e` | Não executado nesta sessão |
+| `npm run test:e2e` | Passou, 4 cenários em desktop e mobile |
 
 ## Testes unitários
 
@@ -49,7 +49,7 @@ Frontend, um teste:
 8. desconexão e restauração por token;
 9. exportação autenticada e score persistido em memória.
 
-Última sessão integrada registrada na execução final: `ECB216`.
+Última sessão integrada registrada na execução final: `27FE68`.
 
 ## Playwright
 
@@ -62,13 +62,15 @@ Frontend, um teste:
 - submissão e bloqueio da resposta;
 - rejeição de exportação sem token.
 
-A execução visual não ocorreu porque nenhum navegador automatizado estava conectado/disponível no ambiente da sessão. O teste permanece versionado e deve ser executado antes do piloto real:
+A execução final passou em Chromium desktop e WebKit mobile. Em uma máquina nova, instale os navegadores antes de executar:
 
 ```bash
 npx playwright install chromium webkit
 npm run build
 npm run test:e2e
 ```
+
+Resultado final: quatro cenários aprovados, cobrindo o início completo da sessão e a proteção da exportação nos dois projetos.
 
 ## Testes manuais ainda necessários
 

@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import { Check, Focus, LockKeyhole, ShieldCheck, TriangleAlert } from "lucide-react";
+import { ScoreTicker } from "../components/ScoreTicker";
 import { ConnectionStatus } from "../components/Status";
+import { TimerRing } from "../components/TimerRing";
 import { formatTime, useSession } from "../lib/socket";
 
 const competitive = new Set(["WARMUP", "CASE_INVESTIGATION", "BLITZ", "FINAL_CHAIN"]);
@@ -93,30 +95,30 @@ export function PlayPage({ code }: { code: string }) {
       )}
 
       {snapshot?.question && competitive.has(snapshot.phase) && (
-        <section className="question-screen">
-          <div className="question-meta"><span>{snapshot.phaseLabel} · {snapshot.questionIndex + 1}/{snapshot.questionCount}</span><strong className={(snapshot.remainingMs ?? 99_999) < 10_000 ? "timer is-critical" : "timer"}>{formatTime(snapshot.remainingMs)}</strong></div>
+        <section className="question-screen" key={snapshot.question.id}>
+          <div className="question-meta"><span>{snapshot.phaseLabel} · {snapshot.questionIndex + 1}/{snapshot.questionCount}</span><TimerRing remainingMs={snapshot.remainingMs} durationSec={snapshot.question.durationSec} /></div>
           <p className="eyebrow">{snapshot.question.title}</p>
-          <h1>{snapshot.question.prompt}</h1>
-          {snapshot.question.evidence?.length && <ul className="evidence-list">{snapshot.question.evidence.map((item) => <li key={item}>{item}</li>)}</ul>}
+          <h1 className="headline-rise">{snapshot.question.prompt}</h1>
+          {snapshot.question.evidence?.length && <ul className="evidence-list">{snapshot.question.evidence.map((item, index) => <li style={{ "--i": index } as React.CSSProperties} key={item}>{item}</li>)}</ul>}
           <div className="choice-list">
-            {snapshot.question.choices.map((choice) => (
-              <button className={`choice ${selected === choice.id ? "is-selected" : ""}`} key={choice.id} onClick={() => !snapshot.answerAccepted && setSelection({ questionId: snapshot.question?.id, choiceId: choice.id })} disabled={snapshot.answerAccepted || sending}>
+            {snapshot.question.choices.map((choice, index) => (
+              <button className={`choice ${selected === choice.id ? "is-selected" : ""}`} style={{ "--i": index } as React.CSSProperties} key={choice.id} onClick={() => !snapshot.answerAccepted && setSelection({ questionId: snapshot.question?.id, choiceId: choice.id })} disabled={snapshot.answerAccepted || sending}>
                 <span>{choice.id}</span><strong>{choice.text}</strong>{selected === choice.id && <Check size={19} />}
               </button>
             ))}
           </div>
           {submitError && <p className="alert-text">{submitError}</p>}
-          <button className={`button button--full ${snapshot.answerAccepted ? "button--confirmed" : "button--danger"}`} onClick={submit} disabled={!selected || sending || snapshot.answerAccepted}>
+          <button className={`button button--full ${snapshot.answerAccepted ? "button--confirmed seal-pop" : "button--danger"}`} onClick={submit} disabled={!selected || sending || snapshot.answerAccepted}>
             {snapshot.answerAccepted ? <><LockKeyhole size={19} /> Resposta lacrada</> : sending ? "Registrando..." : "Confirmar resposta"}
           </button>
-          <div className="score-line"><span>Bases recuperadas</span><strong>{snapshot.score ?? 0}</strong></div>
+          <div className="score-line"><span>Bases recuperadas</span><strong><ScoreTicker value={snapshot.score ?? 0} /></strong></div>
         </section>
       )}
 
       {snapshot?.phase === "PAUSED" && <section className="waiting-state"><p className="eyebrow">Tempo suspenso</p><h1>O HOST INTERROMPEU O MECANISMO.</h1><p>Permaneça nesta tela. A contagem continuará do ponto exato.</p><strong className="large-timer">{formatTime(snapshot.remainingMs)}</strong></section>}
 
       {(snapshot?.phase === "REVEAL" || snapshot?.phase === "FINISHED") && (
-        <section className="finish-screen"><p className="eyebrow">Protocolo concluído</p><h1>VOCÊS SEGUIRAM A CADEIA.</h1><p>Do gene ao fenótipo, cada pista fazia parte do mesmo mecanismo.</p><strong className="final-score">{snapshot.score ?? 0}<span>bases</span></strong><ol>{snapshot.teams.map((team, index) => <li key={team.id}><span>{index + 1}. {team.name}</span><strong>{team.score}</strong></li>)}</ol></section>
+        <section className="finish-screen"><p className="eyebrow">Protocolo concluído</p><h1 className="headline-rise">VOCÊS SEGUIRAM A CADEIA.</h1><p>Do gene ao fenótipo, cada pista fazia parte do mesmo mecanismo.</p><strong className="final-score"><ScoreTicker value={snapshot.score ?? 0} /><span>bases</span></strong><ol>{snapshot.teams.map((team, index) => <li style={{ "--i": index } as React.CSSProperties} key={team.id}><span>{index + 1}. {team.name}</span><strong>{team.score}</strong></li>)}</ol></section>
       )}
     </main>
   );
