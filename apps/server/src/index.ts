@@ -21,7 +21,10 @@ const app = Fastify({ logger: true, bodyLimit: 64 * 1024 });
 const io = new SocketServer(app.server, { maxHttpBufferSize: 64 * 1024 });
 const port = Number(process.env.PORT ?? 3000);
 const lanIp = process.env.HOST_IP ?? findPrivateIpv4();
-const publicBaseUrl = process.env.PUBLIC_URL ?? `http://${lanIp}:${port}`;
+const renderUrl = process.env.RENDER_EXTERNAL_HOSTNAME
+  ? `https://${process.env.RENDER_EXTERNAL_HOSTNAME}`
+  : undefined;
+const publicBaseUrl = process.env.PUBLIC_URL ?? renderUrl ?? `http://${lanIp}:${port}`;
 
 declare module "socket.io" {
   interface SocketData {
