@@ -1,10 +1,11 @@
 import { useEffect, useRef, useState } from "react";
 import type { RefObject } from "react";
 import type { Socket } from "socket.io-client";
-import { BookOpenText, DoorOpen, Lightbulb, PackageOpen, Undo2, X } from "lucide-react";
-import { ESCAPE_REVIEW_COST, escapeRoomIds, type EscapeClientStep, type EscapeRoomId, type SessionSnapshot } from "@hemocase/shared";
+import { BookOpenText, DoorOpen, Eye, EyeOff, Lightbulb, PackageOpen, Undo2, X } from "lucide-react";
+import { ESCAPE_REVIEW_COST, escapeRoomIds, type EscapeClientStep, type EscapePuzzleType, type EscapeRoomId, type SessionSnapshot } from "@hemocase/shared";
 import { ScoreTicker } from "../components/ScoreTicker";
 import { formatTime } from "../lib/socket";
+import { ArchivistCameo, GhostHint } from "./atmosphere";
 import { DoorTransition } from "./DoorTransition";
 import { Hands, type HandGesture } from "./Hands";
 import { PuzzleBody } from "./puzzles";
@@ -19,6 +20,24 @@ interface EscapeGameProps {
 
 const hintCostLabels = ["grátis", "−3 bases", "−8 bases"];
 
+/** Erros viram consequência narrativa, não um "ERRADO" seco. */
+const wrongAttemptLines: Partial<Record<EscapePuzzleType, string>> = {
+  "microscope": "A lâmina errada embaça a objetiva. A SENTINELA registra a contaminação (−bases).",
+  "code": "O teclado pisca vermelho e recusa a combinação (−bases).",
+  "board-select": "O quadro rejeita o conjunto: há achados que não pertencem a este paciente (−bases).",
+  "assemble": "As peças não se encaixam — a estrutura desaba na bancada (−bases).",
+  "chain-fill": "A cadeia não fecha; o painel apaga as lacunas (−bases).",
+  "mechanism-fill": "A frase não se sustenta; o giz se parte no quadro (−bases).",
+  "sequence-spot": "Alinhamento recusado: o códon apontado é idêntico à referência (−bases).",
+  "inheritance": "O heredograma não confirma esse padrão (−bases).",
+  "family-question": "O interfone devolve um silêncio constrangedor (−bases).",
+  "dial-safe": "MUTAÇÃO DELETÉRIA. O cofre trava os seletores (−5 bases, 45 s).",
+};
+
+function readVisualHelp(): boolean {
+  try { return localStorage.getItem("hemocase:ajuda-visual") !== "off"; } catch { return true; }
+}
+
 export default function EscapeGame({ code, token, snapshot, socket }: EscapeGameProps) {
   const escape = snapshot.escape;
   const [openStep, setOpenStep] = useState<EscapeClientStep>();
@@ -29,9 +48,29 @@ export default function EscapeGame({ code, token, snapshot, socket }: EscapeGame
   const [notebookOpen, setNotebookOpen] = useState(false);
   const [noteDraft, setNoteDraft] = useState("");
   const [transition, setTransition] = useState<{ name: string; back: boolean }>();
+  const [visualHelp, setVisualHelp] = useState(readVisualHelp);
+  const [ghost, setGhost] = useState<{ x: number; y: number }>();
+  const [archivist, setArchivist] = useState(false);
   const sceneRef = useRef<HTMLDivElement>(null);
   const previousRoom = useRef<string>(undefined);
   const gestureTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
+  const guidedRooms = useRef(new Set<string>());
+  const archivistSeen = useRef(false);
+
+  function toggleVisualHelp() {
+    setVisualHelp((current) => {
+      try { localStorage.setItem("hemocase:ajuda-visual", current ? "off" : "on"); } catch { /* armazenamento indisponível */ }
+      return !current;
+    });
+  }
+
+  /** O Arquivista aparece UMA vez por partida, de relance. */
+  function maybeSummonArchivist(chance: number) {
+    if (archivistSeen.current || Math.random() > chance) return;
+    archivistSeen.current = true;
+    setArchivist(true);
+    setTimeout(() => setArchivist(false), 4600);
+  }
 
   // Transição de porta (abrir + atravessar) quando a sala exibida muda.
   useEffect(() => {
@@ -45,11 +84,41 @@ export default function EscapeGame({ code, token, snapshot, socket }: EscapeGame
       setNoteDraft("");
       const back = escapeRoomIds.indexOf(roomId as EscapeRoomId) < escapeRoomIds.indexOf(previous as EscapeRoomId);
       setTransition({ name: escape!.roomName, back });
+      if (!back) maybeSummonArchivist(0.3);
       const timer = setTimeout(() => setTransition(undefined), 1900);
       return () => clearTimeout(timer);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps -- roomName muda junto com roomId
   }, [escape?.roomId]);
+
+  // Guia espectral: na PRIMEIRA visita à sala, uma mão translúcida demonstra
+  // onde interagir por ~2,5 s (desligável em "Ajuda visual").
+  const stepObject = escape?.step?.object;
+  useEffect(() => {
+    const roomId = escape?.roomId;
+    if (!roomId || !stepObject || !visualHelp || escape?.reviewing) return;
+    if (guidedRooms.current.has(roomId)) return;
+    guidedRooms.current.add(roomId);
+    const spot = sceneSpots[roomId as EscapeRoomId]?.[stepObject];
+    if (!spot) return;
+    const showTimer = setTimeout(() => setGhost({ x: spot.x + spot.w / 2, y: spot.y + spot.h / 2 }), 2100);
+    const hideTimer = setTimeout(() => setGhost(undefined), 4700);
+    return () => { clearTimeout(showTimer); clearTimeout(hideTimer); };
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- dispara por sala
+  }, [escape?.roomId, stepObject, visualHelp]);
+
+  // Sistema de tensão: o ambiente reage conforme o tempo escorre.
+  const totalMs = (snapshot.durationMin ?? 35) * 60_000;
+  const remaining = snapshot.remainingMs ?? totalMs;
+  const fraction = totalMs > 0 ? remaining / totalMs : 1;
+  const tension = snapshot.phase === "ESCAPE" && !escape?.finishedAt
+    ? (fraction <= 0.1 ? 3 : fraction <= 0.25 ? 2 : fraction <= 0.5 ? 1 : 0)
+    : 0;
+  // Nos últimos 10% do tempo, o Arquivista aparece (se ainda não apareceu).
+  useEffect(() => {
+    if (tension >= 3) maybeSummonArchivist(1);
+     
+  }, [tension]);
 
   // Parallax pelo toque/mouse e pelo giroscópio quando existir.
   useEffect(() => {
@@ -93,7 +162,7 @@ export default function EscapeGame({ code, token, snapshot, socket }: EscapeGame
         setFeedback({ kind: "ok", text: "Mecanismo liberado." });
         setTimeout(() => { setOpenStep(undefined); setFeedback(undefined); }, 900);
       } else {
-        setFeedback({ kind: "erro", text: "A SENTINELA recusou. Analisem de novo (−bases)." });
+        setFeedback({ kind: "erro", text: wrongAttemptLines[step.type] ?? "A SENTINELA recusou. Analisem de novo (−bases)." });
       }
     });
   }
@@ -171,7 +240,7 @@ export default function EscapeGame({ code, token, snapshot, socket }: EscapeGame
   const usedHints = openStep ? (localHints[openStep.id] ?? escape.revealedHints[openStep.id] ?? []) : [];
 
   return (
-    <section className={`escape-stage ${transition ? "is-entering" : ""}`}>
+    <section className={`escape-stage ${transition ? "is-entering" : ""} tension-${tension}`}>
       <div className="escape-scene" ref={sceneRef} key={room}>
         <div className="scene-parallax scene-parallax--far"><SceneBackdrop roomId={room} /></div>
         <div className="scene-hotspots scene-parallax scene-parallax--near">
@@ -196,7 +265,12 @@ export default function EscapeGame({ code, token, snapshot, socket }: EscapeGame
           )}
         </div>
         <div className="scene-grade" />
+        {archivist && <ArchivistCameo />}
+        {ghost && <GhostHint x={ghost.x} y={ghost.y} />}
         <Hands gesture={gesture} />
+        {remaining > 0 && remaining <= 10_000 && !escape.finishedAt && (
+          <strong className="final-count" aria-hidden="true">{Math.ceil(remaining / 1000)}</strong>
+        )}
         {transition && <DoorTransition roomName={transition.name} back={transition.back} />}
       </div>
 
@@ -240,6 +314,9 @@ export default function EscapeGame({ code, token, snapshot, socket }: EscapeGame
 
       <footer className="escape-toolbar">
         <button className="button button--quiet" onClick={() => { setNoteDraft(escape.notes[progressRoomId()] ?? ""); setNotebookOpen(true); }}><BookOpenText size={17} /> Prontuário</button>
+        <button className="icon-button" title={visualHelp ? "Desligar ajuda visual" : "Ligar ajuda visual"} onClick={toggleVisualHelp}>
+          {visualHelp ? <Eye size={17} /> : <EyeOff size={17} />}
+        </button>
         <div className="inventory-strip" aria-label="Inventário">
           <PackageOpen size={16} />
           {escape.inventory.length ? escape.inventory.map((item) => <span key={item}>{item}</span>) : <span className="empty">vazio</span>}

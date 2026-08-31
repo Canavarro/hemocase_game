@@ -3,7 +3,10 @@
   "private": true,
   "type": "module",
   "version": "0.1.0",
-  "workspaces": ["apps/*", "packages/*"],
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
   "scripts": {
     "dev": "npm run build -w @hemocase/shared && concurrently -k -n SERVER,WEB -c red,cyan \"npm run dev -w @hemocase/server\" \"npm run dev -w @hemocase/web\"",
     "build": "npm run build -w @hemocase/shared && npm run build -w @hemocase/web && npm run build -w @hemocase/server",
@@ -12,7 +15,8 @@
     "typecheck": "npm run build -w @hemocase/shared && npm run typecheck --workspaces --if-present",
     "test": "npm run test --workspaces --if-present",
     "test:integration": "node tests/session-flow.mjs",
-    "test:e2e": "npm run test:e2e -w @hemocase/web"
+    "test:e2e": "npm run test:e2e -w @hemocase/web",
+    "manual": "node scripts/generate-game-master-manual.mjs"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
@@ -24,5 +28,7 @@
     "typescript-eslint": "^8.68.0",
     "vitest": "^3.2.4"
   },
-  "engines": { "node": ">=20" }
+  "engines": {
+    "node": ">=20"
+  }
 }

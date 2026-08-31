@@ -10,7 +10,7 @@ Subtítulo: **Do DNA ao Fenótipo**
 
 ## Contexto
 
-O jogo é uma atividade da Liga de Genética Médica, LAGEM, aplicada imediatamente após uma aula sobre proteínas de interesse médico, hemoglobinopatias e coagulopatias. Sua apresentação é um escape room audiovisual com referências autorizadas à série *Jogos Mortais*.
+O jogo é uma atividade da Liga de Genética Médica, LAGEM, aplicada imediatamente após uma aula sobre proteínas de interesse médico, hemoglobinopatias e coagulopatias. Sua apresentação é um escape room audiovisual de identidade própria, conduzido pela SENTINELA e observado pelo Arquivista — sem personagens ou estética de franquias de terceiros.
 
 A duração total disponível é de 30 minutos, incluindo entrada dos jogadores.
 
@@ -26,7 +26,7 @@ A experiência deve integrar o conteúdo da aula e usar os artigos científicos 
 
 ## Objetivo de experiência
 
-O aluno deve sentir que foi colocado dentro de uma investigação clínica e genética em tempo real, conduzida por uma transmissão de Jigsaw. Casos e perguntas são tratados como mecanismos, pistas e códigos necessários para escapar.
+O aluno deve sentir que foi colocado dentro de uma investigação clínica e genética em tempo real, conduzida pela transmissão da SENTINELA. Casos e perguntas são tratados como mecanismos, pistas e códigos necessários para escapar.
 
 A narrativa deve:
 

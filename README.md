@@ -2,7 +2,7 @@
 
 ## Do DNA ao Fenótipo
 
-HEMOCASE é um escape room educacional presencial com interface web, criado para uma atividade da Liga de Genética Médica, LAGEM, após a aula de Proteínas de Interesse Médico, Hemoglobinopatias e Coagulopatias. A experiência assume referências narrativas e audiovisuais autorizadas da série *Jogos Mortais*.
+HEMOCASE é um escape room educacional presencial com interface web, criado para uma atividade da Liga de Genética Médica, LAGEM, após a aula de Proteínas de Interesse Médico, Hemoglobinopatias e Coagulopatias. A experiência tem identidade narrativa própria: a **SENTINELA**, o sistema que sela o laboratório e cobra respostas, e **O Arquivista**, uma figura observadora que aparece uma única vez por partida.
 
 O jogo foi desenhado para uma janela total de 30 minutos. Um computador funciona como servidor e painel do facilitador. Cada equipe usa um único celular, entra na sessão por QR Code e recebe evidências, questões e desafios em tempo real.
 

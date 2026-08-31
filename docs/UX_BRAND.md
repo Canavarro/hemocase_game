@@ -71,9 +71,14 @@ O Codex deve perguntar ao responsável pelo projeto:
 
 Tema principal:
 
-`escape room clínico + Jogos Mortais + genética + código vermelho`
+`escape room clínico + thriller de laboratório + genética + código vermelho`
 
-As referências autorizadas à série podem ser diretas na abertura, na voz, no vídeo, na linguagem de Jigsaw e nas transições. A interface funcional deve continuar original, legível e adequada ao contexto acadêmico, sem depender de gore para produzir tensão.
+A abertura, a voz, o vídeo e as transições usam a identidade própria do jogo — nunca personagens, máscaras, vozes ou silhuetas reconhecíveis de franquias de terceiros. A interface funcional deve continuar original, legível e adequada ao contexto acadêmico, sem depender de gore para produzir tensão.
+
+### As duas presenças do jogo
+
+- **SENTINELA**: o sistema que fala. Voz clínica, ritmo lento, pausas longas, frieza emocional; é ela que sela portas, cobra respostas e comenta erros ("A amostra foi contaminada.").
+- **O Arquivista**: a figura que se vê. Silhueta humanoide escura, sem rosto, que aparece UMA vez por partida — refletida num vidro, ao fundo do laboratório, nos últimos minutos. Nunca interage; é atmosfera e assinatura da marca ("Você viu o Arquivista?").
 
 ### Paleta sugerida
 
