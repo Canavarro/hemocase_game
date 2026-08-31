@@ -264,7 +264,7 @@ Fullscreen e Wake Lock usam detecção de suporte e fallback e não são requisi
 ## Estrutura do repositório
 
 ```text
-hemocase_scape/
+genetic_game/
   AGENTS.md
   ARCHITECTURE.md
   README.md

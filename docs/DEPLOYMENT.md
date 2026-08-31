@@ -6,7 +6,7 @@ O arquivo `render.yaml` define uma implantação de origem única no Render. O m
 
 Implantação:
 
-1. acesse `https://render.com/deploy?repo=https://github.com/Canavarro/hemocase_scape`;
+1. acesse `https://render.com/deploy?repo=https://github.com/Canavarro/genetic_game`;
 2. autorize o Render a ler o repositório;
 3. confirme o Blueprint;
 4. aguarde o health check em `/api/health`;
@@ -34,6 +34,10 @@ Em qualquer host Node compatível:
 - URL pública: variável `PUBLIC_URL`, quando a plataforma não fornecer `RENDER_EXTERNAL_HOSTNAME`.
 
 O proxy deve aceitar conexões WebSocket no mesmo domínio da aplicação.
+
+## Nome do repositório
+
+O repositório foi renomeado de `hemocase_scape` para **`genetic_game`** (GitHub redireciona a URL antiga, mas atualize seus remotes: `git remote set-url origin https://github.com/Canavarro/genetic_game`). O `name: hemocase-scape` do `render.yaml` foi mantido de propósito: ele identifica o serviço existente no Render (`srv-daac15lg1s2s73coato0`), e mudá-lo faria o blueprint criar um serviço novo em vez de atualizar o atual. Confirme no dashboard do Render (Settings → Repository) que o serviço passou a apontar para `Canavarro/genetic_game` — o app do GitHub costuma seguir o rename sozinho.
 
 ## Banco de dados (Neon · Lakebase Postgres)
 
