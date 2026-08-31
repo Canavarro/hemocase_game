@@ -124,6 +124,28 @@ describe("GameEngine · modo Escape", () => {
     expect(allSteps.some((step) => step.id === "R2-S3")).toBe(true);
   });
 
+  it("fixa a sessão em um único caso por caseId, herdando os tópicos do próprio caso", () => {
+    const engine = new GameEngine(content, [escapeCase]);
+    const session = engine.createSession("http://x", "ZERO_ROUND", { mode: "ESCAPE", caseId: escapeCase.id });
+    expect(session.escapeCase!.id).toBe(escapeCase.id);
+    expect(session.allowedTopics).toEqual(escapeCase.topicTags);
+    // Jogo inteiro sobre uma única doença: opcionais de outros temas ficam de fora.
+    const allSteps = session.escapeCase!.rooms.flatMap((room) => room.steps);
+    expect(allSteps.some((step) => step.optional)).toBe(false);
+  });
+
+  it("recusa caseId que não está instalado", () => {
+    const engine = new GameEngine(content, [escapeCase]);
+    expect(() => engine.createSession("http://x", "ZERO_ROUND", { mode: "ESCAPE", caseId: "caso-fantasma" }))
+      .toThrowError(/não está instalado/i);
+  });
+
+  it("com caseId e tópicos explícitos, exige os tópicos obrigatórios do caso", () => {
+    const engine = new GameEngine(content, [escapeCase]);
+    expect(() => engine.createSession("http://x", "ZERO_ROUND", { mode: "ESCAPE", caseId: escapeCase.id, allowedTopics: ["hemofilias"] }))
+      .toThrowError(/tópicos não liberados/i);
+  });
+
   it("equipe começa com 100 bases e resolve enigmas com validação no servidor", () => {
     const { engine, session, team } = setupEscape();
     expect(session.phase).toBe("ESCAPE");

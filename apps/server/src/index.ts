@@ -42,6 +42,8 @@ declare module "socket.io" {
 
 app.get("/api/health", async () => ({ ok: true, lanIp, port }));
 
+app.get("/api/escape/cases", async () => ({ cases: engine.listEscapeCases() }));
+
 app.post<{ Body: unknown }>("/api/sessions", async (request, reply) => {
   const parsed = createSessionSchema.safeParse(request.body ?? {});
   if (!parsed.success) return reply.code(400).send({ error: "Parâmetros de sessão inválidos." });
@@ -50,6 +52,7 @@ app.post<{ Body: unknown }>("/api/sessions", async (request, reply) => {
       mode: parsed.data.mode,
       allowedTopics: parsed.data.allowedTopics,
       durationMin: parsed.data.durationMin,
+      caseId: parsed.data.caseId,
     });
     reply.code(201);
     return { code: session.code, hostToken: session.hostToken, joinUrl: session.joinUrl, mode: session.mode, screenUrl: `${publicBaseUrl}/screen/${session.code}` };

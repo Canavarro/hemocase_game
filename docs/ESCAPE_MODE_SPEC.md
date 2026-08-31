@@ -66,7 +66,7 @@ A única saída é fazer o trabalho: percorrer as cinco alas do laboratório, co
 - Mantém a identidade "Código Vermelho" e o tom autorizado de transmissão ameaçadora, sem gore.
 - O antagonista (SENTINELA) é diegético: quem cobra respostas é o próprio sistema, o que justifica cada tranca, cada dica e cada penalidade.
 - A vítima é um paciente — o que devolve o peso ético: a pressa tem motivo clínico, não apenas cronômetro.
-- Cada partida sorteia **um caso da biblioteca** (ver §7), então a mesma narrativa suporta dezenas de rodadas.
+- Cada partida sorteia **um caso da biblioteca** (ver §7) — ou o facilitador **fixa um caso específico** na criação da sessão, deixando o jogo inteiro sobre uma única doença; a mesma narrativa suporta dezenas de rodadas.
 
 ### 3.3 Estrutura em atos
 

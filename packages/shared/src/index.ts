@@ -111,7 +111,13 @@ export type EscapePuzzleType =
   | "family-question" // pergunta da família
   | "dial-safe";      // cofre final com seletores
 
-export interface EscapeChoice { id: string; text: string }
+/** Aparência do esfregaço exibido ao focar uma lâmina no enigma "microscope". */
+export const escapeSmearKinds = [
+  "normal", "falciforme", "microcitica-hipocromica", "plaquetas-gigantes", "esferocitos",
+] as const;
+export type EscapeSmearKind = (typeof escapeSmearKinds)[number];
+
+export interface EscapeChoice { id: string; text: string; smear?: EscapeSmearKind }
 
 export interface EscapeStep {
   id: string;
@@ -152,6 +158,16 @@ export interface EscapeCase {
   rooms: EscapeRoomContent[];
   answers: Record<string, string[]>;
   debrief: { diagnosis: string; route: string };
+}
+
+/** Resumo de um caso instalado, exposto ao Host para fixar a sessão em um único caso. */
+export interface EscapeCaseSummary {
+  id: string;
+  title: string;
+  patientLabel: string;
+  diagnosis: string;
+  topicTags: EscapeTopic[];
+  roomCount: number;
 }
 
 export type EscapeClientStep = Omit<EscapeStep, "hints">;
@@ -220,6 +236,7 @@ export const createSessionSchema = z.object({
   integrityPolicy: z.enum(["OBSERVE_ONLY", "WARNING", "ZERO_ROUND", "MANUAL_REVIEW"]).default("ZERO_ROUND"),
   allowedTopics: z.array(z.enum(escapeTopics)).max(escapeTopics.length).optional(),
   durationMin: z.number().int().min(15).max(60).default(35),
+  caseId: z.string().trim().min(1).max(64).optional(),
 });
 
 export const escapeHintCosts = [0, 3, 8] as const;

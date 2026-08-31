@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ArrowLeft, DoorOpen, Download, ExternalLink, Pause, Play, Plus, RotateCcw, ShieldAlert, SlidersHorizontal, Square, SkipForward, Timer } from "lucide-react";
-import { escapeTopicLabels, escapeTopics, type EscapeTopic, type GameMode, type HostAction, type IntegrityPolicy } from "@hemocase/shared";
+import { escapeTopicLabels, escapeTopics, type EscapeCaseSummary, type EscapeTopic, type GameMode, type HostAction, type IntegrityPolicy } from "@hemocase/shared";
 import { ConnectionStatus } from "../components/Status";
 import { formatTime, useSession } from "../lib/socket";
 
@@ -23,7 +23,23 @@ export function HostPage() {
   const [mode, setMode] = useState<GameMode>("QUIZ");
   const [topics, setTopics] = useState<EscapeTopic[]>(topicPresets["Hemoglobinopatias"]!);
   const [durationMin, setDurationMin] = useState(35);
+  const [cases, setCases] = useState<EscapeCaseSummary[]>([]);
+  const [caseId, setCaseId] = useState("");
   const { socket, snapshot, connected, error } = useSession("host", code, token);
+
+  useEffect(() => {
+    if (mode !== "ESCAPE" || cases.length) return;
+    fetch("/api/escape/cases")
+      .then((response) => response.json() as Promise<{ cases: EscapeCaseSummary[] }>)
+      .then((data) => setCases(data.cases ?? []))
+      .catch(() => setCases([]));
+  }, [mode, cases.length]);
+
+  function pickCase(nextId: string) {
+    setCaseId(nextId);
+    const picked = cases.find((item) => item.id === nextId);
+    if (picked) setTopics([...picked.topicTags]);
+  }
 
   function toggleTopic(topic: EscapeTopic) {
     setTopics((current) => current.includes(topic) ? current.filter((item) => item !== topic) : [...current, topic]);
@@ -34,7 +50,7 @@ export function HostPage() {
     setNotice(undefined);
     try {
       const body = mode === "ESCAPE"
-        ? { mode, integrityPolicy: "ZERO_ROUND", allowedTopics: topics, durationMin }
+        ? { mode, integrityPolicy: "ZERO_ROUND", allowedTopics: topics, durationMin, caseId: caseId || undefined }
         : { mode, integrityPolicy: "ZERO_ROUND" };
       const response = await fetch("/api/sessions", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(body) });
       const data = await response.json() as { code: string; hostToken: string; error?: string };
@@ -104,11 +120,23 @@ export function HostPage() {
                   </select>
                 </label>
                 <label className="field-label">Predefinição de tópicos
-                  <select defaultValue="Hemoglobinopatias" onChange={(event) => setTopics(topicPresets[event.target.value] ?? [])}>
+                  <select defaultValue="Hemoglobinopatias" onChange={(event) => { setCaseId(""); setTopics(topicPresets[event.target.value] ?? []); }}>
                     {Object.keys(topicPresets).map((preset) => <option key={preset} value={preset}>{preset}</option>)}
                   </select>
                 </label>
               </div>
+              <label className="field-label">Caso do protocolo
+                <select value={caseId} onChange={(event) => pickCase(event.target.value)}>
+                  <option value="">Sortear entre os casos elegíveis pelos tópicos</option>
+                  {cases.map((item) => <option key={item.id} value={item.id}>{item.title} · {item.diagnosis}</option>)}
+                </select>
+              </label>
+              {caseId && (
+                <p className="puzzle-note">
+                  Sessão fixada em um único caso: todo o jogo gira em torno de {cases.find((item) => item.id === caseId)?.diagnosis ?? "uma única doença"}.
+                  Os tópicos abaixo foram ajustados para os conteúdos desse caso; desmarque o que a turma ainda não viu.
+                </p>
+              )}
               <fieldset className="topic-grid">
                 <legend>Conteúdos já vistos pela turma (nada fora disso entra no jogo)</legend>
                 {escapeTopics.map((topic) => (

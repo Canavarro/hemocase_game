@@ -128,13 +128,13 @@
           "type": "microscope",
           "object": "microscopio",
           "title": "O sangue fala",
-          "prompt": "Três lâminas estão na estante, identificadas por paciente. Coloquem a lâmina CORRETA no microscópio e ajustem o foco.",
+          "prompt": "Três lâminas estão na estante, identificadas por paciente. Cada uma mostra um sangue diferente ao focar. Coloquem a lâmina do paciente CERTO no microscópio, ajustem o foco e registrem o achado.",
           "choices": [
-            { "id": "B22", "text": "Lâmina B22" },
-            { "id": "A17", "text": "Lâmina A17" },
-            { "id": "D09", "text": "Lâmina D09" }
+            { "id": "B22", "text": "Lâmina B22", "smear": "normal" },
+            { "id": "A17", "text": "Lâmina A17", "smear": "falciforme" },
+            { "id": "D09", "text": "Lâmina D09", "smear": "microcitica-hipocromica" }
           ],
-          "evidence": ["Ao focar: numerosas hemácias alongadas, em forma de foice, entre hemácias normais."],
+          "evidence": ["Estante de lâminas: B22 · A17 · D09. Etiqueta da bancada: 'Confirme o paciente antes de laudar.'"],
           "points": 4,
           "tags": ["anemia-falciforme"],
           "hints": [

@@ -188,12 +188,15 @@ Limpar esses valores remove a credencial local, mas não altera a sessão no ser
 `POST /api/sessions` aceita corpo validado por `createSessionSchema`:
 
 ```json
-{ "mode": "ESCAPE", "integrityPolicy": "ZERO_ROUND", "allowedTopics": ["anemia-falciforme", "..."], "durationMin": 35 }
+{ "mode": "ESCAPE", "integrityPolicy": "ZERO_ROUND", "allowedTopics": ["anemia-falciforme", "..."], "durationMin": 35, "caseId": "falciforme-a17" }
 ```
 
 - `mode` padrão é `QUIZ` (fluxo antigo inalterado);
-- em `ESCAPE`, o servidor sorteia um caso elegível: todas as `topicTags` obrigatórias do caso precisam estar em `allowedTopics`, senão responde `422` listando os tópicos exigidos;
+- em `ESCAPE` sem `caseId`, o servidor sorteia um caso elegível: todas as `topicTags` obrigatórias do caso precisam estar em `allowedTopics`, senão responde `422` listando os tópicos exigidos;
+- com `caseId`, a sessão fica fixada naquele caso (jogo inteiro sobre uma única doença). Sem `allowedTopics`, os tópicos herdam as `topicTags` do próprio caso; com `allowedTopics`, os tópicos obrigatórios do caso precisam estar presentes, senão `422`;
 - enigmas opcionais com tags não liberadas são removidos da cópia da sessão e nunca chegam a nenhum cliente.
+
+`GET /api/escape/cases` lista os casos instalados para o Host escolher: `{ cases: [{ id, title, patientLabel, diagnosis, topicTags, roomCount }] }`.
 
 ### Fases
 

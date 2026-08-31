@@ -96,6 +96,8 @@ export interface CreateSessionOptions {
   mode?: GameMode;
   allowedTopics?: EscapeTopic[];
   durationMin?: number;
+  /** Fixa a sessão neste caso: o jogo inteiro gira em torno de uma única doença. */
+  caseId?: string;
 }
 
 export class GameEngine {
@@ -109,10 +111,10 @@ export class GameEngine {
 
   createSession(baseUrl: string, integrityPolicy: IntegrityPolicy = "ZERO_ROUND", options: CreateSessionOptions = {}) {
     const mode = options.mode ?? "QUIZ";
-    const allowedTopics = options.allowedTopics ?? [];
+    let allowedTopics = options.allowedTopics ?? [];
     let escapeCase: EscapeCase | undefined;
     if (mode === "ESCAPE") {
-      escapeCase = this.pickEscapeCase(allowedTopics);
+      ({ escapeCase, allowedTopics } = this.pickEscapeCase(allowedTopics, options.caseId));
     }
     let code: string;
     do code = randomBytes(3).toString("hex").toUpperCase(); while (this.sessions.has(code));
@@ -139,27 +141,60 @@ export class GameEngine {
     return session;
   }
 
-  /** Sorteia um caso elegível: todas as tags obrigatórias liberadas pelo professor. */
-  private pickEscapeCase(allowedTopics: EscapeTopic[]): EscapeCase {
+  /**
+   * Seleciona o caso da sessão. Com `caseId`, a sessão fica fixada naquele caso
+   * (sem tópicos explícitos, herda os tópicos do próprio caso — o jogo inteiro
+   * sobre uma única doença). Sem `caseId`, sorteia um caso cujas tags
+   * obrigatórias foram todas liberadas pelo professor.
+   */
+  private pickEscapeCase(allowedTopics: EscapeTopic[], caseId?: string): { escapeCase: EscapeCase; allowedTopics: EscapeTopic[] } {
     if (!this.escapeCases.length) throw new Error("Nenhum caso do modo Escape está instalado em content/escape/cases.");
-    const allowed = new Set(allowedTopics);
-    const eligible = this.escapeCases.filter((candidate) => candidate.topicTags.every((tag) => allowed.has(tag)));
-    if (!eligible.length) {
-      const missing = new Set<string>();
-      for (const candidate of this.escapeCases) {
-        for (const tag of candidate.topicTags) if (!allowed.has(tag)) missing.add(tag);
+    let pick: EscapeCase;
+    let topics: EscapeTopic[];
+    if (caseId) {
+      const found = this.escapeCases.find((candidate) => candidate.id === caseId);
+      if (!found) throw new Error(`O caso "${caseId}" não está instalado em content/escape/cases.`);
+      topics = allowedTopics.length ? allowedTopics : [...found.topicTags];
+      const missing = found.topicTags.filter((tag) => !topics.includes(tag));
+      if (missing.length) throw new Error(`O caso escolhido exige tópicos não liberados: ${missing.join(", ")}.`);
+      pick = found;
+    } else {
+      const allowed = new Set(allowedTopics);
+      const eligible = this.escapeCases.filter((candidate) => candidate.topicTags.every((tag) => allowed.has(tag)));
+      if (!eligible.length) {
+        const missing = new Set<string>();
+        for (const candidate of this.escapeCases) {
+          for (const tag of candidate.topicTags) if (!allowed.has(tag)) missing.add(tag);
+        }
+        throw new Error(`Nenhum caso cabe nos tópicos liberados. Tópicos exigidos pelos casos disponíveis: ${[...missing].join(", ")}.`);
       }
-      throw new Error(`Nenhum caso cabe nos tópicos liberados. Tópicos exigidos pelos casos disponíveis: ${[...missing].join(", ")}.`);
+      pick = eligible[randomBytes(1)[0]! % eligible.length]!;
+      topics = allowedTopics;
     }
-    const pick = eligible[randomBytes(1)[0]! % eligible.length]!;
     // Cópia com os enigmas opcionais filtrados pelos tópicos liberados.
+    const allowed = new Set(topics);
     return {
-      ...pick,
-      rooms: pick.rooms.map((room) => ({
-        ...room,
-        steps: room.steps.filter((step) => !step.optional || step.tags.every((tag) => allowed.has(tag))),
-      })),
+      allowedTopics: topics,
+      escapeCase: {
+        ...pick,
+        rooms: pick.rooms.map((room) => ({
+          ...room,
+          steps: room.steps.filter((step) => !step.optional || step.tags.every((tag) => allowed.has(tag))),
+        })),
+      },
     };
+  }
+
+  /** Casos instalados, para o Host fixar a sessão em um único caso. */
+  listEscapeCases() {
+    return this.escapeCases.map((candidate) => ({
+      id: candidate.id,
+      title: candidate.title,
+      patientLabel: candidate.patientLabel,
+      diagnosis: candidate.debrief.diagnosis,
+      topicTags: candidate.topicTags,
+      roomCount: candidate.rooms.length,
+    }));
   }
 
   getSession(code: string) {
