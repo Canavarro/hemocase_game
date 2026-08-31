@@ -1,0 +1,18 @@
+# Snapshot único do health da produção — disparo manual, sem loop de espera.
+name: Health snapshot
+
+on:
+  workflow_dispatch:
+
+jobs:
+  snapshot:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ler /api/health e /api/rankings
+        run: |
+          echo "health:"
+          curl -sS --max-time 20 https://hemocase-scape.onrender.com/api/health || true
+          echo
+          echo "rankings:"
+          curl -sS --max-time 20 "https://hemocase-scape.onrender.com/api/rankings?limit=3" | head -c 600 || true
+          echo
