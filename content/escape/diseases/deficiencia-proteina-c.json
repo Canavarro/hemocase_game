@@ -1,0 +1,86 @@
+{
+  "id": "deficiencia-proteina-c",
+  "name": "Deficiência hereditária de proteína C",
+  "medicalId": "protein_c_deficiency",
+  "group": "trombofilias",
+  "topicTags": ["proteinas-funcoes", "hemostasia-secundaria", "trombofilias", "heranca-autossomica"],
+  "patient": {
+    "descriptor": "homem, 35 anos",
+    "story": "Segunda trombose venosa em três anos, agora na veia poplítea direita, sem cirurgia nem imobilização; a irmã também já teve tromboflebite e o pai é anticoagulado."
+  },
+  "clinical": {
+    "correct": [
+      "Trombose venosa recorrente",
+      "Eventos sem fator desencadeante",
+      "Irmã com tromboflebite",
+      "Pai em anticoagulação crônica"
+    ],
+    "distractors": [
+      "Hemartroses de repetição",
+      "Epistaxes graves",
+      "Petéquias e púrpura",
+      "Crises de dor óssea",
+      "Albinismo oculocutâneo"
+    ],
+    "evidence": [
+      "Sem uso de warfarina no momento da dosagem",
+      "História familiar trombótica em duas gerações"
+    ]
+  },
+  "labs": {
+    "altered": ["Atividade de proteína C 38%", "D-dímero elevado", "Doppler: trombo em veia poplítea direita"],
+    "normal": ["Antitrombina 98%", "Plaquetas 265.000/µL", "TP/INR 1,0"]
+  },
+  "smear": {
+    "kind": "normal",
+    "finding": "o esfregaço é normal — a falha está na via ANTICOAGULANTE que desliga os fatores Va e VIIIa"
+  },
+  "protein": {
+    "name": "proteína C",
+    "role": {
+      "prompt": "O painel mostra dois fatores acesos que deveriam ser apagados. Qual é o papel da proteína C ativada?",
+      "correct": "Inativar os fatores Va e VIIIa, limitando a coagulação",
+      "wrong": [
+        "Inibir diretamente a trombina como principal freio",
+        "Formar a rede de fibrina",
+        "Ativar as plaquetas na lesão"
+      ]
+    },
+    "defect": "reduzida ou disfuncional",
+    "consequence": "os fatores Va e VIIIa escapam da inativação e a coagulação se prolonga",
+    "context": "na via anticoagulante,"
+  },
+  "gene": {
+    "symbol": "PROC",
+    "locus": "2q14.3",
+    "mutationSummary": "Variantes em PROC reduzindo quantidade ou função da proteína C"
+  },
+  "inheritance": {
+    "pattern": "ad",
+    "familyStory": "afetados em duas gerações (pai, irmã, paciente); formas bialélicas raras causam púrpura fulminante neonatal",
+    "recurrence": {
+      "prompt": "'Sou heterozigoto para a deficiência. Qual a chance de CADA filho herdar?'",
+      "correct": "50%",
+      "wrong": ["25%", "100%", "Nenhuma chance"]
+    }
+  },
+  "route": {
+    "gene": "PROC (2q14.3)",
+    "protein": "Proteína C",
+    "mechanism": "Fatores Va e VIIIa escapam da inativação",
+    "phenotype": "Trombose venosa recorrente (púrpura fulminante se bialélica)",
+    "inheritance": "Autossômica dominante"
+  },
+  "emergencyFiles": [
+    {
+      "prompt": "Alerta da UTI neonatal: 'Recém-nascido com púrpura fulminante e necrose cutânea.' Qual deficiência BIALÉLICA investigar?",
+      "correct": "Deficiência grave de proteína C",
+      "wrong": ["Deficiência de fator VIII", "Deficiência de GPIb", "Deficiência de ferro"],
+      "tags": ["trombofilias"]
+    }
+  ],
+  "debrief": {
+    "diagnosis": "Deficiência hereditária de proteína C",
+    "route": "PROC mutado → proteína C reduzida → fatores Va e VIIIa não são desligados → coagulação prolongada e trombose venosa → herança autossômica dominante (bialélica = púrpura fulminante neonatal)"
+  }
+}

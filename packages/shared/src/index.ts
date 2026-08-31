@@ -113,7 +113,7 @@ export type EscapePuzzleType =
 
 /** Aparência do esfregaço exibido ao focar uma lâmina no enigma "microscope". */
 export const escapeSmearKinds = [
-  "normal", "falciforme", "microcitica-hipocromica", "plaquetas-gigantes", "esferocitos",
+  "normal", "falciforme", "microcitica-hipocromica", "plaquetas-gigantes", "esferocitos", "plaquetas-pequenas",
 ] as const;
 export type EscapeSmearKind = (typeof escapeSmearKinds)[number];
 
@@ -257,7 +257,7 @@ export type BlitzOptions = z.infer<typeof blitzOptionsSchema>;
 
 /* ============ Base de conhecimento de doenças (gerador de casos) ============ */
 
-export const diseaseGroups = ["hemoglobinopatias", "coagulopatias", "plaquetopatias", "trombofilias"] as const;
+export const diseaseGroups = ["hemoglobinopatias", "coagulopatias", "plaquetopatias", "trombofilias", "vasculopatias"] as const;
 export type DiseaseGroup = (typeof diseaseGroups)[number];
 
 export const diseaseGroupLabels: Record<DiseaseGroup, string> = {
@@ -265,6 +265,7 @@ export const diseaseGroupLabels: Record<DiseaseGroup, string> = {
   "coagulopatias": "Coagulopatias",
   "plaquetopatias": "Plaquetopatias",
   "trombofilias": "Trombofilias",
+  "vasculopatias": "Vasculopatias hereditárias",
 };
 
 /**

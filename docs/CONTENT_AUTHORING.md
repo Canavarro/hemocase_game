@@ -111,7 +111,7 @@ Casos ficam em `content/escape/cases/*.json` seguindo o tipo `EscapeCase` de `@h
 - `topicTags`: tags obrigatórias do caso (vocabulário `escapeTopics`). No sorteio, o caso só entra se o professor liberar todas; alternativamente o Host pode fixar a sessão em um caso específico (`caseId` na criação), e então os tópicos herdam as `topicTags` do caso — o jogo inteiro fica sobre uma única doença;
 - `rooms`: seis salas `R0`–`R5`, cada uma com `steps` na ordem de resolução. Passos com `optional: true` são arquivos de emergência e são filtrados pelas tags liberadas;
 - cada passo referencia um `object` da cenografia do cliente (`apps/web/src/escape/scenes.tsx`) e declara exatamente 3 `hints` progressivas;
-- em passos `microscope`, cada alternativa de `choices` deve declarar `smear` (vocabulário `escapeSmearKinds`: `normal`, `falciforme`, `microcitica-hipocromica`, `plaquetas-gigantes`, `esferocitos`) — é ele que define a morfologia desenhada ao focar cada lâmina, e as três lâminas devem mostrar esfregaços diferentes para a escolha ter resposta observável;
+- em passos `microscope`, cada alternativa de `choices` deve declarar `smear` (vocabulário `escapeSmearKinds`: `normal`, `falciforme`, `microcitica-hipocromica`, `plaquetas-gigantes`, `esferocitos`, `plaquetas-pequenas`) — é ele que define a morfologia desenhada ao focar cada lâmina, e as três lâminas devem mostrar esfregaços diferentes para a escolha ter resposta observável;
 - `answers`: gabarito por `stepId`, separado dos passos — nunca é enviado ao cliente. Tipos ordenados (`chain-fill`, `mechanism-fill`, `dial-safe`, `code`) comparam em ordem; `board-select` e `assemble` comparam como conjunto/multiconjunto;
 - `debrief`: diagnóstico e rota molecular exibidos ao escapar.
 
@@ -130,7 +130,7 @@ Regras editoriais: mesmas do quiz (linguagem pt-BR, precisão científica revisa
 
 Além dos casos prontos, o servidor gera casos inéditos a partir de perfis de doença em `content/escape/diseases/*.json`, seguindo o tipo `DiseaseKnowledge` de `@hemocase/shared`. Cada perfil descreve a doença uma única vez e o gerador monta as seis salas sorteando paciente, senhas, distratores e ordem das alternativas (nos enigmas de girar, a resposta nunca fica na primeira posição do seletor). Campos principais:
 
-- `group`: assunto para o filtro "por assunto" do Host (`hemoglobinopatias`, `coagulopatias`, `plaquetopatias`, `trombofilias`);
+- `group`: assunto para o filtro "por assunto" do Host (`hemoglobinopatias`, `coagulopatias`, `plaquetopatias`, `trombofilias`, `vasculopatias`);
 - `topicTags`: tags obrigatórias (mesmo vocabulário `escapeTopics` dos casos prontos);
 - `patient`: `descriptor` (ex.: "lactente, 8 meses") e `story` (gancho do briefing);
 - `clinical`: `correct` (≥4 achados verdadeiros; o gerador sorteia 4) e `distractors` (≥4 achados falsos);

@@ -1,0 +1,86 @@
+{
+  "id": "telangiectasia-hemorragica",
+  "name": "Telangiectasia hemorrágica hereditária (Osler-Weber-Rendu)",
+  "medicalId": "hereditary_hemorrhagic_telangiectasia",
+  "group": "vasculopatias",
+  "topicTags": ["proteinas-funcoes", "hemostasia-primaria", "heranca-autossomica"],
+  "patient": {
+    "descriptor": "homem, 32 anos",
+    "story": "Epistaxes espontâneas desde a adolescência, agora quase semanais, e pontinhos vermelhos nos lábios e na língua; o pai e a avó sempre tiveram 'nariz que sangra' e uma tia investigou uma malformação no pulmão."
+  },
+  "clinical": {
+    "correct": [
+      "Epistaxes espontâneas e recorrentes desde a adolescência",
+      "Telangiectasias em lábios, língua e dedos",
+      "Familiares com epistaxes em várias gerações",
+      "Tia com malformação arteriovenosa pulmonar"
+    ],
+    "distractors": [
+      "Hemartroses de repetição",
+      "Plaquetas gigantes no esfregaço",
+      "Crises de dor em mãos e pés",
+      "Eczema com infecções de repetição",
+      "Icterícia progressiva"
+    ],
+    "evidence": [
+      "Coagulograma e plaquetas repetidamente normais",
+      "Anemia por perda crônica de sangue"
+    ]
+  },
+  "labs": {
+    "altered": ["Hemoglobina 9,8 g/dL (anemia ferropriva)", "Ferritina 8 ng/mL (baixa)", "TC de tórax: malformação arteriovenosa pulmonar"],
+    "normal": ["Plaquetas 280.000/µL", "TTPa 30 s", "Fator de von Willebrand 100%"]
+  },
+  "smear": {
+    "kind": "normal",
+    "finding": "não há alteração típica no esfregaço — o problema é da PAREDE do vaso, não do sangue (a anemia é por perda crônica)"
+  },
+  "protein": {
+    "name": "endoglina/ALK1 (via TGF-β vascular)",
+    "role": {
+      "prompt": "O painel da bancada mostra um capilar se formando torto. Qual é o papel da endoglina e da ALK1?",
+      "correct": "Receptores da sinalização TGF-β/BMP que guiam o desenvolvimento correto dos vasos",
+      "wrong": [
+        "Receptores de adesão da plaqueta ao colágeno",
+        "Enzimas da cascata de coagulação",
+        "Transportadores de ferro no plasma"
+      ]
+    },
+    "defect": "com sinalização vascular TGF-β/BMP deficiente",
+    "consequence": "os capilares se malformam em telangiectasias e fístulas arteriovenosas frágeis",
+    "context": "na parede dos vasos,"
+  },
+  "gene": {
+    "symbol": "ENG/ACVRL1",
+    "locus": "9q34.11 / 12q13.13",
+    "mutationSummary": "Perda de função heterozigota em ENG ou ACVRL1 da via TGF-β/BMP vascular"
+  },
+  "inheritance": {
+    "pattern": "ad",
+    "familyStory": "afetados em TODAS as gerações (avó, pai, tia e paciente), homens e mulheres, com expressão variável",
+    "recurrence": {
+      "prompt": "'Tenho a doença. Qual a chance de CADA filho herdar a variante?'",
+      "correct": "50%",
+      "wrong": ["25%", "100%", "Nenhuma chance"]
+    }
+  },
+  "route": {
+    "gene": "ENG/ACVRL1",
+    "protein": "Endoglina/ALK1 (via TGF-β)",
+    "mechanism": "Malformação vascular (telangiectasias e fístulas)",
+    "phenotype": "Epistaxes + telangiectasias + MAVs viscerais",
+    "inheritance": "Autossômica dominante"
+  },
+  "emergencyFiles": [
+    {
+      "prompt": "Consulta por telefone: 'Epistaxes recorrentes com plaquetas, FvW e coagulograma NORMAIS, e pontinhos vermelhos na língua de vários parentes.' Onde está o defeito?",
+      "correct": "Na parede do vaso (telangiectasia hemorrágica hereditária)",
+      "wrong": ["No fator de von Willebrand", "No receptor GPIb da plaqueta", "No fator VIII"],
+      "tags": ["hemostasia-primaria"]
+    }
+  ],
+  "debrief": {
+    "diagnosis": "Telangiectasia hemorrágica hereditária",
+    "route": "ENG/ACVRL1 com perda de função → sinalização TGF-β/BMP falha → telangiectasias e malformações arteriovenosas → epistaxes e sangramentos com hemostasia normal → herança autossômica dominante"
+  }
+}

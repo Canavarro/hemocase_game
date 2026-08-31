@@ -1,0 +1,93 @@
+{
+  "id": "alfa-talassemia",
+  "name": "α-talassemia (doença de HbH)",
+  "medicalId": "alpha_thalassemia",
+  "group": "hemoglobinopatias",
+  "topicTags": ["proteinas-funcoes", "hemoglobina-estrutura", "talassemias", "heranca-autossomica"],
+  "patient": {
+    "descriptor": "menino, 5 anos",
+    "story": "Anemia conhecida desde o primeiro ano, com palidez que piora em infecções e baço palpável; os pais têm microcitose leve em hemogramas antigos, sem ferro baixo."
+  },
+  "clinical": {
+    "correct": [
+      "Anemia crônica desde o primeiro ano",
+      "Palidez que piora durante infecções",
+      "Esplenomegalia palpável",
+      "Pais com microcitose leve sem deficiência de ferro"
+    ],
+    "distractors": [
+      "Hemartroses de repetição",
+      "Petéquias e púrpura difusas",
+      "Trombose venosa profunda",
+      "Sangramento gengival diário",
+      "Eczema com infecções de repetição"
+    ],
+    "evidence": [
+      "Ferritina normal (não é falta de ferro)",
+      "Icterícia leve intermitente"
+    ]
+  },
+  "labs": {
+    "altered": ["Hemoglobina 9,2 g/dL", "VCM 62 fL (microcitose)", "Eletroforese: HbH presente"],
+    "normal": ["Ferritina 80 ng/mL", "Plaquetas 300.000/µL", "TTPa 30 s"]
+  },
+  "smear": {
+    "kind": "microcitica-hipocromica",
+    "finding": "as hemácias são pequenas e pálidas, com células em alvo — e a coloração supravital revela inclusões de HbH"
+  },
+  "protein": {
+    "name": "cadeias α da globina",
+    "assembly": {
+      "prompt": "A eletroforese revela HbH. Montem a hemoglobina ANÔMALA que se acumula quando faltam cadeias α depois do nascimento.",
+      "pieces": [
+        { "id": "alfa", "text": "Cadeia α" },
+        { "id": "beta", "text": "Cadeia β" },
+        { "id": "gama", "text": "Cadeia γ" },
+        { "id": "delta", "text": "Cadeia δ" }
+      ],
+      "slots": ["Suporte 1", "Suporte 2", "Suporte 3", "Suporte 4"],
+      "answer": ["beta", "beta", "beta", "beta"],
+      "hints": [
+        "Sem cadeias α suficientes, as cadeias que sobram se juntam entre si.",
+        "No período fetal o excesso é de γ (Hb Bart = γ4); depois do nascimento, o excesso é de β.",
+        "β, β, β, β — a HbH é um tetrâmero β4."
+      ]
+    },
+    "defect": "produzidas em quantidade reduzida (deleções de genes α)",
+    "consequence": "deixa cadeias β sobrarem e formarem HbH (β4), que precipita e hemolisa",
+    "context": "no desequilíbrio de cadeias,"
+  },
+  "gene": {
+    "symbol": "HBA1/HBA2",
+    "locus": "16p13.3",
+    "mutationSummary": "Deleções de HBA1/HBA2 no cromossomo 16 reduzindo a produção de cadeias α"
+  },
+  "inheritance": {
+    "pattern": "ar",
+    "familyStory": "pais com microcitose leve (portadores de deleções α em arranjos diferentes) e criança com anemia hemolítica moderada",
+    "recurrence": {
+      "prompt": "'Nosso filho tem doença de HbH. Quantos dos QUATRO genes α ele perdeu?'",
+      "correct": "Três dos quatro genes α",
+      "wrong": ["Apenas um gene α", "Dois genes α", "Todos os quatro genes α"]
+    }
+  },
+  "route": {
+    "gene": "HBA1/HBA2 (16p)",
+    "protein": "Cadeias α em quantidade reduzida",
+    "mechanism": "Excesso de cadeias β forma HbH (β4)",
+    "phenotype": "Anemia microcítica + hemólise (doença de HbH)",
+    "inheritance": "Autossômica recessiva"
+  },
+  "emergencyFiles": [
+    {
+      "prompt": "Cartão didático rasgado: 'No feto sem genes α funcionais forma-se a Hb Bart.' Qual é a composição da Hb Bart?",
+      "correct": "γ4 (tetrâmero de cadeias gama)",
+      "wrong": ["β4 (tetrâmero de cadeias beta)", "α2β2", "α2γ2"],
+      "tags": ["talassemias", "hemoglobina-estrutura"]
+    }
+  ],
+  "debrief": {
+    "diagnosis": "α-talassemia (doença de HbH)",
+    "route": "Deleções em HBA1/HBA2 → cadeias α escassas → excesso de β forma HbH (β4) → precipitação e hemólise com microcitose → herança autossômica recessiva de quatro alelos"
+  }
+}

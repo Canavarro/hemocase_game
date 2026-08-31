@@ -1,0 +1,86 @@
+{
+  "id": "wiskott-aldrich",
+  "name": "Síndrome de Wiskott-Aldrich",
+  "medicalId": "wiskott_aldrich",
+  "group": "plaquetopatias",
+  "topicTags": ["proteinas-funcoes", "hemostasia-primaria", "imunodeficiencias-plaquetarias", "heranca-ligada-x"],
+  "patient": {
+    "descriptor": "menino, 18 meses",
+    "story": "Eczema difícil de controlar desde os primeiros meses, três otites e uma pneumonia no último ano, e agora petéquias espalhadas; um primo da mãe morreu pequeno 'de infecção e sangramento'."
+  },
+  "clinical": {
+    "correct": [
+      "Eczema de difícil controle",
+      "Infecções de repetição (otites, pneumonia)",
+      "Petéquias e sangramentos fáceis",
+      "Primo materno com quadro semelhante"
+    ],
+    "distractors": [
+      "Hemartroses de repetição",
+      "Esplenomegalia volumosa isolada",
+      "Crises de dor em mãos e pés",
+      "Trombose venosa profunda",
+      "Albinismo oculocutâneo"
+    ],
+    "evidence": [
+      "Tríade: plaquetas baixas + eczema + infecções",
+      "Somente meninos afetados na família"
+    ]
+  },
+  "labs": {
+    "altered": ["Plaquetas 30.000/µL (reduzidas)", "Volume plaquetário médio BAIXO (plaquetas pequenas)", "Imunoglobulinas com padrão alterado"],
+    "normal": ["TP/INR 1,0", "TTPa 31 s", "Hemoglobina 11,8 g/dL"]
+  },
+  "smear": {
+    "kind": "plaquetas-pequenas",
+    "finding": "as plaquetas são PEQUENAS e raras — o oposto das macroplaquetas de Bernard-Soulier"
+  },
+  "protein": {
+    "name": "WASp (proteína da síndrome de Wiskott-Aldrich)",
+    "role": {
+      "prompt": "O modelo da célula mostra filamentos desarrumados sob a membrana. Qual é o papel da WASp?",
+      "correct": "Organizar o citoesqueleto de ACTINA das células hematopoéticas",
+      "wrong": [
+        "Converter fibrinogênio em fibrina",
+        "Receptor de FvW na membrana plaquetária",
+        "Transportar o fator VIII no plasma"
+      ]
+    },
+    "defect": "deficiente, com o citoesqueleto de actina desorganizado",
+    "consequence": "gera plaquetas pequenas e escassas e linfócitos que funcionam mal",
+    "context": "nas células hematopoéticas,"
+  },
+  "gene": {
+    "symbol": "WAS",
+    "locus": "Xp11.23",
+    "mutationSummary": "Variantes no gene WAS (Xp11.23) comprometendo a WASp"
+  },
+  "inheritance": {
+    "pattern": "xr",
+    "familyStory": "somente meninos adoecem, sempre pela linha materna (o primo materno falecido); as mulheres são portadoras saudáveis",
+    "recurrence": {
+      "prompt": "'Sou portadora da variante no WAS. Qual a chance de um próximo MENINO nascer afetado?'",
+      "correct": "50%",
+      "wrong": ["25%", "100%", "Nenhuma chance"]
+    }
+  },
+  "route": {
+    "gene": "WAS (Xp11.23)",
+    "protein": "WASp (citoesqueleto de actina)",
+    "mechanism": "Plaquetas pequenas e imunidade deficiente",
+    "phenotype": "Microtrombocitopenia + eczema + infecções",
+    "inheritance": "Recessiva ligada ao X"
+  },
+  "emergencyFiles": [
+    {
+      "prompt": "Nota de plantão: 'Dois meninos com plaquetopenia — um com plaquetas GIGANTES, outro com plaquetas PEQUENAS e eczema.' Quais os diagnósticos prováveis, na ordem?",
+      "correct": "Bernard-Soulier e Wiskott-Aldrich",
+      "wrong": ["Wiskott-Aldrich e Bernard-Soulier", "Glanzmann e Hermansky-Pudlak", "Hemofilia A e hemofilia B"],
+      "tags": ["imunodeficiencias-plaquetarias", "bernard-soulier"]
+    }
+  ],
+  "debrief": {
+    "diagnosis": "Síndrome de Wiskott-Aldrich",
+    "route": "WAS (Xp11.23) mutado → WASp deficiente → citoesqueleto de actina desorganizado → microtrombocitopenia + eczema + imunodeficiência → herança recessiva ligada ao X"
+  }
+}

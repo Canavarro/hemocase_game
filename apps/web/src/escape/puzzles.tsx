@@ -110,7 +110,7 @@ function BoardSelectPuzzle({ step, sending, onSubmit }: PuzzleProps) {
 /* ---------- Esfregaço do microscópio: um campo distinto por lâmina ---------- */
 
 const smearSeeds: Record<EscapeSmearKind, number> = {
-  "normal": 11, "falciforme": 47, "microcitica-hipocromica": 83, "plaquetas-gigantes": 29, "esferocitos": 61,
+  "normal": 11, "falciforme": 47, "microcitica-hipocromica": 83, "plaquetas-gigantes": 29, "esferocitos": 61, "plaquetas-pequenas": 97,
 };
 
 /** Gerador determinístico: o mesmo esfregaço aparece igual para toda a equipe. */
@@ -178,23 +178,28 @@ export function SmearField({ kind }: { kind: EscapeSmearKind }) {
     switch (kind) {
       case "falciforme": {
         const cells = scatterCells(random, 22, 9);
-        return { blurred, rbc: cells.slice(0, 11), sickle: cells.slice(11, 20), target: cells.slice(20, 21), platelet: cells.slice(21), small: [], sphero: [], giant: [], neutro: [] as SmearCell[] };
+        return { blurred, rbc: cells.slice(0, 11), sickle: cells.slice(11, 20), target: cells.slice(20, 21), platelet: cells.slice(21), small: [], sphero: [], giant: [], neutro: [] as SmearCell[], tiny: [] as SmearCell[] };
       }
       case "microcitica-hipocromica": {
         const cells = scatterCells(random, 26, 7.6);
-        return { blurred, rbc: [], sickle: [], target: cells.slice(18, 23), platelet: cells.slice(23), small: cells.slice(0, 18), sphero: [], giant: [], neutro: [] as SmearCell[] };
+        return { blurred, rbc: [], sickle: [], target: cells.slice(18, 23), platelet: cells.slice(23), small: cells.slice(0, 18), sphero: [], giant: [], neutro: [] as SmearCell[], tiny: [] as SmearCell[] };
       }
       case "plaquetas-gigantes": {
         const cells = scatterCells(random, 20, 9.4);
-        return { blurred, rbc: cells.slice(0, 14), sickle: [], target: [], platelet: cells.slice(19), small: [], sphero: [], giant: cells.slice(14, 19), neutro: [] as SmearCell[] };
+        return { blurred, rbc: cells.slice(0, 14), sickle: [], target: [], platelet: cells.slice(19), small: [], sphero: [], giant: cells.slice(14, 19), neutro: [] as SmearCell[], tiny: [] as SmearCell[] };
       }
       case "esferocitos": {
         const cells = scatterCells(random, 24, 8);
-        return { blurred, rbc: cells.slice(16, 21), sickle: [], target: [], platelet: cells.slice(21), small: [], sphero: cells.slice(0, 16), giant: [], neutro: [] as SmearCell[] };
+        return { blurred, rbc: cells.slice(16, 21), sickle: [], target: [], platelet: cells.slice(21), small: [], sphero: cells.slice(0, 16), giant: [], neutro: [] as SmearCell[], tiny: [] as SmearCell[] };
+      }
+      case "plaquetas-pequenas": {
+        // Microtrombocitopenia: hemácias normais, plaquetas raras e minúsculas.
+        const cells = scatterCells(random, 20, 9.4);
+        return { blurred, rbc: cells.slice(0, 17), sickle: [], target: [], platelet: [], small: [], sphero: [], giant: [], neutro: [] as SmearCell[], tiny: cells.slice(17) };
       }
       default: {
         const cells = scatterCells(random, 21, 9.6);
-        return { blurred, rbc: cells.slice(0, 17), sickle: [], target: [], platelet: cells.slice(17, 20), small: [], sphero: [], giant: [], neutro: cells.slice(20) };
+        return { blurred, rbc: cells.slice(0, 17), sickle: [], target: [], platelet: cells.slice(17, 20), small: [], sphero: [], giant: [], neutro: cells.slice(20), tiny: [] as SmearCell[] };
       }
     }
   }, [kind]);
@@ -248,6 +253,7 @@ export function SmearField({ kind }: { kind: EscapeSmearKind }) {
         </g>
       ))}
       {layout.platelet.map((cell) => <circle key={`${cell.x}-${cell.y}`} cx={cell.x} cy={cell.y} r={1.15} fill="url(#smear-plt)" />)}
+      {layout.tiny.map((cell) => <circle key={`${cell.x}-${cell.y}`} cx={cell.x} cy={cell.y} r={0.6} fill="url(#smear-plt)" />)}
       {layout.neutro.map((cell) => <Neutrophil key={`${cell.x}-${cell.y}`} cell={cell} />)}
       <circle cx="50" cy="50" r="49" fill="url(#smear-rim)" />
       <circle cx="50" cy="50" r="48.2" fill="none" stroke="rgba(90,140,190,.18)" strokeWidth=".9" />

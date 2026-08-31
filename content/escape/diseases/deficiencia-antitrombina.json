@@ -1,0 +1,86 @@
+{
+  "id": "deficiencia-antitrombina",
+  "name": "Deficiência hereditária de antitrombina",
+  "medicalId": "antithrombin_deficiency",
+  "group": "trombofilias",
+  "topicTags": ["proteinas-funcoes", "hemostasia-secundaria", "trombofilias", "heranca-autossomica"],
+  "patient": {
+    "descriptor": "mulher, 22 anos",
+    "story": "Trombose extensa na veia ilíaca sem nenhum fator desencadeante, aos 22 anos; a mãe teve trombose na primeira gestação e o avô materno, embolia pulmonar aos 45."
+  },
+  "clinical": {
+    "correct": [
+      "Trombose venosa extensa em idade jovem",
+      "Evento sem fator desencadeante claro",
+      "Mãe com trombose na gestação",
+      "Avô materno com embolia pulmonar"
+    ],
+    "distractors": [
+      "Epistaxes de repetição",
+      "Hemartroses de repetição",
+      "Petéquias difusas",
+      "Esplenomegalia com icterícia",
+      "Sangramento gengival diário"
+    ],
+    "evidence": [
+      "Eventos trombóticos em três gerações",
+      "Nenhuma história de sangramento"
+    ]
+  },
+  "labs": {
+    "altered": ["Atividade de antitrombina 45% (persistentemente baixa)", "D-dímero elevado", "Doppler: trombose em veia ilíaca"],
+    "normal": ["Plaquetas 250.000/µL", "TP/INR 1,0", "Hemoglobina 14,1 g/dL"]
+  },
+  "smear": {
+    "kind": "normal",
+    "finding": "o esfregaço é normal — falta um ANTICOAGULANTE natural do plasma, nada muda nas células"
+  },
+  "protein": {
+    "name": "antitrombina",
+    "role": {
+      "prompt": "O diagrama mostra a trombina cercada por um inibidor. Qual é o papel da antitrombina?",
+      "correct": "Inibir a trombina e outros fatores ativados — o principal freio da cascata",
+      "wrong": [
+        "Ativar o fator X na tenase",
+        "Servir de cofator da proteína C ativada",
+        "Ligar a plaqueta ao colágeno"
+      ]
+    },
+    "defect": "com atividade muito reduzida (o freio principal falha)",
+    "consequence": "a trombina circula sem seu inibidor mais importante",
+    "context": "no controle da coagulação,"
+  },
+  "gene": {
+    "symbol": "SERPINC1",
+    "locus": "1q25.1",
+    "mutationSummary": "Variantes em SERPINC1: quantitativas (tipo I) ou qualitativas (tipo II)"
+  },
+  "inheritance": {
+    "pattern": "ad",
+    "familyStory": "afetados em gerações sucessivas (avô, mãe, paciente), homens e mulheres",
+    "recurrence": {
+      "prompt": "'Tenho a deficiência (heterozigota). Qual a chance de CADA filho herdá-la?'",
+      "correct": "50%",
+      "wrong": ["25%", "100%", "Nenhuma chance"]
+    }
+  },
+  "route": {
+    "gene": "SERPINC1 (1q25.1)",
+    "protein": "Antitrombina",
+    "mechanism": "Trombina sem inibição adequada",
+    "phenotype": "Trombose venosa precoce e recorrente",
+    "inheritance": "Autossômica dominante"
+  },
+  "emergencyFiles": [
+    {
+      "prompt": "Interconsulta: 'Trombose em jovem com atividade de antitrombina persistentemente baixa.' Qual gene investigar primeiro?",
+      "correct": "SERPINC1",
+      "wrong": ["PROC", "PROS1", "F8"],
+      "tags": ["trombofilias"]
+    }
+  ],
+  "debrief": {
+    "diagnosis": "Deficiência hereditária de antitrombina",
+    "route": "SERPINC1 mutado → antitrombina reduzida ou disfuncional → trombina e fatores ativados sem freio → trombose venosa precoce/recorrente → herança autossômica dominante"
+  }
+}

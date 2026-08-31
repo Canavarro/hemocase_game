@@ -1,0 +1,93 @@
+{
+  "id": "hemoglobina-c",
+  "name": "Doença da hemoglobina C (HbCC)",
+  "medicalId": "hemoglobin_c",
+  "group": "hemoglobinopatias",
+  "topicTags": ["proteinas-funcoes", "hemoglobina-estrutura", "mutacoes-ponto", "heranca-autossomica"],
+  "patient": {
+    "descriptor": "menina, 7 anos",
+    "story": "Consulta de rotina revelou baço discretamente aumentado e anemia leve que nunca precisou de transfusão; os pais, assintomáticos, têm 'traço de hemoglobina' anotado em exames antigos."
+  },
+  "clinical": {
+    "correct": [
+      "Anemia leve, sem transfusões",
+      "Esplenomegalia discreta",
+      "Icterícia leve intermitente",
+      "Pais assintomáticos com traço de hemoglobina (HbAC)"
+    ],
+    "distractors": [
+      "Hemartroses de repetição",
+      "Crises de dor em mãos e pés",
+      "Epistaxes graves de repetição",
+      "Trombose venosa profunda",
+      "Eczema com infecções de repetição"
+    ],
+    "evidence": [
+      "Curva de crescimento preservada",
+      "Nunca precisou de internação"
+    ]
+  },
+  "labs": {
+    "altered": ["Hemoglobina 10,5 g/dL (anemia leve)", "Reticulócitos 6%", "Eletroforese: HbC predominante"],
+    "normal": ["Plaquetas 290.000/µL", "TTPa 30 s", "TP/INR 1,0"]
+  },
+  "smear": {
+    "kind": "esferocitos",
+    "finding": "há células densas e esferócitos entre células em alvo — a HbC tende a cristalizar e desidratar a hemácia"
+  },
+  "protein": {
+    "name": "hemoglobina",
+    "assembly": {
+      "prompt": "A HbC mantém a composição de cadeias da hemoglobina adulta — a troca é de UM aminoácido na cadeia β. Montem o tetrâmero da hemoglobina deste paciente.",
+      "pieces": [
+        { "id": "alfa", "text": "Cadeia α" },
+        { "id": "beta", "text": "Cadeia β" },
+        { "id": "gama", "text": "Cadeia γ" },
+        { "id": "delta", "text": "Cadeia δ" }
+      ],
+      "slots": ["Suporte 1", "Suporte 2", "Suporte 3", "Suporte 4"],
+      "answer": ["alfa", "alfa", "beta", "beta"],
+      "hints": [
+        "A estrutura de cadeias é a mesma da HbA; o defeito é pontual dentro da cadeia β.",
+        "γ pertence à HbF; δ, à HbA2.",
+        "α, α, β, β — tetrâmero α2β2 com a variante C na cadeia β."
+      ]
+    },
+    "defect": "estruturalmente alterada (HbC, com lisina no lugar do glutamato)",
+    "consequence": "tende a cristalizar e desidratar a hemácia, encurtando sua vida",
+    "context": "dentro da hemácia,"
+  },
+  "gene": {
+    "symbol": "HBB",
+    "locus": "11p15.4",
+    "mutationSummary": "Missense no HBB trocando glutamato por lisina (Glu6Lys tradicional), gerando HbC"
+  },
+  "inheritance": {
+    "pattern": "ar",
+    "familyStory": "pais assintomáticos com traço HbAC e paciente com as duas variantes (HbCC)",
+    "recurrence": {
+      "prompt": "'Nós dois temos o traço HbAC. Qual a chance de um próximo filho ter HbCC?'",
+      "correct": "25%",
+      "wrong": ["50%", "100%", "Nenhuma chance"]
+    }
+  },
+  "route": {
+    "gene": "HBB (11p) · variante C",
+    "protein": "HbC",
+    "mechanism": "Cristalização da hemoglobina na hemácia",
+    "phenotype": "Anemia hemolítica leve + células em alvo",
+    "inheritance": "Autossômica recessiva"
+  },
+  "emergencyFiles": [
+    {
+      "prompt": "Ficha antiga: 'Na mesma posição 6 tradicional da cadeia β, uma doença troca glutamato por VALINA e outra por LISINA.' Quais são, respectivamente?",
+      "correct": "HbS (falciforme) e HbC",
+      "wrong": ["HbC e HbS", "HbF e HbA2", "HbH e Hb Bart"],
+      "tags": ["hemoglobina-estrutura", "mutacoes-ponto"]
+    }
+  ],
+  "debrief": {
+    "diagnosis": "Doença da hemoglobina C (HbCC)",
+    "route": "HBB com troca Glu6Lys → HbC → cristalização e desidratação da hemácia → hemólise leve com células em alvo → herança autossômica recessiva"
+  }
+}

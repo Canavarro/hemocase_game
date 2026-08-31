@@ -134,6 +134,7 @@ Os bancos canônicos estão integrados à aplicação:
 - **Código Relâmpago**: o Host pode sortear a fase BLITZ do `question-bank` com filtros de dificuldade, categoria e expansão (campo `blitz` em `POST /api/sessions`). Roteiro fixo de 30 minutos continua sendo o padrão.
 - **Modo Escape**: os arquivos de emergência (bônus opcionais) são alimentados pelo `question-bank`, filtrados pelos tópicos liberados e excluindo a doença do caso principal.
 - **Gabarito**: `correctOptionId` e `explanation` nunca são enviados ao cliente antes da fase apropriada (o servidor remove ambos do snapshot; correção e pontuação são autoritativas no servidor).
+- **Perfis de Escape**: todas as 17 entidades canônicas têm perfil jogável em `content/escape/diseases` (trilhas principais + expansão: HbC, α-talassemia/HbH, Glanzmann, Hermansky-Pudlak, Wiskott-Aldrich, HHT, fator V Leiden, deficiências de antitrombina, proteína C e proteína S), respeitando as regras médicas deste documento — HbH = β4 e Hb Bart = γ4, hemofilias diferenciadas por dosagem de fator, trombofilias como predisposição, macroplaquetas (BSS) × plaquetas pequenas (WAS), e esfregaço declarado como normal quando não há achado específico.
 
 Divergências normalizadas no conteúdo do jogo conforme a precedência do banco: locus do VWF corrigido para 12p13.31; loci de GP1BA/GP1BB/GP9 detalhados (17p13.2/22q11.21/3q21.3). O perfil de VWD do Escape representa explicitamente o **tipo 1** (autossômico dominante), compatível com a nota canônica de herança mista por subtipo.
 

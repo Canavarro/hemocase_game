@@ -1,0 +1,90 @@
+{
+  "id": "glanzmann",
+  "name": "Trombastenia de Glanzmann",
+  "medicalId": "glanzmann_thrombasthenia",
+  "group": "plaquetopatias",
+  "topicTags": ["proteinas-funcoes", "hemostasia-primaria", "heranca-autossomica"],
+  "patient": {
+    "descriptor": "menina, 6 anos",
+    "story": "Sangramentos de mucosa desde o primeiro ano — gengiva, nariz, pequenos cortes que demoram a parar — com hemograma repetidamente NORMAL; os pais são primos de segundo grau."
+  },
+  "clinical": {
+    "correct": [
+      "Epistaxes e gengivorragia de repetição",
+      "Púrpura e equimoses fáceis",
+      "Sangramento prolongado em pequenos cortes",
+      "Pais consanguíneos"
+    ],
+    "distractors": [
+      "Hemartroses de repetição",
+      "Hematomas musculares profundos",
+      "Crises de dor óssea",
+      "Trombose venosa profunda",
+      "Albinismo oculocutâneo"
+    ],
+    "evidence": [
+      "Contagem de plaquetas repetidamente NORMAL",
+      "Sangramentos sempre mucocutâneos"
+    ]
+  },
+  "labs": {
+    "altered": ["Agregação ausente com ADP, colágeno e epinefrina", "Citometria: GPIIb/IIIa ausente na superfície", "Tempo de sangramento prolongado"],
+    "normal": ["Plaquetas 240.000/µL, de tamanho normal", "Aglutinação com ristocetina PRESERVADA", "TP/INR 1,0"]
+  },
+  "smear": {
+    "kind": "normal",
+    "finding": "o esfregaço é normal — plaquetas em número e tamanho preservados; o defeito é funcional, invisível à morfologia"
+  },
+  "protein": {
+    "name": "integrina GPIIb/IIIa (αIIbβ3)",
+    "role": {
+      "prompt": "A maquete do tampão plaquetário mostra duas plaquetas que não conseguem se unir. Qual é o papel da integrina GPIIb/IIIa?",
+      "correct": "Receptor de fibrinogênio que liga uma plaqueta à outra na AGREGAÇÃO",
+      "wrong": [
+        "Receptor de FvW que faz a ADESÃO ao subendotélio (GPIb)",
+        "Enzima que converte fibrinogênio em fibrina",
+        "Canal de cálcio da membrana plaquetária"
+      ]
+    },
+    "defect": "sem a integrina de agregação funcional na membrana",
+    "consequence": "as plaquetas aderem ao vaso, mas não se agregam entre si",
+    "context": "na formação do tampão,"
+  },
+  "gene": {
+    "symbol": "ITGA2B/ITGB3",
+    "locus": "17q21.31",
+    "mutationSummary": "Variantes bialélicas em ITGA2B ou ITGB3, desmontando a integrina αIIbβ3"
+  },
+  "inheritance": {
+    "pattern": "ar",
+    "familyStory": "pais consanguíneos saudáveis e paciente afetada, sem casos nas gerações anteriores",
+    "recurrence": {
+      "prompt": "'Somos primos e nossa filha tem a doença. Qual o risco em cada nova gestação?'",
+      "correct": "25%",
+      "wrong": ["50%", "100%", "Nenhuma chance"]
+    }
+  },
+  "route": {
+    "gene": "ITGA2B/ITGB3 (17q)",
+    "protein": "Integrina GPIIb/IIIa",
+    "mechanism": "Falha de agregação plaquetária",
+    "phenotype": "Sangramento mucocutâneo com plaquetas normais",
+    "inheritance": "Autossômica recessiva"
+  },
+  "emergencyFiles": [
+    {
+      "prompt": "Quadro comparativo incompleto: 'Bernard-Soulier × Glanzmann'. Qual linha está CORRETA?",
+      "correct": "Bernard-Soulier: adesão/GPIb com macroplaquetas · Glanzmann: agregação/GPIIbIIIa com plaquetas normais",
+      "wrong": [
+        "Bernard-Soulier: agregação/GPIIbIIIa · Glanzmann: adesão/GPIb",
+        "Ambas cursam obrigatoriamente com plaquetas gigantes",
+        "Ambas são deficiências de fatores da coagulação"
+      ],
+      "tags": ["hemostasia-primaria", "bernard-soulier"]
+    }
+  ],
+  "debrief": {
+    "diagnosis": "Trombastenia de Glanzmann",
+    "route": "ITGA2B/ITGB3 mutados → integrina αIIbβ3 ausente/disfuncional → plaquetas aderem mas não agregam → sangramento mucocutâneo com contagem normal → herança autossômica recessiva"
+  }
+}

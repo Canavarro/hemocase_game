@@ -1,0 +1,86 @@
+{
+  "id": "hermansky-pudlak",
+  "name": "Síndrome de Hermansky-Pudlak",
+  "medicalId": "hermansky_pudlak",
+  "group": "plaquetopatias",
+  "topicTags": ["proteinas-funcoes", "hemostasia-primaria", "heranca-autossomica"],
+  "patient": {
+    "descriptor": "menino, 8 anos",
+    "story": "Pele e cabelos muito claros desde o nascimento, baixa visão com nistagmo, e um histórico de equimoses e epistaxes desproporcionais; a família procurou o serviço após um sangramento prolongado em extração dentária."
+  },
+  "clinical": {
+    "correct": [
+      "Hipopigmentação de pele e cabelos (albinismo oculocutâneo)",
+      "Baixa visão com nistagmo",
+      "Equimoses e epistaxes desproporcionais",
+      "Sangramento prolongado após procedimento dentário"
+    ],
+    "distractors": [
+      "Hemartroses de repetição",
+      "Crises de dor em mãos e pés",
+      "Trombose venosa profunda",
+      "Esplenomegalia volumosa",
+      "Icterícia com colúria"
+    ],
+    "evidence": [
+      "Fotofobia importante",
+      "Sangramentos sempre mucocutâneos"
+    ]
+  },
+  "labs": {
+    "altered": ["Tempo de sangramento prolongado", "Agregação: segunda onda ausente (defeito de secreção)", "Microscopia eletrônica: ausência de corpos densos plaquetários"],
+    "normal": ["Plaquetas 210.000/µL (contagem normal)", "TP/INR 1,0", "TTPa 30 s"]
+  },
+  "smear": {
+    "kind": "normal",
+    "finding": "à microscopia ÓPTICA o esfregaço parece normal — a ausência dos grânulos densos só aparece na microscopia eletrônica"
+  },
+  "protein": {
+    "name": "proteínas HPS (biogênese de organelas)",
+    "role": {
+      "prompt": "O painel da bancada liga plaquetas e melanócitos ao mesmo defeito. Qual é o papel das proteínas HPS?",
+      "correct": "Construir organelas relacionadas a lisossomos: grânulos densos das plaquetas e melanossomos",
+      "wrong": [
+        "Converter fibrinogênio em fibrina",
+        "Servir de receptor de adesão ao colágeno",
+        "Transportar oxigênio no plasma"
+      ]
+    },
+    "defect": "sem grânulos densos para secretar",
+    "consequence": "a ativação plaquetária não se amplifica e o tampão fica frouxo",
+    "context": "após a adesão inicial,"
+  },
+  "gene": {
+    "symbol": "HPS1",
+    "locus": "múltiplos loci (HPS1 em 10q24)",
+    "mutationSummary": "Variantes bialélicas em genes HPS (ex.: HPS1) da biogênese de organelas"
+  },
+  "inheritance": {
+    "pattern": "ar",
+    "familyStory": "pais saudáveis de pigmentação normal e paciente afetado — o defeito precisa vir dos dois lados",
+    "recurrence": {
+      "prompt": "'Nosso filho tem a síndrome. Qual o risco de um próximo filho também ter?'",
+      "correct": "25%",
+      "wrong": ["50%", "100%", "Nenhuma chance"]
+    }
+  },
+  "route": {
+    "gene": "Genes HPS (ex.: HPS1)",
+    "protein": "Maquinaria dos grânulos densos",
+    "mechanism": "Falha de secreção plaquetária (pool de armazenamento)",
+    "phenotype": "Sangramento mucocutâneo + albinismo oculocutâneo",
+    "inheritance": "Autossômica recessiva"
+  },
+  "emergencyFiles": [
+    {
+      "prompt": "Laudo de microscopia eletrônica esquecido: 'Plaquetas SEM corpos densos' em paciente com hipopigmentação e sangramento. Qual é a síndrome?",
+      "correct": "Síndrome de Hermansky-Pudlak",
+      "wrong": ["Síndrome de Wiskott-Aldrich", "Bernard-Soulier", "Trombastenia de Glanzmann"],
+      "tags": ["hemostasia-primaria"]
+    }
+  ],
+  "debrief": {
+    "diagnosis": "Síndrome de Hermansky-Pudlak",
+    "route": "Genes HPS mutados → organelas relacionadas a lisossomos defeituosas → plaquetas sem grânulos densos + melanossomos falhos → sangramento mucocutâneo com albinismo → herança autossômica recessiva"
+  }
+}

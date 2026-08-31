@@ -1,0 +1,94 @@
+{
+  "id": "fator-v-leiden",
+  "name": "Trombofilia por fator V Leiden",
+  "medicalId": "factor_v_leiden",
+  "group": "trombofilias",
+  "topicTags": ["proteinas-funcoes", "hemostasia-secundaria", "trombofilias", "mutacoes-ponto", "heranca-autossomica"],
+  "patient": {
+    "descriptor": "homem, 28 anos",
+    "story": "Trombose venosa profunda na perna direita depois de um voo longo — mas o irmão teve o mesmo aos 30 anos, sem viagem nenhuma; o pai usa anticoagulante desde uma embolia pulmonar."
+  },
+  "clinical": {
+    "correct": [
+      "Trombose venosa profunda em adulto jovem",
+      "Irmão com trombose sem fator desencadeante",
+      "Pai anticoagulado após embolia pulmonar",
+      "Edema e dor assimétricos na perna"
+    ],
+    "distractors": [
+      "Epistaxes de repetição",
+      "Petéquias e púrpura",
+      "Hemartroses de repetição",
+      "Icterícia com esplenomegalia",
+      "Eczema com infecções"
+    ],
+    "evidence": [
+      "Trombose em vários parentes jovens",
+      "Nenhum sangramento anormal na história"
+    ]
+  },
+  "labs": {
+    "altered": ["Resistência à proteína C ativada detectada", "D-dímero elevado", "Doppler: trombo em veia femoral superficial"],
+    "normal": ["Plaquetas 260.000/µL", "TTPa 29 s", "TP/INR 1,0"]
+  },
+  "smear": {
+    "kind": "normal",
+    "finding": "o esfregaço é normal — a doença mora na REGULAÇÃO da coagulação, não nas células"
+  },
+  "protein": {
+    "name": "fator V",
+    "role": {
+      "prompt": "O diagrama da cascata destaca o fator V com um cadeado. Qual é o papel normal do fator V e do seu 'freio'?",
+      "correct": "Cofator da protrombinase, normalmente DESLIGADO pela proteína C ativada",
+      "wrong": [
+        "Receptor de adesão plaquetária inativado pela trombina",
+        "Enzima que degrada a fibrina",
+        "Transportador do fator IX"
+      ]
+    },
+    "defect": "resistente à inativação pela proteína C ativada (variante Leiden)",
+    "consequence": "continua ativo e sustenta a geração de trombina além do necessário",
+    "context": "quando o freio anticoagulante atua,"
+  },
+  "gene": {
+    "symbol": "F5",
+    "locus": "1q24.2",
+    "mutationSummary": "F5 c.1601G>A (Arg506Gln tradicional) — o fator V Leiden"
+  },
+  "inheritance": {
+    "pattern": "ad",
+    "familyStory": "trombose venosa em gerações sucessivas (pai, irmão), homens e mulheres, com muitos portadores assintomáticos",
+    "recurrence": {
+      "prompt": "'Sou heterozigoto para o fator V Leiden. O que acontece com meus filhos?'",
+      "correct": "Cada filho tem 50% de chance de herdar a variante — e herdar significa predisposição, não certeza de trombose",
+      "wrong": [
+        "Todos herdam a variante e terão trombose",
+        "25% herdam a variante e todos esses terão trombose",
+        "Variantes de predisposição não são herdadas"
+      ]
+    }
+  },
+  "route": {
+    "gene": "F5 (1q24.2)",
+    "protein": "Fator V resistente à proteína C ativada",
+    "mechanism": "Freio anticoagulante ineficaz sobre o fator Va",
+    "phenotype": "Predisposição a trombose venosa",
+    "inheritance": "Autossômica dominante (predisposição)"
+  },
+  "emergencyFiles": [
+    {
+      "prompt": "Ficha de aconselhamento: 'Portador heterozigoto de fator V Leiden, assintomático.' Qual orientação está CORRETA?",
+      "correct": "A variante aumenta o risco de trombose, mas muitos portadores nunca terão evento",
+      "wrong": [
+        "Todo portador terá trombose em algum momento",
+        "A variante causa sangramento mucocutâneo",
+        "A variante só importa se vier dos dois pais"
+      ],
+      "tags": ["trombofilias"]
+    }
+  ],
+  "debrief": {
+    "diagnosis": "Trombofilia por fator V Leiden",
+    "route": "F5 com Arg506Gln → fator Va resistente à proteína C ativada → geração de trombina prolongada → predisposição a trombose venosa (penetrância incompleta) → herança autossômica dominante"
+  }
+}

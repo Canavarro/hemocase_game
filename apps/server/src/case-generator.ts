@@ -88,6 +88,7 @@ const smearLabels: Record<EscapeSmearKind, string> = {
   "microcitica-hipocromica": "microcitose e hipocromia com células em alvo",
   "plaquetas-gigantes": "plaquetas gigantes e escassas",
   "esferocitos": "esferócitos densos sem palidez central",
+  "plaquetas-pequenas": "plaquetas pequenas e raras (microtrombocitopenia)",
 };
 
 function generatePatientId(rng: Rng): string {

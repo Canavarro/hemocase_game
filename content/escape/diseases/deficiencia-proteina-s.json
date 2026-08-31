@@ -1,0 +1,90 @@
+{
+  "id": "deficiencia-proteina-s",
+  "name": "Deficiência hereditária de proteína S",
+  "medicalId": "protein_s_deficiency",
+  "group": "trombofilias",
+  "topicTags": ["proteinas-funcoes", "hemostasia-secundaria", "trombofilias", "heranca-autossomica"],
+  "patient": {
+    "descriptor": "mulher, 27 anos",
+    "story": "Trombose femoropoplítea confirmada no Doppler, fora de gestação e sem uso de estrogênio; o pai teve trombose aos 38 e uma prima paterna, embolia pulmonar."
+  },
+  "clinical": {
+    "correct": [
+      "Trombose venosa profunda confirmada",
+      "Evento fora de gestação e sem estrogênio",
+      "Pai com trombose antes dos 40",
+      "Prima paterna com embolia pulmonar"
+    ],
+    "distractors": [
+      "Epistaxes de repetição",
+      "Hemartroses de repetição",
+      "Sangramento gengival diário",
+      "Esplenomegalia volumosa",
+      "Eczema com infecções"
+    ],
+    "evidence": [
+      "Dosagem feita fora de gestação e sem anticoagulação",
+      "História familiar paterna de trombose"
+    ]
+  },
+  "labs": {
+    "altered": ["Proteína S livre 30%", "D-dímero elevado", "Doppler: trombose femoropoplítea"],
+    "normal": ["Proteína C 95%", "Antitrombina 102%", "Plaquetas 255.000/µL"]
+  },
+  "smear": {
+    "kind": "normal",
+    "finding": "o esfregaço é normal — falta o COFATOR da via da proteína C, invisível à morfologia"
+  },
+  "protein": {
+    "name": "proteína S",
+    "role": {
+      "prompt": "O painel mostra a proteína C ativada trabalhando sozinha, sem ajudante. Qual é o papel da proteína S?",
+      "correct": "Ser o COFATOR da proteína C ativada na inativação dos fatores Va e VIIIa",
+      "wrong": [
+        "Inibir diretamente a trombina",
+        "Transportar oxigênio no plasma",
+        "Ser o receptor de FvW da plaqueta"
+      ]
+    },
+    "defect": "reduzida (o cofator falta)",
+    "consequence": "a proteína C ativada trabalha sem cofator e inativa mal os fatores Va e VIIIa",
+    "context": "na via da proteína C,"
+  },
+  "gene": {
+    "symbol": "PROS1",
+    "locus": "3q11.1",
+    "mutationSummary": "Variantes em PROS1 reduzindo a proteína S livre ou sua função"
+  },
+  "inheritance": {
+    "pattern": "ad",
+    "familyStory": "afetados na linha paterna em gerações sucessivas (pai, prima), homens e mulheres, com penetrância variável",
+    "recurrence": {
+      "prompt": "'Sou heterozigota para a deficiência. Qual a chance de CADA filho herdá-la?'",
+      "correct": "50%",
+      "wrong": ["25%", "100%", "Nenhuma chance"]
+    }
+  },
+  "route": {
+    "gene": "PROS1 (3q11.1)",
+    "protein": "Proteína S",
+    "mechanism": "Via da proteína C sem cofator",
+    "phenotype": "Trombose venosa em contexto familiar",
+    "inheritance": "Autossômica dominante"
+  },
+  "emergencyFiles": [
+    {
+      "prompt": "Nota do laboratório: 'Proteína S baixa em gestante — repetir fora da gestação.' Por quê?",
+      "correct": "Gestação e estrogênio reduzem a proteína S; um valor baixo isolado não prova deficiência hereditária",
+      "wrong": [
+        "A proteína S não existe na gestação",
+        "O exame só funciona em homens",
+        "A gestação aumenta a proteína S e mascara o resultado"
+      ],
+      "tags": ["trombofilias"]
+    }
+  ],
+  "debrief": {
+    "diagnosis": "Deficiência hereditária de proteína S",
+    "route": "PROS1 mutado → proteína S livre reduzida → proteína C ativada sem cofator → fatores Va e VIIIa mal inativados → trombose venosa familiar → herança autossômica dominante"
+  }
+}
