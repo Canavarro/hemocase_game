@@ -1,0 +1,32 @@
+# Verifica a saúde da produção no Render após cada publicação na main.
+# O deploy do Render é assíncrono, então o job aguarda (até ~15 min) o serviço
+# responder — e reporta se a persistência (DATABASE_URL/Neon) está ativa.
+name: Health check produção
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+
+jobs:
+  health:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Aguardar deploy e verificar /api/health
+        run: |
+          url="https://hemocase-scape.onrender.com/api/health"
+          last=""
+          for i in $(seq 1 45); do
+            last=$(curl -sS --max-time 15 "$url" || true)
+            echo "tentativa $i: $last"
+            if echo "$last" | grep -q '"db":true'; then
+              echo "PRODUCAO_OK: servidor no ar e persistência Neon ativa (db:true)."
+              curl -sS --max-time 15 "https://hemocase-scape.onrender.com/api/rankings" | head -c 500 || true
+              echo
+              exit 0
+            fi
+            sleep 20
+          done
+          echo "FALHA: db nunca ficou true. Última resposta: $last"
+          echo "Se ok:true com db:false, o serviço está no ar mas sem DATABASE_URL válida (ver logs do Render)."
+          exit 1
