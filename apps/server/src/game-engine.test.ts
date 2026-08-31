@@ -140,10 +140,16 @@ describe("GameEngine · modo Escape", () => {
       .toThrowError(/não está instalado/i);
   });
 
-  it("com caseId e tópicos explícitos, exige os tópicos obrigatórios do caso", () => {
+  it("tópicos marcados nunca vetam um caso escolhido explicitamente; só limitam os bônus", () => {
     const engine = new GameEngine(content, [escapeCase]);
-    expect(() => engine.createSession("http://x", "ZERO_ROUND", { mode: "ESCAPE", caseId: escapeCase.id, allowedTopics: ["hemofilias"] }))
-      .toThrowError(/tópicos não liberados/i);
+    const session = engine.createSession("http://x", "ZERO_ROUND", { mode: "ESCAPE", caseId: escapeCase.id, allowedTopics: ["hemofilias"] });
+    expect(session.escapeCase!.id).toBe(escapeCase.id);
+    // Sessão registra a união (marcações + tópicos do caso).
+    for (const tag of escapeCase.topicTags) expect(session.allowedTopics).toContain(tag);
+    expect(session.allowedTopics).toContain("hemofilias");
+    // Bônus fora das marcações da turma ficam de fora.
+    const optional = session.escapeCase!.rooms.flatMap((room) => room.steps).filter((step) => step.optional);
+    expect(optional).toHaveLength(0);
   });
 
   it("equipe começa com 100 bases e resolve enigmas com validação no servidor", () => {

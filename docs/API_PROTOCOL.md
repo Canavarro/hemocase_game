@@ -211,10 +211,12 @@ Os bancos canônicos (`medical-knowledge` + `question-bank`) são validados na i
 - em `ESCAPE` sem `caseId`, o servidor sorteia um caso elegível: todas as `topicTags` obrigatórias do caso precisam estar em `allowedTopics`, senão responde `422` listando os tópicos exigidos;
 - com `caseId`, a sessão fica fixada naquele caso (jogo inteiro sobre uma única doença). Sem `allowedTopics`, os tópicos herdam as `topicTags` do próprio caso; com `allowedTopics`, os tópicos obrigatórios do caso precisam estar presentes, senão `422`;
 - com `generator`, o servidor GERA um caso inédito a partir da base de conhecimento (`content/escape/diseases`):
+  - `{ "generator": { "mode": "auto" } }` — usa um caso pronto se ele couber integralmente nos tópicos marcados; senão gera da doença mais compatível (origem padrão do Host);
   - `{ "generator": { "mode": "disease", "diseaseId": "hemofilia-a" } }` — todo o jogo sobre a doença escolhida;
+  - `{ "generator": { "mode": "diseases", "diseaseIds": ["hemofilia-a", "hemofilia-b"] } }` — sorteia UMA entre as doenças listadas (uma ou mais);
   - `{ "generator": { "mode": "group", "group": "coagulopatias" } }` — sorteia uma doença do assunto;
   - `{ "generator": { "mode": "any" } }` — sorteia qualquer doença instalada (aula inteira).
-  Em todos os modos, `allowedTopics` (quando enviado) filtra as doenças elegíveis e os arquivos de emergência; sem ele, os tópicos herdam os da doença sorteada. Paciente, senhas, distratores e ordem das alternativas mudam a cada geração (seed aleatório por sessão), e nos enigmas de girar a combinação correta nunca fica na primeira posição dos seletores;
+  `allowedTopics` NUNCA veta uma escolha explícita (disease/diseases/caseId): nos sorteios ele prioriza as doenças mais bem cobertas pelos tópicos marcados, e em todos os modos limita apenas os arquivos de emergência (bônus). A sessão registra em `allowedTopics` a união das marcações com os tópicos da doença sorteada. Erros `422` ocorrem somente quando falta conteúdo de verdade (doença/assunto inexistente, nenhuma doença instalada). Paciente, senhas, distratores e ordem das alternativas mudam a cada geração (seed aleatório por sessão), e nos enigmas de girar a combinação correta nunca fica na primeira posição dos seletores;
 - enigmas opcionais com tags não liberadas são removidos da cópia da sessão e nunca chegam a nenhum cliente.
 
 `GET /api/escape/cases` lista os casos instalados para o Host escolher: `{ cases: [{ id, title, patientLabel, diagnosis, topicTags, roomCount }] }`.

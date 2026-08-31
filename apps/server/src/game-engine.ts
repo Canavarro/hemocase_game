@@ -143,9 +143,11 @@ export class GameEngine {
     let allowedTopics = options.allowedTopics ?? [];
     let escapeCase: EscapeCase | undefined;
     if (mode === "ESCAPE") {
-      ({ escapeCase, allowedTopics } = options.generator
-        ? this.generateCase(options.generator, allowedTopics)
-        : this.pickEscapeCase(allowedTopics, options.caseId));
+      ({ escapeCase, allowedTopics } = options.generator?.mode === "auto"
+        ? this.autoCase(allowedTopics)
+        : options.generator
+          ? this.generateCase(options.generator, allowedTopics)
+          : this.pickEscapeCase(allowedTopics, options.caseId));
     }
     let blitzQuestions: Question[] | undefined;
     if (mode === "QUIZ" && options.blitz?.source === "bank") {
@@ -186,13 +188,10 @@ export class GameEngine {
   private pickEscapeCase(allowedTopics: EscapeTopic[], caseId?: string): { escapeCase: EscapeCase; allowedTopics: EscapeTopic[] } {
     if (!this.escapeCases.length) throw new Error("Nenhum caso do modo Escape está instalado em content/escape/cases.");
     let pick: EscapeCase;
-    let topics: EscapeTopic[];
     if (caseId) {
+      // Escolha explícita do professor: os tópicos marcados nunca a vetam.
       const found = this.escapeCases.find((candidate) => candidate.id === caseId);
       if (!found) throw new Error(`O caso "${caseId}" não está instalado em content/escape/cases.`);
-      topics = allowedTopics.length ? allowedTopics : [...found.topicTags];
-      const missing = found.topicTags.filter((tag) => !topics.includes(tag));
-      if (missing.length) throw new Error(`O caso escolhido exige tópicos não liberados: ${missing.join(", ")}.`);
       pick = found;
     } else {
       const allowed = new Set(allowedTopics);
@@ -202,61 +201,87 @@ export class GameEngine {
         for (const candidate of this.escapeCases) {
           for (const tag of candidate.topicTags) if (!allowed.has(tag)) missing.add(tag);
         }
-        throw new Error(`Nenhum caso cabe nos tópicos liberados. Tópicos exigidos pelos casos disponíveis: ${[...missing].join(", ")}.`);
+        throw new Error(`Nenhum caso pronto cabe nos tópicos liberados. Tópicos exigidos pelos casos disponíveis: ${[...missing].join(", ")}.`);
       }
       pick = eligible[randomBytes(1)[0]! % eligible.length]!;
-      topics = allowedTopics;
     }
-    // Cópia com os enigmas opcionais filtrados pelos tópicos liberados.
-    const allowed = new Set(topics);
+    // Bônus (enigmas opcionais) continuam limitados ao que a turma já viu.
+    const marks = allowedTopics.length ? allowedTopics : [...pick.topicTags];
+    const bonusAllowed = new Set(marks);
     return {
-      allowedTopics: topics,
+      allowedTopics: [...new Set([...marks, ...pick.topicTags])],
       escapeCase: {
         ...pick,
         rooms: pick.rooms.map((room) => ({
           ...room,
-          steps: room.steps.filter((step) => !step.optional || step.tags.every((tag) => allowed.has(tag))),
+          steps: room.steps.filter((step) => !step.optional || step.tags.every((tag) => bonusAllowed.has(tag))),
         })),
       },
     };
   }
 
   /**
+   * Origem automática: usa um caso pronto quando ele cabe integralmente nos
+   * tópicos marcados; senão, gera um caso da doença mais bem coberta por eles.
+   */
+  private autoCase(allowedTopics: EscapeTopic[]): { escapeCase: EscapeCase; allowedTopics: EscapeTopic[] } {
+    if (this.escapeCases.length && allowedTopics.length) {
+      const allowed = new Set(allowedTopics);
+      if (this.escapeCases.some((candidate) => candidate.topicTags.every((tag) => allowed.has(tag)))) {
+        return this.pickEscapeCase(allowedTopics);
+      }
+    }
+    if (this.diseases.length) return this.generateCase({ mode: "any" }, allowedTopics);
+    return this.pickEscapeCase(allowedTopics);
+  }
+
+  /**
    * Gera um caso a partir da base de conhecimento de doenças, conforme o modo:
    * - `disease`: todo o jogo sobre a doença escolhida;
+   * - `diseases`: sorteia entre as doenças LISTADAS pelo professor (uma ou mais);
    * - `group`: sorteia uma doença do assunto (grupo) escolhido;
    * - `any`: sorteia entre todas as doenças instaladas (aula inteira).
-   * Sem tópicos explícitos, os tópicos herdam os da doença sorteada.
+   * Os tópicos marcados nunca vetam uma escolha explícita; nos sorteios, eles
+   * apenas priorizam as doenças mais bem cobertas pelo que a turma já viu.
+   * Sem tópicos marcados, os tópicos herdam os da doença sorteada.
    */
   private generateCase(request: EscapeGeneratorRequest, allowedTopics: EscapeTopic[]): { escapeCase: EscapeCase; allowedTopics: EscapeTopic[] } {
     if (!this.diseases.length) throw new Error("Nenhuma doença está instalada em content/escape/diseases.");
     let candidates = this.diseases;
+    let explicitChoice = false;
     if (request.mode === "disease") {
       if (!request.diseaseId) throw new Error("Informe a doença (diseaseId) para gerar o caso.");
       candidates = this.diseases.filter((disease) => disease.id === request.diseaseId);
       if (!candidates.length) throw new Error(`A doença "${request.diseaseId}" não está instalada em content/escape/diseases.`);
+      explicitChoice = true;
+    }
+    if (request.mode === "diseases") {
+      const ids = request.diseaseIds ?? [];
+      if (!ids.length) throw new Error("Informe ao menos uma doença (diseaseIds) para gerar o caso.");
+      candidates = this.diseases.filter((disease) => ids.includes(disease.id));
+      if (!candidates.length) throw new Error(`Nenhuma das doenças escolhidas está instalada: ${ids.join(", ")}.`);
+      explicitChoice = true;
     }
     if (request.mode === "group") {
       if (!request.group) throw new Error("Informe o assunto (group) para gerar o caso.");
       candidates = this.diseases.filter((disease) => disease.group === request.group);
       if (!candidates.length) throw new Error(`Nenhuma doença do assunto "${request.group}" está instalada.`);
     }
-    if (allowedTopics.length) {
+    if (!explicitChoice && allowedTopics.length) {
       const allowed = new Set(allowedTopics);
-      const eligible = candidates.filter((disease) => disease.topicTags.every((tag) => allowed.has(tag)));
-      if (!eligible.length) {
-        const missing = new Set<string>();
-        for (const disease of candidates) {
-          for (const tag of disease.topicTags) if (!allowed.has(tag)) missing.add(tag);
-        }
-        throw new Error(`Nenhuma doença cabe nos tópicos liberados. Tópicos exigidos: ${[...missing].join(", ")}.`);
-      }
-      candidates = eligible;
+      const coverage = (disease: DiseaseKnowledge) =>
+        disease.topicTags.filter((tag) => allowed.has(tag)).length / disease.topicTags.length;
+      const best = Math.max(...candidates.map(coverage));
+      candidates = candidates.filter((disease) => coverage(disease) === best);
     }
     const profile = candidates[randomBytes(1)[0]! % candidates.length]!;
-    const topics = allowedTopics.length ? allowedTopics : [...profile.topicTags];
+    // Marcações da turma limitam apenas os bônus; a sessão registra a união real.
+    const marks = allowedTopics.length ? allowedTopics : [...profile.topicTags];
     const seed = randomBytes(4).readUInt32LE(0);
-    return { allowedTopics: topics, escapeCase: generateEscapeCase(profile, this.diseases, seed, topics, this.bankEmergencyFiles) };
+    return {
+      allowedTopics: [...new Set([...marks, ...profile.topicTags])],
+      escapeCase: generateEscapeCase(profile, this.diseases, seed, marks, this.bankEmergencyFiles),
+    };
   }
 
   /**

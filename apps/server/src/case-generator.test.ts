@@ -1,7 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
-import type { DiseaseKnowledge, GameContent } from "@hemocase/shared";
+import type { DiseaseKnowledge, EscapeCase, GameContent } from "@hemocase/shared";
 import { generateEscapeCase, validateDisease } from "./case-generator.js";
 import { GameEngine } from "./game-engine.js";
 
@@ -9,6 +9,7 @@ const diseasesDir = path.resolve(process.cwd(), "../../content/escape/diseases")
 const diseases = fs.readdirSync(diseasesDir).filter((file) => file.endsWith(".json"))
   .map((file) => JSON.parse(fs.readFileSync(path.join(diseasesDir, file), "utf8")) as DiseaseKnowledge);
 const content = JSON.parse(fs.readFileSync(path.resolve(process.cwd(), "../../content/game.pt-BR.json"), "utf8")) as GameContent;
+const authoredCase = JSON.parse(fs.readFileSync(path.resolve(process.cwd(), "../../content/escape/cases/falciforme-a17.json"), "utf8")) as EscapeCase;
 
 describe("Base de conhecimento de doenças", () => {
   it("instala pelo menos 4 doenças válidas em mais de um grupo", () => {
@@ -142,6 +143,56 @@ describe("GameEngine · gerador por doença/assunto/aula", () => {
     const engine = new GameEngine(content, [], diseases);
     expect(() => engine.createSession("http://x", "ZERO_ROUND", { mode: "ESCAPE", generator: { mode: "disease", diseaseId: "doenca-fantasma" } }))
       .toThrowError(/não está instalada/i);
+  });
+
+  it("gera sorteando entre VÁRIAS doenças escolhidas (modo diseases)", () => {
+    const engine = new GameEngine(content, [], diseases);
+    for (let round = 0; round < 5; round += 1) {
+      const session = engine.createSession("http://x", "ZERO_ROUND", {
+        mode: "ESCAPE",
+        generator: { mode: "diseases", diseaseIds: ["hemofilia-a", "hemofilia-b"] },
+      });
+      expect(session.escapeCase!.id).toMatch(/^gen-hemofilia-(a|b)-/);
+    }
+  });
+
+  it("no sorteio, tópicos marcados priorizam a doença mais bem coberta em vez de bloquear", () => {
+    const engine = new GameEngine(content, [], diseases);
+    // Marcar só "Doença de von Willebrand" (o cenário que antes dava erro).
+    const session = engine.createSession("http://x", "ZERO_ROUND", {
+      mode: "ESCAPE",
+      generator: { mode: "any" },
+      allowedTopics: ["von-willebrand"],
+    });
+    expect(session.escapeCase!.id).toMatch(/^gen-von-willebrand-/);
+  });
+
+  it("escolha explícita de doença nunca é vetada pelos tópicos marcados", () => {
+    const engine = new GameEngine(content, [], diseases);
+    const session = engine.createSession("http://x", "ZERO_ROUND", {
+      mode: "ESCAPE",
+      generator: { mode: "disease", diseaseId: "anemia-falciforme" },
+      allowedTopics: ["hemofilias"],
+    });
+    expect(session.escapeCase!.id).toMatch(/^gen-anemia-falciforme-/);
+    expect(session.allowedTopics).toContain("hemofilias");
+    expect(session.allowedTopics).toContain("anemia-falciforme");
+  });
+
+  it("modo auto usa caso pronto quando ele cabe nos tópicos, senão gera o mais compatível", () => {
+    const engine = new GameEngine(content, [authoredCase], diseases);
+    const covered = engine.createSession("http://x", "ZERO_ROUND", {
+      mode: "ESCAPE",
+      generator: { mode: "auto" },
+      allowedTopics: [...authoredCase.topicTags],
+    });
+    expect(covered.escapeCase!.id).toBe(authoredCase.id);
+    const generated = engine.createSession("http://x", "ZERO_ROUND", {
+      mode: "ESCAPE",
+      generator: { mode: "auto" },
+      allowedTopics: ["von-willebrand"],
+    });
+    expect(generated.escapeCase!.id).toMatch(/^gen-von-willebrand-/);
   });
 
   it("expõe a biblioteca completa para o Host", () => {

@@ -367,9 +367,15 @@ export interface EscapeLibrary {
 }
 
 export const escapeGeneratorSchema = z.object({
-  mode: z.enum(["any", "group", "disease"]),
+  /**
+   * auto: caso pronto se couber nos tópicos, senão gera da doença mais compatível;
+   * any: gera sorteando entre todas; group: dentro do assunto; disease: uma doença;
+   * diseases: sorteia entre as doenças listadas em diseaseIds (uma ou mais).
+   */
+  mode: z.enum(["auto", "any", "group", "disease", "diseases"]),
   group: z.enum(diseaseGroups).optional(),
   diseaseId: z.string().trim().min(1).max(64).optional(),
+  diseaseIds: z.array(z.string().trim().min(1).max(64)).min(1).max(32).optional(),
 });
 export type EscapeGeneratorRequest = z.infer<typeof escapeGeneratorSchema>;
 

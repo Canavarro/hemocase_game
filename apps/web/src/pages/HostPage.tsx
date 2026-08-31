@@ -30,6 +30,7 @@ export function HostPage() {
   const [durationMin, setDurationMin] = useState(35);
   const [library, setLibrary] = useState<EscapeLibrary>({ cases: [], diseases: [] });
   const [source, setSource] = useState("");
+  const [pickedDiseases, setPickedDiseases] = useState<string[]>([]);
   const [blitzSource, setBlitzSource] = useState<"script" | "bank">("script");
   const [blitzDifficulties, setBlitzDifficulties] = useState<QuestionDifficulty[]>([]);
   const [blitzCategories, setBlitzCategories] = useState<QuestionCategory[]>([]);
@@ -45,7 +46,7 @@ export function HostPage() {
       .catch(() => setLibrary({ cases: [], diseases: [] }));
   }, [mode, library.cases.length, library.diseases.length]);
 
-  /** Origem do caso: sorteio, caso pronto, doença específica, assunto ou aula inteira. */
+  /** Origem do caso: automático, caso pronto, doença(s) específica(s), assunto ou aula inteira. */
   function pickSource(next: string) {
     setSource(next);
     const [kind, id] = next.split(":");
@@ -57,6 +58,13 @@ export function HostPage() {
       const picked = library.diseases.find((item) => item.id === id);
       if (picked) setTopics([...picked.topicTags]);
     }
+    if (kind === "multi") {
+      const tags = new Set<EscapeTopic>();
+      for (const disease of library.diseases) {
+        if (pickedDiseases.includes(disease.id)) for (const tag of disease.topicTags) tags.add(tag);
+      }
+      if (tags.size) setTopics([...tags]);
+    }
     if (kind === "group") {
       const tags = new Set<EscapeTopic>();
       for (const disease of library.diseases) {
@@ -65,6 +73,18 @@ export function HostPage() {
       if (tags.size) setTopics([...tags]);
     }
     if (kind === "any") setTopics([...escapeTopics]);
+  }
+
+  function toggleDisease(id: string) {
+    setPickedDiseases((current) => {
+      const next = current.includes(id) ? current.filter((item) => item !== id) : [...current, id];
+      const tags = new Set<EscapeTopic>();
+      for (const disease of library.diseases) {
+        if (next.includes(disease.id)) for (const tag of disease.topicTags) tags.add(tag);
+      }
+      if (tags.size) setTopics([...tags]);
+      return next;
+    });
   }
 
   function sourceNote(): string | undefined {
@@ -77,11 +97,16 @@ export function HostPage() {
       const picked = library.diseases.find((item) => item.id === id);
       return `A SENTINELA vai GERAR um caso inédito de ${picked?.name ?? "uma doença específica"}: paciente, senhas e alternativas mudam a cada sessão, mas todo o jogo é sobre essa doença.`;
     }
+    if (kind === "multi") {
+      return pickedDiseases.length
+        ? `A SENTINELA sorteia UMA das ${pickedDiseases.length} doença(s) marcada(s) e gera um caso inédito sobre ela.`
+        : "Marque uma ou mais doenças abaixo; a SENTINELA sorteia uma delas e gera o caso.";
+    }
     if (kind === "group") {
       return `A SENTINELA sorteia uma doença de ${diseaseGroupLabels[id as DiseaseGroup] ?? "um assunto"} e gera um caso inédito sobre ela.`;
     }
     if (kind === "any") return "A SENTINELA sorteia qualquer doença da base de conhecimento (aula inteira) e gera um caso inédito.";
-    return undefined;
+    return "Automático: um caso pronto se couber nos tópicos marcados; senão, a SENTINELA gera um caso da doença mais compatível com eles. Os tópicos nunca bloqueiam a criação.";
   }
 
   function toggleTopic(topic: EscapeTopic) {
@@ -96,9 +121,13 @@ export function HostPage() {
       const caseId = kind === "case" ? id : undefined;
       const generator = kind === "disease"
         ? { mode: "disease", diseaseId: id }
-        : kind === "group"
-          ? { mode: "group", group: id }
-          : kind === "any" ? { mode: "any" } : undefined;
+        : kind === "multi"
+          ? { mode: "diseases", diseaseIds: pickedDiseases }
+          : kind === "group"
+            ? { mode: "group", group: id }
+            : kind === "any"
+              ? { mode: "any" }
+              : kind === "" && library.diseases.length ? { mode: "auto" } : undefined;
       const blitz = blitzSource === "bank"
         ? {
           source: "bank",
@@ -231,7 +260,8 @@ export function HostPage() {
               </div>
               <label className="field-label">Origem do caso
                 <select value={source} onChange={(event) => pickSource(event.target.value)}>
-                  <option value="">Sortear caso pronto pelos tópicos liberados</option>
+                  <option value="">Automático: melhor caso para os tópicos marcados</option>
+                  {library.diseases.length > 0 && <option value="multi">Escolher uma ou mais doenças…</option>}
                   {library.diseases.length > 0 && <option value="any">Gerar caso inédito · aula inteira (qualquer doença)</option>}
                   {library.diseases.length > 0 && (
                     <optgroup label="Gerar por assunto">
@@ -256,13 +286,20 @@ export function HostPage() {
                   )}
                 </select>
               </label>
-              {sourceNote() && (
-                <p className="puzzle-note">
-                  {sourceNote()} Os tópicos abaixo foram pré-ajustados; desmarque o que a turma ainda não viu.
-                </p>
+              {source === "multi" && (
+                <fieldset className="topic-grid">
+                  <legend>Doenças do protocolo (marque uma ou mais)</legend>
+                  {library.diseases.map((disease) => (
+                    <label key={disease.id} className={`topic-chip ${pickedDiseases.includes(disease.id) ? "is-on" : ""}`}>
+                      <input type="checkbox" checked={pickedDiseases.includes(disease.id)} onChange={() => toggleDisease(disease.id)} />
+                      {disease.name}
+                    </label>
+                  ))}
+                </fieldset>
               )}
+              <p className="puzzle-note">{sourceNote()}</p>
               <fieldset className="topic-grid">
-                <legend>Conteúdos já vistos pela turma (nada fora disso entra no jogo)</legend>
+                <legend>Conteúdos já vistos pela turma (orientam o sorteio e limitam os bônus — nunca bloqueiam sua escolha)</legend>
                 {escapeTopics.map((topic) => (
                   <label key={topic} className={`topic-chip ${topics.includes(topic) ? "is-on" : ""}`}>
                     <input type="checkbox" checked={topics.includes(topic)} onChange={() => toggleTopic(topic)} />
@@ -273,7 +310,7 @@ export function HostPage() {
             </div>
           )}
 
-          <button className="button button--danger" onClick={createSession} disabled={busy}><Plus size={19} /> {busy ? "Criando..." : mode === "ESCAPE" ? "Selar o laboratório" : "Criar sessão"}</button>
+          <button className="button button--danger" onClick={createSession} disabled={busy || (mode === "ESCAPE" && source === "multi" && pickedDiseases.length === 0)}><Plus size={19} /> {busy ? "Criando..." : mode === "ESCAPE" ? "Selar o laboratório" : "Criar sessão"}</button>
           {notice && <p className="alert-text">{notice}</p>}
         </section>
       </main>
