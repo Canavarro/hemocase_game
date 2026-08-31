@@ -1,0 +1,474 @@
+{
+  "version": "1.0.0",
+  "language": "pt-BR",
+  "purpose": "Fonte canônica de conteúdo médico para perguntas, pistas, explicações e gabaritos do HEMOCASE.",
+  "rules": {
+    "sourcePriority": ["aula do professor", "artigos da Liga", "GeneReviews e referências médicas de alta autoridade"],
+    "questionPolicy": "Perguntas podem combinar o conteúdo da aula com complementação médica validada. Evitar detalhes controversos, excessivamente especializados ou não necessários ao objetivo pedagógico.",
+    "morphologyField": "Usar alteração morfológica/microscópica/celular. Quando não houver achado específico, declarar explicitamente.",
+    "inheritancePolicy": "Distinguir doença mendeliana de predisposição genética. Não apresentar penetrância incompleta como certeza clínica."
+  },
+  "diseases": [
+    {
+      "id": "sickle_cell_disease",
+      "name": "Doença falciforme / anemia falciforme",
+      "aliases": ["HbS", "doença falciforme"],
+      "category": "hemoglobinopatia estrutural",
+      "suspectedProtein": "β-globina alterada formando hemoglobina S (HbS)",
+      "genes": ["HBB"],
+      "chromosomeLocation": ["11p15.4"],
+      "variantTypes": ["variante missense clássica HBB c.20A>T, p.Glu7Val na nomenclatura HGVS; tradicionalmente descrita como Glu6Val na cadeia beta madura"],
+      "molecularEffect": "A HbS desoxigenada polimeriza, altera a deformabilidade da hemácia e favorece falcização, hemólise e vaso-oclusão.",
+      "alteredProcess": "estrutura e propriedades físico-químicas da hemoglobina; deformabilidade eritrocitária",
+      "morphologyMicroscopy": ["hemácias falciformes/drepanócitos", "células-alvo podem ocorrer", "reticulocitose em contexto hemolítico"],
+      "clinicalManifestations": ["anemia hemolítica crônica", "crises vaso-oclusivas dolorosas", "dactilite na infância", "icterícia", "síndrome torácica aguda", "asplenia funcional e maior risco de infecções"],
+      "laboratoryFindings": ["HbS na análise de hemoglobinas", "reticulocitose", "marcadores de hemólise podem estar elevados"],
+      "inheritance": {"pattern": "autossômica recessiva", "notes": "A doença falciforme clássica ocorre quando há duas variantes clinicamente relevantes envolvendo HBB, como HbSS ou combinações compostas."},
+      "keyEvidence": ["HbS", "falcização", "crises vaso-oclusivas", "alteração da β-globina"],
+      "differentials": ["β-talassemia", "HbC", "outras anemias hemolíticas"],
+      "progressiveClues": [
+        {"order":1,"title":"Fenótipo","text":"Anemia desde a infância, icterícia discreta e crises recorrentes de dor.","weight":6},
+        {"order":2,"title":"Microscopia","text":"Hemácias alongadas, curvas, em forma de foice.","weight":8},
+        {"order":3,"title":"Proteína","text":"A proteína suspeita é a hemoglobina, especificamente uma variante da β-globina.","weight":10},
+        {"order":4,"title":"DNA","text":"Substituição de glutamato por valina na cadeia β leva à HbS.","weight":14,"decisive":true}
+      ],
+      "pitfalls": ["Não confundir alteração estrutural da HbS com redução quantitativa de globina da talassemia."],
+      "references": [
+        {"label":"Aula: hemoglobinopatias e coagulopatias","kind":"lecture"},
+        {"label":"GeneReviews: Sickle Cell Disease","kind":"gene_reviews","url":"https://www.ncbi.nlm.nih.gov/books/NBK1377/"}
+      ]
+    },
+    {
+      "id": "hemoglobin_c",
+      "name": "Hemoglobina C",
+      "aliases": ["HbC"],
+      "category": "hemoglobinopatia estrutural",
+      "suspectedProtein": "β-globina formando HbC",
+      "genes": ["HBB"],
+      "chromosomeLocation": ["11p15.4"],
+      "variantTypes": ["missense HBB p.Glu7Lys; tradicionalmente Glu6Lys na cadeia beta madura"],
+      "molecularEffect": "Produção de hemoglobina C com propriedades físico-químicas alteradas e tendência à cristalização intracelular.",
+      "alteredProcess": "estrutura da hemoglobina e estabilidade eritrocitária",
+      "morphologyMicroscopy": ["células-alvo", "cristais de HbC podem ocorrer", "esferócitos podem estar presentes"],
+      "clinicalManifestations": ["HbCC geralmente causa anemia hemolítica leve a moderada", "esplenomegalia", "icterícia pode ocorrer", "heterozigotos HbAC costumam ser assintomáticos"],
+      "laboratoryFindings": ["HbC identificada por eletroforese/HPLC ou método equivalente"],
+      "inheritance": {"pattern":"autossômica recessiva/codominância das variantes de hemoglobina","notes":"O fenótipo depende da combinação alélica; HbSC é uma condição clinicamente distinta."},
+      "keyEvidence": ["HbC", "substituição de aminoácido na posição 6 tradicional da β-globina", "células-alvo/cristais"],
+      "differentials": ["doença falciforme", "talassemias"],
+      "progressiveClues": [
+        {"order":1,"title":"Proteína","text":"Outra variante estrutural de hemoglobina citada na aula.","weight":6},
+        {"order":2,"title":"Microscopia","text":"Células-alvo e possíveis cristais intracelulares.","weight":8},
+        {"order":3,"title":"DNA","text":"Substituição de glutamato por lisina na β-globina.","weight":12,"decisive":true}
+      ],
+      "pitfalls": ["Não usar HbC como caso principal se o tempo da aula for curto; funciona melhor em rodada relâmpago."],
+      "references": [{"label":"Aula: principais hemoglobinopatias","kind":"lecture"}]
+    },
+    {
+      "id": "alpha_thalassemia",
+      "name": "α-talassemia",
+      "aliases": ["alfa-talassemia"],
+      "category": "talassemia",
+      "suspectedProtein": "cadeias α da globina",
+      "genes": ["HBA1", "HBA2"],
+      "chromosomeLocation": ["16p13.3"],
+      "variantTypes": ["deleções são as causas mais comuns", "variantes não delecionais também ocorrem"],
+      "molecularEffect": "Redução da produção de cadeias α, com excesso relativo de cadeias não α e formação de tetrâmeros anormais conforme a fase da vida.",
+      "alteredProcess": "síntese quantitativa de globina",
+      "morphologyMicroscopy": ["microcitose", "hipocromia", "células-alvo", "na doença HbH podem ocorrer inclusões detectáveis com coloração supravital"],
+      "clinicalManifestations": ["portadores podem ser assintomáticos", "doença HbH pode causar anemia hemolítica", "perda funcional dos quatro genes α pode causar síndrome de Hb Bart e hidropisia fetal"],
+      "laboratoryFindings": ["VCM e HCM reduzidos", "análise de hemoglobinas e testes moleculares auxiliam conforme o fenótipo"],
+      "inheritance": {"pattern":"autossômica recessiva com herança complexa por quatro alelos α","notes":"Há dois genes α funcionais em cada cromossomo 16. O risco fetal depende de quantos genes estão alterados e se as deleções estão em cis ou trans."},
+      "keyEvidence": ["microcitose/hipocromia", "redução de α-globina", "HBA1/HBA2", "HbH ou Hb Bart em formas específicas"],
+      "differentials": ["β-talassemia", "deficiência de ferro"],
+      "progressiveClues": [
+        {"order":1,"title":"Hemograma","text":"Microcitose e hipocromia, por vezes com anemia discreta.","weight":6},
+        {"order":2,"title":"Proteína","text":"Há produção insuficiente das cadeias α da globina.","weight":10},
+        {"order":3,"title":"Genética","text":"Os genes envolvidos são HBA1 e HBA2 no cromossomo 16.","weight":12,"decisive":true}
+      ],
+      "pitfalls": ["Não afirmar que Hb Bart é β4: Hb Bart é γ4 no período fetal/neonatal; HbH é β4 após o nascimento."],
+      "references": [
+        {"label":"Aula: talassemias","kind":"lecture"},
+        {"label":"GeneReviews: Alpha-Thalassemia","kind":"gene_reviews","url":"https://www.ncbi.nlm.nih.gov/books/NBK1435/"}
+      ]
+    },
+    {
+      "id": "beta_thalassemia",
+      "name": "β-talassemia",
+      "aliases": ["beta-talassemia", "talassemia beta"],
+      "category": "talassemia",
+      "suspectedProtein": "cadeias β da globina",
+      "genes": ["HBB"],
+      "chromosomeLocation": ["11p15.4"],
+      "variantTypes": ["variantes de promotor", "splicing", "nonsense", "frameshift", "missense selecionadas"],
+      "molecularEffect": "Produção reduzida (β+) ou ausente (β0) de β-globina, gerando desequilíbrio de cadeias e eritropoiese ineficaz.",
+      "alteredProcess": "síntese quantitativa de globina",
+      "morphologyMicroscopy": ["microcitose", "hipocromia", "anisopoquilocitose", "células-alvo", "eritroblastos em formas graves"],
+      "clinicalManifestations": ["traço/minor frequentemente assintomático ou anemia leve", "formas graves causam anemia importante", "palidez", "icterícia", "hepatoesplenomegalia", "alterações ósseas por expansão medular em doença não controlada", "dependência transfusional em formas transfusão-dependentes"],
+      "laboratoryFindings": ["VCM e HCM reduzidos", "HbA2 frequentemente elevada no traço β-talassêmico", "análise molecular de HBB quando indicada"],
+      "inheritance": {"pattern":"autossômica recessiva","notes":"Quando ambos os pais são heterozigotos para variantes patogênicas em HBB, cada gestação tem risco mendeliano de 25% para um filho com duas variantes, 50% para heterozigose e 25% para não herdar nenhuma das duas variantes parentais."},
+      "keyEvidence": ["microcitose desproporcional", "hipocromia", "produção reduzida de β-globina", "HBB"],
+      "differentials": ["deficiência de ferro", "α-talassemia", "doença falciforme"],
+      "progressiveClues": [
+        {"order":1,"title":"Hemograma","text":"Anemia microcítica e hipocrômica persistente.","weight":6},
+        {"order":2,"title":"Proteína","text":"O defeito é quantitativo e reduz a produção da cadeia β.","weight":9},
+        {"order":3,"title":"RNA","text":"Uma variante de splicing ou promotor reduz o mRNA funcional de β-globina.","weight":11},
+        {"order":4,"title":"Gene","text":"O gene envolvido é HBB.","weight":14,"decisive":true}
+      ],
+      "pitfalls": ["Não confundir talassemia com HbS: talassemia é predominantemente um defeito quantitativo de síntese."],
+      "references": [
+        {"label":"Aula: β-talassemias","kind":"lecture"},
+        {"label":"GeneReviews: Beta-Thalassemia","kind":"gene_reviews","url":"https://www.ncbi.nlm.nih.gov/books/NBK1426/"}
+      ]
+    },
+    {
+      "id": "von_willebrand_disease",
+      "name": "Doença de von Willebrand",
+      "aliases": ["DVW", "VWD"],
+      "category": "distúrbio hemorrágico hereditário",
+      "suspectedProtein": "fator de von Willebrand (VWF)",
+      "genes": ["VWF"],
+      "chromosomeLocation": ["12p13.31"],
+      "variantTypes": ["variantes quantitativas e qualitativas; o mecanismo varia conforme o subtipo"],
+      "molecularEffect": "Redução quantitativa ou disfunção do VWF, comprometendo adesão plaquetária e, em graus variáveis, estabilização do fator VIII.",
+      "alteredProcess": "hemostasia primária e interface com hemostasia secundária",
+      "morphologyMicroscopy": ["esfregaço geralmente sem alteração específica", "trombocitopenia pode ocorrer especialmente em VWD tipo 2B"],
+      "clinicalManifestations": ["epistaxe", "equimoses", "sangramento gengival", "menorragia", "sangramento prolongado após procedimentos", "sangramento gastrointestinal em alguns pacientes"],
+      "laboratoryFindings": ["VWF antigênico e/ou atividade reduzidos conforme subtipo", "FVIII pode estar reduzido", "TP geralmente normal", "TTPa pode ser normal ou prolongado dependendo do FVIII"],
+      "inheritance": {"pattern":"mista por subtipo","notes":"Tipo 1 e muitos tipos 2 são geralmente autossômicos dominantes. Tipo 3 e frequentemente tipo 2N são autossômicos recessivos."},
+      "keyEvidence": ["sangramento mucocutâneo", "alteração de VWF", "adesão plaquetária"],
+      "differentials": ["Bernard-Soulier", "trombastenia de Glanzmann", "hemofilia A"],
+      "progressiveClues": [
+        {"order":1,"title":"Clínica","text":"Epistaxe recorrente, gengivorragia e menorragia.","weight":6},
+        {"order":2,"title":"Hemostasia","text":"O problema envolve adesão plaquetária ao vaso lesionado.","weight":8},
+        {"order":3,"title":"Proteína","text":"O ligante plasmático que interage com GPIb está quantitativa ou qualitativamente alterado.","weight":11},
+        {"order":4,"title":"Gene","text":"A alteração está no gene VWF.","weight":14,"decisive":true}
+      ],
+      "pitfalls": ["Não definir toda VWD como exclusivamente autossômica dominante.", "Não confundir deficiência de VWF com deficiência do receptor GPIb-IX-V da Bernard-Soulier."],
+      "references": [
+        {"label":"Aula: Doença de von Willebrand","kind":"lecture"},
+        {"label":"GeneReviews: Von Willebrand Disease","kind":"gene_reviews","url":"https://www.ncbi.nlm.nih.gov/books/NBK7014/"}
+      ]
+    },
+    {
+      "id": "hemophilia_a",
+      "name": "Hemofilia A",
+      "aliases": ["deficiência de fator VIII"],
+      "category": "coagulopatia da hemostasia secundária",
+      "suspectedProtein": "fator VIII (FVIII)",
+      "genes": ["F8"],
+      "chromosomeLocation": ["Xq28"],
+      "variantTypes": ["inversões, incluindo inversão do intron 22 em muitos casos graves", "missense", "nonsense", "indels", "deleções/duplicações"],
+      "molecularEffect": "Deficiência quantitativa ou funcional do FVIII prejudica a amplificação da coagulação e a geração adequada de trombina/fibrina.",
+      "alteredProcess": "hemostasia secundária",
+      "morphologyMicroscopy": ["sem alteração específica esperada no esfregaço por causa da hemofilia isolada"],
+      "clinicalManifestations": ["hemartroses", "hematomas musculares profundos", "sangramento tardio após trauma ou cirurgia", "sangramento intracraniano em casos graves"],
+      "laboratoryFindings": ["FVIII reduzido", "TTPa prolongado em muitos pacientes", "TP normal", "contagem plaquetária geralmente normal"],
+      "inheritance": {"pattern":"recessiva ligada ao X","notes":"Homens hemizigotos são mais frequentemente afetados; mulheres heterozigotas podem ter níveis reduzidos de FVIII e manifestações hemorrágicas."},
+      "keyEvidence": ["FVIII reduzido", "hemartrose", "F8", "herança ligada ao X"],
+      "differentials": ["hemofilia B", "VWD tipo 2N ou VWD com FVIII baixo"],
+      "progressiveClues": [
+        {"order":1,"title":"Clínica","text":"Menino com hemartroses e hematomas profundos.","weight":6},
+        {"order":2,"title":"Laboratório","text":"TP normal, TTPa prolongado e plaquetas normais.","weight":8},
+        {"order":3,"title":"Herança","text":"Tio materno apresenta quadro semelhante.","weight":10},
+        {"order":4,"title":"Fator","text":"Atividade de FVIII = 2% com FIX normal.","weight":14,"decisive":true}
+      ],
+      "pitfalls": ["Hemofilia A e B são clinicamente muito semelhantes; o ensaio do fator é decisivo.", "FVIII de 2% corresponde à forma moderada."],
+      "references": [
+        {"label":"Aula: Hemofilia A e B","kind":"lecture"},
+        {"label":"GeneReviews: Hemophilia A","kind":"gene_reviews","url":"https://www.ncbi.nlm.nih.gov/books/NBK1404/"}
+      ]
+    },
+    {
+      "id": "hemophilia_b",
+      "name": "Hemofilia B",
+      "aliases": ["deficiência de fator IX", "Christmas disease"],
+      "category": "coagulopatia da hemostasia secundária",
+      "suspectedProtein": "fator IX (FIX)",
+      "genes": ["F9"],
+      "chromosomeLocation": ["Xq27.1"],
+      "variantTypes": ["missense", "nonsense", "indels", "deleções e outras variantes patogênicas"],
+      "molecularEffect": "Deficiência quantitativa ou funcional do FIX prejudica a formação do complexo tenase e a geração adequada de fator Xa.",
+      "alteredProcess": "hemostasia secundária",
+      "morphologyMicroscopy": ["sem alteração específica esperada no esfregaço por causa da hemofilia isolada"],
+      "clinicalManifestations": ["hemartroses", "hematomas musculares profundos", "sangramento após trauma ou cirurgia"],
+      "laboratoryFindings": ["FIX reduzido", "TTPa prolongado em muitos pacientes", "TP normal", "contagem plaquetária geralmente normal"],
+      "inheritance": {"pattern":"recessiva ligada ao X","notes":"Padrão familiar semelhante ao da hemofilia A."},
+      "keyEvidence": ["FIX reduzido", "F9", "hemartrose", "herança ligada ao X"],
+      "differentials": ["hemofilia A"],
+      "progressiveClues": [
+        {"order":1,"title":"Clínica","text":"Menino com sangramento profundo e hemartroses.","weight":6},
+        {"order":2,"title":"Laboratório","text":"TP normal, TTPa prolongado e plaquetas normais.","weight":8},
+        {"order":3,"title":"Herança","text":"Homens do ramo materno apresentam quadro semelhante.","weight":10},
+        {"order":4,"title":"Fator","text":"Atividade de FIX = 3% com FVIII normal.","weight":14,"decisive":true}
+      ],
+      "pitfalls": ["Não tentar diferenciar hemofilia A de B apenas pelas manifestações clínicas.", "FIX de 3% corresponde à forma moderada."],
+      "references": [{"label":"Aula: Hemofilia A e B","kind":"lecture"}]
+    },
+    {
+      "id": "bernard_soulier",
+      "name": "Síndrome de Bernard-Soulier",
+      "aliases": ["BSS"],
+      "category": "distúrbio da hemostasia primária",
+      "suspectedProtein": "complexo plaquetário GPIb-IX-V",
+      "genes": ["GP1BA", "GP1BB", "GP9"],
+      "chromosomeLocation": ["GP1BA 17p13.2", "GP1BB 22q11.21", "GP9 3q21.3"],
+      "variantTypes": ["missense", "nonsense", "frameshift", "outras variantes bialélicas que reduzem expressão/função do complexo"],
+      "molecularEffect": "Defeito do receptor plaquetário de VWF compromete a adesão das plaquetas ao subendotélio lesionado.",
+      "alteredProcess": "hemostasia primária / adesão plaquetária",
+      "morphologyMicroscopy": ["macroplaquetas", "trombocitopenia variável", "macrotrombocitopenia é característica clássica"],
+      "clinicalManifestations": ["epistaxe", "gengivorragia", "equimoses", "menorragia", "sangramento pós-trauma ou cirurgia"],
+      "laboratoryFindings": ["aglutinação com ristocetina marcadamente reduzida/ausente e não corrigida por plasma normal", "expressão reduzida de GPIb-IX-V por citometria", "plaquetas grandes"],
+      "inheritance": {"pattern":"geralmente autossômica recessiva","notes":"Formas clássicas decorrem de variantes bialélicas. Algumas variantes heterozigotas podem causar macrotrombocitopenia dominante relacionada a GPIb."},
+      "keyEvidence": ["macroplaquetas", "trombocitopenia", "GPIb-IX-V alterado", "defeito de adesão ao VWF"],
+      "differentials": ["doença de von Willebrand", "Wiskott-Aldrich", "trombastenia de Glanzmann"],
+      "progressiveClues": [
+        {"order":1,"title":"Clínica","text":"Sangramento mucocutâneo desde a infância.","weight":6},
+        {"order":2,"title":"Microscopia","text":"Plaquetas muito grandes e contagem reduzida.","weight":9},
+        {"order":3,"title":"Interação","text":"O VWF está presente, mas a plaqueta não consegue se ligar adequadamente a ele.","weight":11},
+        {"order":4,"title":"Receptor","text":"Expressão/função do complexo GPIb-IX-V está comprometida.","weight":14,"decisive":true}
+      ],
+      "pitfalls": ["Bernard-Soulier é defeito do receptor; VWD é defeito do ligante VWF.", "Diferenciar macroplaquetas da microtrombocitopenia de Wiskott-Aldrich."],
+      "references": [
+        {"label":"Aula: Síndrome de Bernard-Soulier","kind":"lecture"},
+        {"label":"Afrasiabi et al. Genetic characterization of patients with Bernard-Soulier syndrome","kind":"article"}
+      ]
+    },
+    {
+      "id": "glanzmann_thrombasthenia",
+      "name": "Trombastenia de Glanzmann",
+      "aliases": ["Glanzmann"],
+      "category": "distúrbio da hemostasia primária",
+      "suspectedProtein": "integrina αIIbβ3 (GPIIb/IIIa)",
+      "genes": ["ITGA2B", "ITGB3"],
+      "chromosomeLocation": ["17q21.31"],
+      "variantTypes": ["variantes bialélicas que reduzem quantidade ou função da integrina αIIbβ3"],
+      "molecularEffect": "Defeito da ligação do fibrinogênio e da agregação plaquetária.",
+      "alteredProcess": "hemostasia primária / agregação plaquetária",
+      "morphologyMicroscopy": ["contagem e tamanho das plaquetas geralmente normais"],
+      "clinicalManifestations": ["epistaxe", "gengivorragia", "púrpura/equimoses", "menorragia", "sangramento após trauma ou cirurgia"],
+      "laboratoryFindings": ["agregação ausente ou muito reduzida com vários agonistas", "resposta à ristocetina preservada", "GPIIb/IIIa reduzida/ausente ou disfuncional"],
+      "inheritance": {"pattern":"autossômica recessiva","notes":"Mais frequente em populações com maior consanguinidade."},
+      "keyEvidence": ["plaquetas em número/tamanho normais", "defeito de agregação", "GPIIb/IIIa"],
+      "differentials": ["Bernard-Soulier", "VWD"],
+      "progressiveClues": [
+        {"order":1,"title":"Clínica","text":"Sangramento mucocutâneo com contagem plaquetária normal.","weight":6},
+        {"order":2,"title":"Função","text":"A adesão inicial pode ocorrer, mas a agregação entre plaquetas falha.","weight":9},
+        {"order":3,"title":"Proteína","text":"A integrina GPIIb/IIIa está ausente ou disfuncional.","weight":14,"decisive":true}
+      ],
+      "pitfalls": ["Bernard-Soulier = adesão/GPIb; Glanzmann = agregação/GPIIbIIIa."],
+      "references": [{"label":"Aula: classificação das síndromes plaquetárias","kind":"lecture"}]
+    },
+    {
+      "id": "hermansky_pudlak",
+      "name": "Síndrome de Hermansky-Pudlak",
+      "aliases": ["HPS"],
+      "category": "distúrbio da hemostasia primária e organelas relacionadas a lisossomos",
+      "suspectedProtein": "proteínas envolvidas na biogênese/tráfego de organelas e grânulos densos plaquetários",
+      "genes": ["HPS1", "AP3B1", "HPS3", "HPS4", "HPS5", "HPS6", "DTNBP1", "BLOC1S3", "BLOC1S6", "AP3D1"],
+      "chromosomeLocation": ["múltiplos loci conforme o subtipo"],
+      "variantTypes": ["variantes bialélicas patogênicas em genes HPS"],
+      "molecularEffect": "Defeito de organelas relacionadas a lisossomos, incluindo grânulos densos plaquetários e melanossomos.",
+      "alteredProcess": "secreção plaquetária e pigmentação",
+      "morphologyMicroscopy": ["microscopia eletrônica pode demonstrar ausência de corpos densos plaquetários"],
+      "clinicalManifestations": ["albinismo oculocutâneo", "redução de pigmentação ocular e baixa visão", "equimoses", "epistaxe", "sangramento gengival e pós-procedimentos", "alguns subtipos cursam com fibrose pulmonar, granulomatose ou imunodeficiência"],
+      "laboratoryFindings": ["defeito de pool de armazenamento plaquetário", "ausência de grânulos densos à microscopia eletrônica"],
+      "inheritance": {"pattern":"autossômica recessiva","notes":"O fenótipo sistêmico varia conforme o gene envolvido."},
+      "keyEvidence": ["albinismo oculocutâneo", "sangramento", "ausência de grânulos densos"],
+      "differentials": ["outros distúrbios de grânulos plaquetários", "síndromes de albinismo"],
+      "progressiveClues": [
+        {"order":1,"title":"Fenótipo","text":"Hipopigmentação associada a equimoses e epistaxe.","weight":8},
+        {"order":2,"title":"Microscopia","text":"Plaquetas não apresentam grânulos densos à microscopia eletrônica.","weight":14,"decisive":true}
+      ],
+      "pitfalls": ["Não limitar HPS ao sangramento: há componente de pigmentação e, em subtipos, doença sistêmica."],
+      "references": [{"label":"GeneReviews: Hermansky-Pudlak Syndrome","kind":"gene_reviews","url":"https://www.ncbi.nlm.nih.gov/books/NBK1287/"}]
+    },
+    {
+      "id": "wiskott_aldrich",
+      "name": "Síndrome de Wiskott-Aldrich",
+      "aliases": ["WAS"],
+      "category": "imunodeficiência ligada ao X com distúrbio plaquetário",
+      "suspectedProtein": "WASp",
+      "genes": ["WAS"],
+      "chromosomeLocation": ["Xp11.23"],
+      "variantTypes": ["variantes patogênicas em WAS com gravidade fenotípica variável"],
+      "molecularEffect": "Defeito de WASp compromete dinâmica de actina e funções de células hematopoéticas, incluindo formação/produção de plaquetas.",
+      "alteredProcess": "imunidade e hemostasia primária",
+      "morphologyMicroscopy": ["microtrombocitopenia: plaquetas pequenas e em baixo número"],
+      "clinicalManifestations": ["eczema", "infecções recorrentes/imunodeficiência", "sangramento", "autoimunidade", "risco aumentado de malignidades hematológicas"],
+      "laboratoryFindings": ["trombocitopenia com volume plaquetário reduzido em muitos casos", "alterações imunológicas variáveis"],
+      "inheritance": {"pattern":"recessiva ligada ao X","notes":"Afeta predominantemente indivíduos do sexo masculino."},
+      "keyEvidence": ["menino", "plaquetas pequenas", "trombocitopenia", "eczema", "imunodeficiência"],
+      "differentials": ["Bernard-Soulier", "púrpuras trombocitopênicas", "outras imunodeficiências"],
+      "progressiveClues": [
+        {"order":1,"title":"Clínica","text":"Menino com eczema, infecções recorrentes e sangramento.","weight":8},
+        {"order":2,"title":"Microscopia","text":"Plaquetas pequenas e em baixo número.","weight":12},
+        {"order":3,"title":"Gene","text":"Variante em gene ligado ao X que codifica WASp.","weight":14,"decisive":true}
+      ],
+      "pitfalls": ["Bernard-Soulier tem macroplaquetas; Wiskott-Aldrich classicamente apresenta plaquetas pequenas."],
+      "references": [
+        {"label":"Aula: Wiskott-Aldrich","kind":"lecture"},
+        {"label":"GeneReviews: WAS-Related Disorders","kind":"gene_reviews","url":"https://www.ncbi.nlm.nih.gov/books/NBK1178/"}
+      ]
+    },
+    {
+      "id": "hereditary_hemorrhagic_telangiectasia",
+      "name": "Telangiectasia hemorrágica hereditária",
+      "aliases": ["HHT", "síndrome de Osler-Weber-Rendu"],
+      "category": "distúrbio vascular hereditário",
+      "suspectedProtein": "proteínas da sinalização TGF-β/BMP vascular, especialmente endoglina e ALK1",
+      "genes": ["ENG", "ACVRL1", "SMAD4"],
+      "chromosomeLocation": ["ENG 9q34.11", "ACVRL1 12q13.13", "SMAD4 18q21.2"],
+      "variantTypes": ["variantes heterozigotas com perda de função"],
+      "molecularEffect": "Disfunção da sinalização vascular leva ao desenvolvimento de telangiectasias e malformações arteriovenosas.",
+      "alteredProcess": "desenvolvimento e integridade vascular",
+      "morphologyMicroscopy": ["não há alteração típica no esfregaço sanguíneo", "o achado morfológico relevante é vascular: telangiectasias e malformações arteriovenosas"],
+      "clinicalManifestations": ["epistaxe espontânea e recorrente", "telangiectasias mucocutâneas", "sangramento gastrointestinal", "malformações arteriovenosas pulmonares, hepáticas ou cerebrais"],
+      "laboratoryFindings": ["anemia ferropriva pode ocorrer por sangramento crônico"],
+      "inheritance": {"pattern":"autossômica dominante","notes":"História familiar em múltiplas gerações é uma pista forte, embora expressão clínica varie."},
+      "keyEvidence": ["epistaxe recorrente", "telangiectasias", "AVMs", "herança autossômica dominante"],
+      "differentials": ["VWD", "distúrbios plaquetários"],
+      "progressiveClues": [
+        {"order":1,"title":"Clínica","text":"Epistaxes recorrentes desde a juventude.","weight":6},
+        {"order":2,"title":"Exame","text":"Telangiectasias em lábios, língua e mucosa.","weight":10},
+        {"order":3,"title":"Imagem","text":"Malformação arteriovenosa pulmonar.","weight":12},
+        {"order":4,"title":"Herança","text":"Vários familiares em gerações sucessivas são afetados.","weight":14,"decisive":true}
+      ],
+      "pitfalls": ["Epistaxe isolada não basta; telangiectasias/AVMs e história familiar fortalecem muito o diagnóstico."],
+      "references": [
+        {"label":"Aula: Osler-Weber-Rendu","kind":"lecture"},
+        {"label":"GeneReviews: Hereditary Hemorrhagic Telangiectasia","kind":"gene_reviews","url":"https://www.ncbi.nlm.nih.gov/books/NBK1351/"}
+      ]
+    },
+    {
+      "id": "factor_v_leiden",
+      "name": "Trombofilia por fator V Leiden",
+      "aliases": ["Fator V Leiden"],
+      "category": "trombofilia hereditária",
+      "suspectedProtein": "fator V",
+      "genes": ["F5"],
+      "chromosomeLocation": ["1q24.2"],
+      "variantTypes": ["F5 c.1601G>A, p.Arg534Gln; nomenclatura tradicional Arg506Gln"],
+      "molecularEffect": "O fator V torna-se relativamente resistente à inativação pela proteína C ativada, favorecendo geração de trombina.",
+      "alteredProcess": "regulação anticoagulante da coagulação",
+      "morphologyMicroscopy": ["sem alteração específica no esfregaço"],
+      "clinicalManifestations": ["predisposição a trombose venosa profunda", "embolia pulmonar", "muitos heterozigotos permanecem assintomáticos"],
+      "laboratoryFindings": ["resistência à proteína C ativada", "confirmação molecular da variante F5 Leiden"],
+      "inheritance": {"pattern":"predisposição autossômica dominante","notes":"Heterozigose aumenta o risco, mas não determina que ocorrerá trombose; homozigose confere risco maior."},
+      "keyEvidence": ["trombose venosa", "resistência à proteína C ativada", "F5 Leiden"],
+      "differentials": ["F2 G20210A", "deficiência de antitrombina", "deficiência de proteínas C/S"],
+      "progressiveClues": [
+        {"order":1,"title":"Fenótipo","text":"Paciente jovem com trombose venosa sem causa evidente.","weight":6},
+        {"order":2,"title":"Mecanismo","text":"O fator V é menos sensível à inativação pela proteína C ativada.","weight":12},
+        {"order":3,"title":"Gene","text":"Variante patogênica clássica no gene F5.","weight":14,"decisive":true}
+      ],
+      "pitfalls": ["Apresentar como predisposição, não como certeza de trombose."],
+      "references": [
+        {"label":"Aula: trombofilias hereditárias","kind":"lecture"},
+        {"label":"GeneReviews: Factor V Leiden Thrombophilia","kind":"gene_reviews","url":"https://www.ncbi.nlm.nih.gov/books/NBK1368/"}
+      ]
+    },
+    {
+      "id": "prothrombin_thrombophilia",
+      "name": "Trombofilia por protrombina G20210A",
+      "aliases": ["F2 20210G>A", "mutação da protrombina G20210A"],
+      "category": "trombofilia hereditária",
+      "suspectedProtein": "protrombina (fator II)",
+      "genes": ["F2"],
+      "chromosomeLocation": ["11p11.2"],
+      "variantTypes": ["F2 c.*97G>A, tradicionalmente 20210G>A"],
+      "molecularEffect": "Associa-se a aumento dos níveis plasmáticos de protrombina e maior potencial de geração de trombina.",
+      "alteredProcess": "tendência pró-coagulante",
+      "morphologyMicroscopy": ["sem alteração específica no esfregaço"],
+      "clinicalManifestations": ["predisposição a trombose venosa profunda", "embolia pulmonar", "muitos portadores permanecem assintomáticos"],
+      "laboratoryFindings": ["diagnóstico genético da variante F2 20210G>A; níveis de protrombina podem estar aumentados"],
+      "inheritance": {"pattern":"predisposição autossômica dominante","notes":"A variante aumenta risco, mas apresenta penetrância incompleta."},
+      "keyEvidence": ["F2 20210G>A", "aumento de protrombina", "tendência trombótica"],
+      "differentials": ["Fator V Leiden", "deficiências de anticoagulantes naturais"],
+      "progressiveClues": [
+        {"order":1,"title":"Pegadinha","text":"O problema não é sangrar demais: o paciente tem tendência à trombose.","weight":6},
+        {"order":2,"title":"Proteína","text":"Há maior disponibilidade de protrombina, precursor da trombina.","weight":10},
+        {"order":3,"title":"DNA","text":"Variante G20210A no gene F2.","weight":14,"decisive":true}
+      ],
+      "pitfalls": ["Não tratar a variante como causa determinística de trombose."],
+      "references": [
+        {"label":"Aula: mutação no gene da protrombina G20210A","kind":"lecture"},
+        {"label":"GeneReviews: Prothrombin Thrombophilia","kind":"gene_reviews","url":"https://www.ncbi.nlm.nih.gov/books/NBK1148/"}
+      ]
+    },
+    {
+      "id": "antithrombin_deficiency",
+      "name": "Deficiência hereditária de antitrombina",
+      "aliases": ["deficiência de AT", "deficiência de antitrombina III"],
+      "category": "trombofilia hereditária",
+      "suspectedProtein": "antitrombina",
+      "genes": ["SERPINC1"],
+      "chromosomeLocation": ["1q25.1"],
+      "variantTypes": ["variantes quantitativas tipo I", "variantes qualitativas tipo II"],
+      "molecularEffect": "Redução da capacidade de inibir trombina e outros fatores ativados, aumentando tendência à coagulação.",
+      "alteredProcess": "anticoagulação natural",
+      "morphologyMicroscopy": ["sem alteração específica no esfregaço"],
+      "clinicalManifestations": ["trombose venosa profunda", "embolia pulmonar", "eventos recorrentes ou em idade jovem podem ocorrer"],
+      "laboratoryFindings": ["atividade de antitrombina reduzida; antígeno pode estar reduzido no tipo I e preservado em alguns tipos II"],
+      "inheritance": {"pattern":"autossômica dominante","notes":"Formas heterozigotas clássicas conferem predisposição trombótica relevante."},
+      "keyEvidence": ["atividade de antitrombina baixa", "SERPINC1", "trombose venosa"],
+      "differentials": ["Fator V Leiden", "F2 G20210A", "deficiência de proteína C/S"],
+      "progressiveClues": [
+        {"order":1,"title":"Fenótipo","text":"Trombose venosa em indivíduo jovem.","weight":6},
+        {"order":2,"title":"Laboratório","text":"A atividade de um anticoagulante natural que inibe trombina está reduzida.","weight":12},
+        {"order":3,"title":"Gene","text":"O gene envolvido é SERPINC1.","weight":14,"decisive":true}
+      ],
+      "pitfalls": ["Distinguir causas hereditárias de redução de antitrombina de causas adquiridas."],
+      "references": [{"label":"Aula: deficiências de anticoagulantes naturais","kind":"lecture"}]
+    },
+    {
+      "id": "protein_c_deficiency",
+      "name": "Deficiência hereditária de proteína C",
+      "aliases": ["deficiência de PC"],
+      "category": "trombofilia hereditária",
+      "suspectedProtein": "proteína C",
+      "genes": ["PROC"],
+      "chromosomeLocation": ["2q14.3"],
+      "variantTypes": ["variantes quantitativas e qualitativas em PROC"],
+      "molecularEffect": "Redução da anticoagulação dependente de proteína C, com menor inativação dos fatores Va e VIIIa.",
+      "alteredProcess": "anticoagulação natural",
+      "morphologyMicroscopy": ["sem alteração específica no esfregaço"],
+      "clinicalManifestations": ["trombose venosa profunda", "embolia pulmonar", "formas bialélicas graves podem causar púrpura fulminante neonatal"],
+      "laboratoryFindings": ["atividade de proteína C reduzida; testes antigênicos podem complementar"],
+      "inheritance": {"pattern":"autossômica dominante nas formas heterozigotas clássicas","notes":"Formas bialélicas podem causar fenótipo neonatal grave."},
+      "keyEvidence": ["proteína C baixa", "PROC", "trombose venosa"],
+      "differentials": ["deficiência de proteína S", "Fator V Leiden", "deficiência de antitrombina"],
+      "progressiveClues": [
+        {"order":1,"title":"Fenótipo","text":"Trombose venosa recorrente.","weight":6},
+        {"order":2,"title":"Mecanismo","text":"Há falha na via que normalmente inativa os fatores Va e VIIIa.","weight":11},
+        {"order":3,"title":"Gene","text":"O gene PROC está alterado.","weight":14,"decisive":true}
+      ],
+      "pitfalls": ["Warfarina e outras situações podem reduzir proteína C; interpretar no contexto clínico."],
+      "references": [{"label":"Aula: deficiências de anticoagulantes naturais","kind":"lecture"}]
+    },
+    {
+      "id": "protein_s_deficiency",
+      "name": "Deficiência hereditária de proteína S",
+      "aliases": ["deficiência de PS"],
+      "category": "trombofilia hereditária",
+      "suspectedProtein": "proteína S",
+      "genes": ["PROS1"],
+      "chromosomeLocation": ["3q11.1"],
+      "variantTypes": ["variantes quantitativas e qualitativas em PROS1"],
+      "molecularEffect": "Deficiência do cofator da proteína C ativada reduz a inativação fisiológica de fatores pró-coagulantes.",
+      "alteredProcess": "anticoagulação natural",
+      "morphologyMicroscopy": ["sem alteração específica no esfregaço"],
+      "clinicalManifestations": ["predisposição a trombose venosa profunda", "embolia pulmonar"],
+      "laboratoryFindings": ["atividade e/ou proteína S livre reduzidas; interpretação é influenciada por gestação, estrogênio, inflamação e anticoagulação"],
+      "inheritance": {"pattern":"autossômica dominante nas formas heterozigotas clássicas","notes":"Penetrância é variável."},
+      "keyEvidence": ["proteína S reduzida", "PROS1", "trombose venosa"],
+      "differentials": ["deficiência de proteína C", "Fator V Leiden", "deficiência de antitrombina"],
+      "progressiveClues": [
+        {"order":1,"title":"Fenótipo","text":"Trombose venosa em contexto familiar.","weight":6},
+        {"order":2,"title":"Mecanismo","text":"O cofator da proteína C ativada está reduzido.","weight":11},
+        {"order":3,"title":"Gene","text":"O gene PROS1 está alterado.","weight":14,"decisive":true}
+      ],
+      "pitfalls": ["A proteína S pode estar reduzida por condições adquiridas; não interpretar resultado isolado como diagnóstico hereditário."],
+      "references": [{"label":"Aula: deficiências de anticoagulantes naturais","kind":"lecture"}]
+    }
+  ]
+}
