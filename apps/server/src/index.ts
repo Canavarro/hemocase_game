@@ -10,6 +10,7 @@ import {
   escapeReviewSchema, hostActionSchema, integritySchema, joinSessionSchema, watchSessionSchema,
   type DiseaseKnowledge, type EscapeCase, type GameContent, type MedicalKnowledgeBase, type QuestionBank,
 } from "@hemocase/shared";
+import { createDb } from "./db.js";
 import { GameEngine, type SessionState } from "./game-engine.js";
 import { findPrivateIpv4 } from "./network.js";
 
@@ -37,6 +38,9 @@ const medical = fs.existsSync(medicalKnowledgePath) && fs.existsSync(questionBan
   }
   : undefined;
 const engine = new GameEngine(content, escapeCases, diseases, medical);
+// Persistência opcional (Neon · projeto LAGEM). Falha de banco nunca derruba o jogo.
+let db = createDb();
+const persistedSessions = new Set<string>();
 const app = Fastify({ logger: true, bodyLimit: 64 * 1024 });
 const io = new SocketServer(app.server, { maxHttpBufferSize: 64 * 1024 });
 const port = Number(process.env.PORT ?? 3000);
@@ -54,7 +58,17 @@ declare module "socket.io" {
   }
 }
 
-app.get("/api/health", async () => ({ ok: true, lanIp, port }));
+app.get("/api/health", async () => ({ ok: true, lanIp, port, db: Boolean(db) }));
+
+app.get<{ Querystring: { limit?: string } }>("/api/rankings", async (request, reply) => {
+  if (!db) return reply.code(503).send({ error: "Ranking indisponível: banco de dados não configurado (DATABASE_URL)." });
+  try {
+    return { rankings: await db.fetchRankings(Number(request.query.limit ?? 20) || 20) };
+  } catch (error) {
+    app.log.error(error, "falha ao ler rankings");
+    return reply.code(502).send({ error: "Ranking temporariamente indisponível." });
+  }
+});
 
 app.get("/api/escape/cases", async () => ({ cases: engine.listEscapeCases() }));
 
@@ -233,11 +247,22 @@ function bindSocket(socket: Socket, session: SessionState, role: "host" | "scree
 }
 
 async function broadcast(session: SessionState) {
+  maybePersist(session);
   const sockets = await io.in(session.code).fetchSockets();
   for (const socket of sockets) {
     const role = socket.data.role ?? "screen";
     socket.emit("session:update", engine.snapshot(session, role, socket.data.teamToken));
   }
+}
+
+/** Grava a sessão no banco uma única vez, quando o protocolo encerra. */
+function maybePersist(session: SessionState) {
+  if (!db || session.phase !== "FINISHED" || persistedSessions.has(session.id) || !session.teams.size) return;
+  persistedSessions.add(session.id);
+  db.saveFinishedSession(session, engine.exportSession(session)).catch((error) => {
+    persistedSessions.delete(session.id);
+    app.log.error(error, `falha ao persistir a sessão ${session.code}`);
+  });
 }
 
 function message(error: unknown) {
@@ -257,6 +282,17 @@ if (fs.existsSync(webDist)) {
     if (request.url.startsWith("/api/")) return reply.code(404).send({ error: "Rota não encontrada." });
     return reply.type("text/html").sendFile("index.html");
   });
+}
+
+if (db) {
+  try {
+    await db.ensureSchema();
+    app.log.info("Persistência ativa (Postgres/Neon): schema verificado.");
+  } catch (error) {
+    app.log.error(error, "Banco configurado mas inacessível — seguindo 100% em memória.");
+    await db.close().catch(() => undefined);
+    db = undefined;
+  }
 }
 
 await app.listen({ host: "0.0.0.0", port });
