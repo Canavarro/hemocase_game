@@ -1,8 +1,14 @@
 {
   "id": "bernard-soulier",
   "name": "Síndrome de Bernard-Soulier",
+  "medicalId": "bernard_soulier",
   "group": "plaquetopatias",
-  "topicTags": ["proteinas-funcoes", "hemostasia-primaria", "bernard-soulier", "heranca-autossomica"],
+  "topicTags": [
+    "proteinas-funcoes",
+    "hemostasia-primaria",
+    "bernard-soulier",
+    "heranca-autossomica"
+  ],
   "patient": {
     "descriptor": "menino, 3 anos",
     "story": "Púrpura e epistaxes desde o primeiro ano de vida, com um sangramento nasal que precisou de tamponamento; os pais são primos entre si."
@@ -27,8 +33,16 @@
     ]
   },
   "labs": {
-    "altered": ["Plaquetas 45.000/µL (reduzidas)", "Plaquetas GIGANTES no esfregaço", "Agregação ausente com ristocetina, SEM correção com plasma"],
-    "normal": ["TP/INR 1,0", "TTPa 32 s", "Fator de von Willebrand 95%"]
+    "altered": [
+      "Plaquetas 45.000/µL (reduzidas)",
+      "Plaquetas GIGANTES no esfregaço",
+      "Agregação ausente com ristocetina, SEM correção com plasma"
+    ],
+    "normal": [
+      "TP/INR 1,0",
+      "TTPa 32 s",
+      "Fator de von Willebrand 95%"
+    ]
   },
   "smear": {
     "kind": "plaquetas-gigantes",
@@ -51,7 +65,7 @@
   },
   "gene": {
     "symbol": "GP1BA/GP1BB/GP9",
-    "locus": "17p13 / 22q11 / 3q21",
+    "locus": "17p13.2 / 22q11.21 / 3q21.3",
     "mutationSummary": "Mutações bialélicas em GP1BA, GP1BB ou GP9, desmontando o complexo GPIb-IX-V"
   },
   "inheritance": {
@@ -60,7 +74,11 @@
     "recurrence": {
       "prompt": "'Somos primos e nosso filho nasceu com a síndrome. Qual a chance em um próximo filho?'",
       "correct": "25%",
-      "wrong": ["50%", "100%", "Nenhuma chance"]
+      "wrong": [
+        "50%",
+        "100%",
+        "Nenhuma chance"
+      ]
     }
   },
   "route": {
@@ -74,8 +92,14 @@
     {
       "prompt": "Etiqueta no freezer −80 °C: 'Menino com plaquetas PEQUENAS e baixas, eczema e infecções de repetição.' Qual é a síndrome?",
       "correct": "Síndrome de Wiskott-Aldrich",
-      "wrong": ["Bernard-Soulier", "Doença de von Willebrand", "Telangiectasia hemorrágica hereditária"],
-      "tags": ["imunodeficiencias-plaquetarias"]
+      "wrong": [
+        "Bernard-Soulier",
+        "Doença de von Willebrand",
+        "Telangiectasia hemorrágica hereditária"
+      ],
+      "tags": [
+        "imunodeficiencias-plaquetarias"
+      ]
     }
   ],
   "debrief": {

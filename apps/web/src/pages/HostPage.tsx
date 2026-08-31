@@ -1,6 +1,11 @@
 import { useEffect, useState } from "react";
 import { ArrowLeft, DoorOpen, Download, ExternalLink, Pause, Play, Plus, RotateCcw, ShieldAlert, SlidersHorizontal, Square, SkipForward, Timer } from "lucide-react";
-import { diseaseGroupLabels, diseaseGroups, escapeTopicLabels, escapeTopics, type DiseaseGroup, type EscapeLibrary, type EscapeTopic, type GameMode, type HostAction, type IntegrityPolicy } from "@hemocase/shared";
+import {
+  diseaseGroupLabels, diseaseGroups, escapeTopicLabels, escapeTopics,
+  questionCategories, questionCategoryLabels, questionDifficulties, questionDifficultyLabels,
+  type DiseaseGroup, type EscapeLibrary, type EscapeTopic, type GameMode, type HostAction,
+  type IntegrityPolicy, type QuestionCategory, type QuestionDifficulty,
+} from "@hemocase/shared";
 import { ConnectionStatus } from "../components/Status";
 import { formatTime, useSession } from "../lib/socket";
 
@@ -25,6 +30,11 @@ export function HostPage() {
   const [durationMin, setDurationMin] = useState(35);
   const [library, setLibrary] = useState<EscapeLibrary>({ cases: [], diseases: [] });
   const [source, setSource] = useState("");
+  const [blitzSource, setBlitzSource] = useState<"script" | "bank">("script");
+  const [blitzDifficulties, setBlitzDifficulties] = useState<QuestionDifficulty[]>([]);
+  const [blitzCategories, setBlitzCategories] = useState<QuestionCategory[]>([]);
+  const [blitzExpansion, setBlitzExpansion] = useState(true);
+  const [blitzCount, setBlitzCount] = useState(7);
   const { socket, snapshot, connected, error } = useSession("host", code, token);
 
   useEffect(() => {
@@ -89,9 +99,18 @@ export function HostPage() {
         : kind === "group"
           ? { mode: "group", group: id }
           : kind === "any" ? { mode: "any" } : undefined;
+      const blitz = blitzSource === "bank"
+        ? {
+          source: "bank",
+          difficulties: blitzDifficulties.length ? blitzDifficulties : undefined,
+          categories: blitzCategories.length ? blitzCategories : undefined,
+          includeExpansion: blitzExpansion,
+          count: blitzCount,
+        }
+        : undefined;
       const body = mode === "ESCAPE"
         ? { mode, integrityPolicy: "ZERO_ROUND", allowedTopics: topics, durationMin, caseId, generator }
-        : { mode, integrityPolicy: "ZERO_ROUND" };
+        : { mode, integrityPolicy: "ZERO_ROUND", blitz };
       const response = await fetch("/api/sessions", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(body) });
       const data = await response.json() as { code: string; hostToken: string; error?: string };
       if (!response.ok) throw new Error(data.error ?? "Não foi possível criar a sessão.");
@@ -148,6 +167,51 @@ export function HostPage() {
               <span>Laboratório selado em primeira pessoa. Cada equipe investiga no seu ritmo.</span>
             </button>
           </div>
+
+          {mode === "QUIZ" && (
+            <div className="escape-setup">
+              <label className="field-label">Código relâmpago
+                <select value={blitzSource} onChange={(event) => setBlitzSource(event.target.value as "script" | "bank")}>
+                  <option value="script">Roteiro fixo de 30 minutos (revisado)</option>
+                  <option value="bank">Sortear do banco canônico de questões</option>
+                </select>
+              </label>
+              {blitzSource === "bank" && (
+                <>
+                  <div className="setup-row">
+                    <label className="field-label">Quantidade de perguntas
+                      <select value={blitzCount} onChange={(event) => setBlitzCount(Number(event.target.value))}>
+                        {[5, 7, 10, 12].map((count) => <option key={count} value={count}>{count} perguntas</option>)}
+                      </select>
+                    </label>
+                    <label className={`topic-chip ${blitzExpansion ? "is-on" : ""}`}>
+                      <input type="checkbox" checked={blitzExpansion} onChange={() => setBlitzExpansion((current) => !current)} />
+                      Incluir doenças de expansão
+                    </label>
+                  </div>
+                  <fieldset className="topic-grid">
+                    <legend>Dificuldades (nenhuma marcada = todas)</legend>
+                    {questionDifficulties.map((difficulty) => (
+                      <label key={difficulty} className={`topic-chip ${blitzDifficulties.includes(difficulty) ? "is-on" : ""}`}>
+                        <input type="checkbox" checked={blitzDifficulties.includes(difficulty)} onChange={() => setBlitzDifficulties((current) => current.includes(difficulty) ? current.filter((item) => item !== difficulty) : [...current, difficulty])} />
+                        {questionDifficultyLabels[difficulty]}
+                      </label>
+                    ))}
+                  </fieldset>
+                  <fieldset className="topic-grid">
+                    <legend>Categorias (nenhuma marcada = todas)</legend>
+                    {questionCategories.map((category) => (
+                      <label key={category} className={`topic-chip ${blitzCategories.includes(category) ? "is-on" : ""}`}>
+                        <input type="checkbox" checked={blitzCategories.includes(category)} onChange={() => setBlitzCategories((current) => current.includes(category) ? current.filter((item) => item !== category) : [...current, category])} />
+                        {questionCategoryLabels[category]}
+                      </label>
+                    ))}
+                  </fieldset>
+                  <p className="puzzle-note">O Código Relâmpago será sorteado do banco canônico (`question-bank.pt-BR.json`) com os filtros acima; o restante do roteiro de 30 minutos permanece igual.</p>
+                </>
+              )}
+            </div>
+          )}
 
           {mode === "ESCAPE" && (
             <div className="escape-setup">

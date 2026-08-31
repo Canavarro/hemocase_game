@@ -1,8 +1,14 @@
 {
   "id": "hemofilia-b",
   "name": "Hemofilia B",
+  "medicalId": "hemophilia_b",
   "group": "coagulopatias",
-  "topicTags": ["proteinas-funcoes", "hemostasia-secundaria", "hemofilias", "heranca-ligada-x"],
+  "topicTags": [
+    "proteinas-funcoes",
+    "hemostasia-secundaria",
+    "hemofilias",
+    "heranca-ligada-x"
+  ],
   "patient": {
     "descriptor": "menino, 6 anos",
     "story": "Após uma vacina intramuscular, formou-se um hematoma volumoso e endurecido na coxa; um tio materno tem 'problema nas juntas' desde a infância."
@@ -27,8 +33,16 @@
     ]
   },
   "labs": {
-    "altered": ["TTPa 62 s (alargado)", "Fator IX 4% (muito reduzido)", "TTPa corrige na mistura com plasma normal"],
-    "normal": ["TP/INR 1,0", "Plaquetas 300.000/µL", "Fator VIII 95%"]
+    "altered": [
+      "TTPa 62 s (alargado)",
+      "Fator IX 4% (muito reduzido)",
+      "TTPa corrige na mistura com plasma normal"
+    ],
+    "normal": [
+      "TP/INR 1,0",
+      "Plaquetas 300.000/µL",
+      "Fator VIII 95%"
+    ]
   },
   "smear": {
     "kind": "normal",
@@ -60,7 +74,11 @@
     "recurrence": {
       "prompt": "'Se eu for portadora, qual a chance de um próximo MENINO nascer afetado?'",
       "correct": "50%",
-      "wrong": ["25%", "100%", "Nenhuma chance"]
+      "wrong": [
+        "25%",
+        "100%",
+        "Nenhuma chance"
+      ]
     }
   },
   "route": {
@@ -74,8 +92,14 @@
     {
       "prompt": "Etiqueta antiga: 'Doença de Christmas' — este é o outro nome histórico de qual condição?",
       "correct": "Hemofilia B (deficiência de fator IX)",
-      "wrong": ["Hemofilia A (deficiência de fator VIII)", "Doença de von Willebrand", "Púrpura trombocitopênica"],
-      "tags": ["hemofilias"]
+      "wrong": [
+        "Hemofilia A (deficiência de fator VIII)",
+        "Doença de von Willebrand",
+        "Púrpura trombocitopênica"
+      ],
+      "tags": [
+        "hemofilias"
+      ]
     }
   ],
   "debrief": {

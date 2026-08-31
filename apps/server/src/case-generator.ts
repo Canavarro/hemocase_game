@@ -7,6 +7,7 @@ import {
   type EscapeStep,
   type EscapeTopic,
 } from "@hemocase/shared";
+import type { EmergencyFileEntry } from "./medical-content.js";
 
 /**
  * Gerador de casos: transforma um perfil da base de conhecimento
@@ -139,7 +140,7 @@ function routeDistractors(rng: Rng, others: DiseaseKnowledge[], field: keyof Dis
   return sample(rng, unique, count);
 }
 
-export function generateEscapeCase(profile: DiseaseKnowledge, installed: DiseaseKnowledge[], seed: number, allowedTopics: EscapeTopic[]): EscapeCase {
+export function generateEscapeCase(profile: DiseaseKnowledge, installed: DiseaseKnowledge[], seed: number, allowedTopics: EscapeTopic[], extraEmergency: EmergencyFileEntry[] = []): EscapeCase {
   validateDisease(profile);
   const rng = mulberry32(seed);
   const others = installed.filter((other) => other.id !== profile.id);
@@ -393,17 +394,26 @@ export function generateEscapeCase(profile: DiseaseKnowledge, installed: Disease
 
   /* ---------- Arquivos de emergência (opcionais, pool das outras doenças) ---------- */
 
-  const pool = shuffle(rng, installed.flatMap((disease) =>
-    (disease.emergencyFiles ?? []).map((file) => ({ ...file, from: disease.id })),
-  ).filter((file) => file.from !== profile.id && file.tags.every((tag) => allowed.has(tag))));
+  const pool = shuffle(rng, [
+    ...installed.flatMap((disease) => (disease.emergencyFiles ?? []).map((file) => ({ ...file, from: disease.id }))),
+    ...extraEmergency,
+  ].filter((file) =>
+    file.from !== profile.id
+    && (!profile.medicalId || file.from !== profile.medicalId)
+    && file.tags.every((tag) => allowed.has(tag)),
+  ));
   const optionalSlots: Array<{ id: string; roomId: EscapeStep["roomId"]; object: string; title: string }> = [
     { id: "R2-F1", roomId: "R2", object: "arquivo-morto", title: "Arquivo de emergência: pasta esquecida" },
     { id: "R3-F1", roomId: "R3", object: "balanca", title: "Arquivo de emergência: o cartão na balança" },
     { id: "R4-F1", roomId: "R4", object: "freezer", title: "Arquivo de emergência: etiqueta no freezer" },
   ];
+  // Um arquivo por sala opcional, sem repetir a mesma resposta correta no caso.
+  const usedAnswers = new Set<string>();
   optionalSlots.forEach((slot, index) => {
-    const file = pool[index];
-    if (!file) return;
+    const fileIndex = pool.findIndex((entry) => !usedAnswers.has(entry.correct));
+    if (fileIndex === -1) return;
+    const file = pool.splice(fileIndex, 1)[0]!;
+    usedAnswers.add(file.correct);
     const built = buildChoices(rng, file.correct, sample(rng, file.wrong, 3), `e${index}`);
     steps.push({
       id: slot.id, roomId: slot.roomId, type: "family-question", object: slot.object,

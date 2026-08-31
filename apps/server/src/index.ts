@@ -8,7 +8,7 @@ import { Server as SocketServer, type Socket } from "socket.io";
 import {
   answerSchema, createSessionSchema, escapeAttemptSchema, escapeHintSchema, escapeNoteSchema,
   hostActionSchema, integritySchema, joinSessionSchema, watchSessionSchema,
-  type DiseaseKnowledge, type EscapeCase, type GameContent,
+  type DiseaseKnowledge, type EscapeCase, type GameContent, type MedicalKnowledgeBase, type QuestionBank,
 } from "@hemocase/shared";
 import { GameEngine, type SessionState } from "./game-engine.js";
 import { findPrivateIpv4 } from "./network.js";
@@ -27,7 +27,16 @@ const diseases: DiseaseKnowledge[] = fs.existsSync(diseasesDir)
   ? fs.readdirSync(diseasesDir).filter((file) => file.endsWith(".json"))
     .map((file) => JSON.parse(fs.readFileSync(path.join(diseasesDir, file), "utf8")) as DiseaseKnowledge)
   : [];
-const engine = new GameEngine(content, escapeCases, diseases);
+const medicalKnowledgePath = path.resolve(rootDir, "content/medical-knowledge.pt-BR.json");
+const questionBankPath = path.resolve(rootDir, "content/question-bank.pt-BR.json");
+// Bancos canônicos: validados na inicialização; erro estrutural derruba o servidor com mensagem clara.
+const medical = fs.existsSync(medicalKnowledgePath) && fs.existsSync(questionBankPath)
+  ? {
+    knowledge: JSON.parse(fs.readFileSync(medicalKnowledgePath, "utf8")) as MedicalKnowledgeBase,
+    bank: JSON.parse(fs.readFileSync(questionBankPath, "utf8")) as QuestionBank,
+  }
+  : undefined;
+const engine = new GameEngine(content, escapeCases, diseases, medical);
 const app = Fastify({ logger: true, bodyLimit: 64 * 1024 });
 const io = new SocketServer(app.server, { maxHttpBufferSize: 64 * 1024 });
 const port = Number(process.env.PORT ?? 3000);
@@ -61,6 +70,7 @@ app.post<{ Body: unknown }>("/api/sessions", async (request, reply) => {
       durationMin: parsed.data.durationMin,
       caseId: parsed.data.caseId,
       generator: parsed.data.generator,
+      blitz: parsed.data.blitz,
     });
     reply.code(201);
     return { code: session.code, hostToken: session.hostToken, joinUrl: session.joinUrl, mode: session.mode, screenUrl: `${publicBaseUrl}/screen/${session.code}` };

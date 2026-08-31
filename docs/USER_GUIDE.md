@@ -129,6 +129,13 @@ As durações competitivas vêm de `content/game.pt-BR.json`.
 
 Todas as superfícies usam logo LAGEM e DNA animado em baixa opacidade. Sistemas com `prefers-reduced-motion` reduzem animações e transições. Informação importante nunca depende apenas de vibração, cor ou movimento.
 
+## Código Relâmpago pelo banco canônico (Rodadas ao vivo)
+
+Ao criar uma sessão de **Rodadas ao vivo**, o facilitador escolhe a origem do Código Relâmpago:
+
+- **Roteiro fixo de 30 minutos**: as 7 perguntas revisadas do roteiro;
+- **Sortear do banco canônico**: perguntas sorteadas de `question-bank.pt-BR.json`, com filtros de **dificuldade** (fácil/média/difícil), **categoria** (genética, microscopia, clínica, laboratório, molecular, herança, diferencial), **quantidade** e a opção de **incluir doenças de expansão** (HbC, α-talassemia, Glanzmann, Hermansky-Pudlak, Wiskott-Aldrich, HHT e trombofilias). A pontuação segue o banco (5/8/12) e o tempo por pergunta cresce com a dificuldade.
+
 ## Modo Escape: Protocolo Hélix
 
 Ao criar a sessão, o facilitador escolhe entre **Rodadas ao vivo** (fluxo clássico) e **Escape: Protocolo Hélix**. No modo Escape:

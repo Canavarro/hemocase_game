@@ -1,8 +1,15 @@
 {
   "id": "anemia-falciforme",
   "name": "Anemia falciforme",
+  "medicalId": "sickle_cell_disease",
   "group": "hemoglobinopatias",
-  "topicTags": ["proteinas-funcoes", "hemoglobina-estrutura", "anemia-falciforme", "mutacoes-ponto", "heranca-autossomica"],
+  "topicTags": [
+    "proteinas-funcoes",
+    "hemoglobina-estrutura",
+    "anemia-falciforme",
+    "mutacoes-ponto",
+    "heranca-autossomica"
+  ],
   "patient": {
     "descriptor": "lactente, 8 meses",
     "story": "Desde os 6 meses chora à manipulação das mãos e dos pés, está pálido e o baço cresceu; um tio materno tem 'doença do sangue' desde criança."
@@ -29,8 +36,16 @@
     ]
   },
   "labs": {
-    "altered": ["Hemoglobina 7,5 g/dL", "Reticulócitos 12%", "Bilirrubina indireta 2,1 mg/dL"],
-    "normal": ["VCM 84 fL", "Plaquetas 260.000/µL", "TTPa 31 s"]
+    "altered": [
+      "Hemoglobina 7,5 g/dL",
+      "Reticulócitos 12%",
+      "Bilirrubina indireta 2,1 mg/dL"
+    ],
+    "normal": [
+      "VCM 84 fL",
+      "Plaquetas 260.000/µL",
+      "TTPa 31 s"
+    ]
   },
   "smear": {
     "kind": "falciforme",
@@ -41,13 +56,35 @@
     "assembly": {
       "prompt": "O modelo molecular da hemoglobina adulta (HbA) está desmontado. Encaixem as QUATRO cadeias corretas nos quatro suportes.",
       "pieces": [
-        { "id": "alfa", "text": "Cadeia α" },
-        { "id": "beta", "text": "Cadeia β" },
-        { "id": "gama", "text": "Cadeia γ" },
-        { "id": "delta", "text": "Cadeia δ" }
+        {
+          "id": "alfa",
+          "text": "Cadeia α"
+        },
+        {
+          "id": "beta",
+          "text": "Cadeia β"
+        },
+        {
+          "id": "gama",
+          "text": "Cadeia γ"
+        },
+        {
+          "id": "delta",
+          "text": "Cadeia δ"
+        }
       ],
-      "slots": ["Suporte 1", "Suporte 2", "Suporte 3", "Suporte 4"],
-      "answer": ["alfa", "alfa", "beta", "beta"],
+      "slots": [
+        "Suporte 1",
+        "Suporte 2",
+        "Suporte 3",
+        "Suporte 4"
+      ],
+      "answer": [
+        "alfa",
+        "alfa",
+        "beta",
+        "beta"
+      ],
       "hints": [
         "A HbA predominante do adulto tem duas cadeias de cada tipo.",
         "γ pertence à hemoglobina fetal; δ, à HbA2 minoritária.",
@@ -63,8 +100,22 @@
     "locus": "11p15.4",
     "sequence": {
       "label": "Códons 4–9 da beta-globina",
-      "reference": ["ACT", "CCT", "GAG", "GAG", "AAG", "TCT"],
-      "sample": ["ACT", "CCT", "GTG", "GAG", "AAG", "TCT"],
+      "reference": [
+        "ACT",
+        "CCT",
+        "GAG",
+        "GAG",
+        "AAG",
+        "TCT"
+      ],
+      "sample": [
+        "ACT",
+        "CCT",
+        "GTG",
+        "GAG",
+        "AAG",
+        "TCT"
+      ],
       "divergentIndex": 2,
       "chromatogram": "troca de A por T no segundo nucleotídeo do códon 6 (GAG → GTG): glutamato → valina"
     },
@@ -76,7 +127,11 @@
     "recurrence": {
       "prompt": "'Nós dois temos o traço. Qual a chance de um próximo filho nascer com a doença?'",
       "correct": "25%",
-      "wrong": ["50%", "100%", "Nenhuma chance"]
+      "wrong": [
+        "50%",
+        "100%",
+        "Nenhuma chance"
+      ]
     }
   },
   "route": {
@@ -90,8 +145,14 @@
     {
       "prompt": "Pasta esquecida: 'Criança com dor óssea em crises e esfregaço com hemácias em foice.' Qual é a hemoglobina anômala?",
       "correct": "HbS (Glu6Val da cadeia β)",
-      "wrong": ["HbF (fetal)", "HbA2 (α2δ2)", "Hemoglobina glicada (HbA1c)"],
-      "tags": ["anemia-falciforme"]
+      "wrong": [
+        "HbF (fetal)",
+        "HbA2 (α2δ2)",
+        "Hemoglobina glicada (HbA1c)"
+      ],
+      "tags": [
+        "anemia-falciforme"
+      ]
     }
   ],
   "debrief": {

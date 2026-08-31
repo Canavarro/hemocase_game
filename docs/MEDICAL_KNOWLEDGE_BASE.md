@@ -126,6 +126,17 @@ Pode-se montar perguntas por template, por exemplo:
 
 Distratores devem vir preferencialmente de doenças da mesma categoria.
 
+## Estado da integração
+
+Os bancos canônicos estão integrados à aplicação:
+
+- **Validação na inicialização**: `apps/server/src/medical-content.ts` valida os dois JSONs (ids únicos, gabarito com opção correspondente, doença existente, pontuação conforme scoring) e confere os perfis do Escape (`content/escape/diseases`) contra o canônico via `medicalId` — genes e herança divergentes derrubam o servidor com mensagem clara.
+- **Código Relâmpago**: o Host pode sortear a fase BLITZ do `question-bank` com filtros de dificuldade, categoria e expansão (campo `blitz` em `POST /api/sessions`). Roteiro fixo de 30 minutos continua sendo o padrão.
+- **Modo Escape**: os arquivos de emergência (bônus opcionais) são alimentados pelo `question-bank`, filtrados pelos tópicos liberados e excluindo a doença do caso principal.
+- **Gabarito**: `correctOptionId` e `explanation` nunca são enviados ao cliente antes da fase apropriada (o servidor remove ambos do snapshot; correção e pontuação são autoritativas no servidor).
+
+Divergências normalizadas no conteúdo do jogo conforme a precedência do banco: locus do VWF corrigido para 12p13.31; loci de GP1BA/GP1BB/GP9 detalhados (17p13.2/22q11.21/3q21.3). O perfil de VWD do Escape representa explicitamente o **tipo 1** (autossômico dominante), compatível com a nota canônica de herança mista por subtipo.
+
 ## Revisão científica
 
 Antes de uma versão usada em avaliação formal, recomenda-se revisão final do banco por docente/orientador da Liga. O banco foi desenhado para atividade educacional e não substitui protocolos clínicos ou aconselhamento genético individual.

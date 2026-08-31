@@ -185,6 +185,22 @@ Limpar esses valores remove a credencial local, mas não altera a sessão no ser
 
 ### Criação de sessão
 
+### Código Relâmpago pelo banco canônico (modo QUIZ)
+
+`POST /api/sessions` com `mode: "QUIZ"` aceita o campo opcional `blitz`:
+
+```json
+{ "mode": "QUIZ", "blitz": { "source": "bank", "difficulties": ["medium", "hard"], "categories": ["genetics", "differential"], "includeExpansion": true, "count": 7 } }
+```
+
+- `source: "script"` (padrão) mantém o roteiro fixo de 30 minutos;
+- `source: "bank"` sorteia a fase BLITZ de `content/question-bank.pt-BR.json` (fonte canônica), com pontuação do próprio banco (fácil 5, média 8, difícil 12) e duração por dificuldade (20/30/40 s);
+- `difficulties`/`categories` vazios ou ausentes = todas; `includeExpansion: false` restringe às trilhas principais;
+- filtros que deixem menos de 3 perguntas elegíveis retornam `422` com mensagem clara;
+- perguntas e ordem das alternativas são embaralhadas por sessão; `correctOptionId` e `explanation` nunca chegam ao cliente antes do momento apropriado (o snapshot remove o gabarito como nas demais fases).
+
+Os bancos canônicos (`medical-knowledge` + `question-bank`) são validados na inicialização do servidor: id duplicado, gabarito sem opção correspondente, doença inexistente, pontuação divergente da regra de scoring ou perfil do Escape divergente do canônico derrubam o servidor com mensagem apontando o problema.
+
 `POST /api/sessions` aceita corpo validado por `createSessionSchema`:
 
 ```json

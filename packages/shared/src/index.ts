@@ -170,6 +170,91 @@ export interface EscapeCaseSummary {
   roomCount: number;
 }
 
+/* ============== Bancos canônicos de conteúdo médico (fonte de verdade) ============== */
+
+export const questionCategories = ["genetics", "microscopy", "clinical", "laboratory", "molecular", "inheritance", "differential"] as const;
+export type QuestionCategory = (typeof questionCategories)[number];
+
+export const questionCategoryLabels: Record<QuestionCategory, string> = {
+  genetics: "Genética", microscopy: "Microscopia", clinical: "Clínica", laboratory: "Laboratório",
+  molecular: "Molecular", inheritance: "Herança", differential: "Diferencial",
+};
+
+export const questionDifficulties = ["easy", "medium", "hard"] as const;
+export type QuestionDifficulty = (typeof questionDifficulties)[number];
+
+export const questionDifficultyLabels: Record<QuestionDifficulty, string> = {
+  easy: "Fácil", medium: "Média", hard: "Difícil",
+};
+
+/** Entidade de `content/medical-knowledge.pt-BR.json` — fonte canônica de fatos médicos. */
+export interface MedicalDisease {
+  id: string;
+  name: string;
+  aliases: string[];
+  category: string;
+  suspectedProtein: string;
+  genes: string[];
+  chromosomeLocation: string[];
+  variantTypes: string[];
+  molecularEffect: string;
+  alteredProcess: string;
+  morphologyMicroscopy: string[];
+  clinicalManifestations: string[];
+  laboratoryFindings: string[];
+  inheritance: { pattern: string; notes?: string };
+  keyEvidence: string[];
+  differentials: string[];
+  progressiveClues: Array<{ order: number; title: string; text: string; weight: number; decisive?: boolean }>;
+  pitfalls: string[];
+  references: Array<{ label: string; kind: string; url?: string }>;
+}
+
+export interface MedicalKnowledgeBase {
+  version: string;
+  language: string;
+  purpose?: string;
+  rules?: Record<string, unknown>;
+  diseases: MedicalDisease[];
+}
+
+/** Pergunta de `content/question-bank.pt-BR.json` — banco canônico reutilizável. */
+export interface BankQuestion {
+  id: string;
+  diseaseId?: string;
+  category: QuestionCategory;
+  difficulty: QuestionDifficulty;
+  stem: string;
+  options: Array<{ id: string; text: string }>;
+  correctOptionId: string;
+  explanation: string;
+  points: number;
+  tags: string[];
+}
+
+export interface QuestionBank {
+  version: string;
+  language: string;
+  rules?: { scoring?: Record<QuestionDifficulty, number>; selection?: string; antiGuessing?: string };
+  questions: BankQuestion[];
+}
+
+/** Trilhas principais do modo de 30 minutos; as demais doenças são expansão. */
+export const coreMedicalDiseaseIds = [
+  "sickle_cell_disease", "beta_thalassemia", "hemophilia_a", "hemophilia_b",
+  "von_willebrand_disease", "bernard_soulier",
+] as const;
+
+/** Configuração do Código Relâmpago escolhida pelo Host na criação da sessão QUIZ. */
+export const blitzOptionsSchema = z.object({
+  source: z.enum(["script", "bank"]).default("script"),
+  categories: z.array(z.enum(questionCategories)).optional(),
+  difficulties: z.array(z.enum(questionDifficulties)).optional(),
+  includeExpansion: z.boolean().default(true),
+  count: z.number().int().min(3).max(15).default(7),
+});
+export type BlitzOptions = z.infer<typeof blitzOptionsSchema>;
+
 /* ============ Base de conhecimento de doenças (gerador de casos) ============ */
 
 export const diseaseGroups = ["hemoglobinopatias", "coagulopatias", "plaquetopatias", "trombofilias"] as const;
@@ -190,6 +275,8 @@ export const diseaseGroupLabels: Record<DiseaseGroup, string> = {
 export interface DiseaseKnowledge {
   id: string;
   name: string;
+  /** Id da entidade correspondente em `content/medical-knowledge.pt-BR.json` (fonte canônica). */
+  medicalId?: string;
   group: DiseaseGroup;
   topicTags: EscapeTopic[];
   patient: {
@@ -353,6 +440,7 @@ export const createSessionSchema = z.object({
   durationMin: z.number().int().min(15).max(60).default(35),
   caseId: z.string().trim().min(1).max(64).optional(),
   generator: escapeGeneratorSchema.optional(),
+  blitz: blitzOptionsSchema.optional(),
 });
 
 export const escapeHintCosts = [0, 3, 8] as const;

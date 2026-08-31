@@ -1,8 +1,15 @@
 {
   "id": "talassemia-beta",
   "name": "Beta-talassemia maior",
+  "medicalId": "beta_thalassemia",
   "group": "hemoglobinopatias",
-  "topicTags": ["proteinas-funcoes", "hemoglobina-estrutura", "talassemias", "splicing-promotor", "heranca-autossomica"],
+  "topicTags": [
+    "proteinas-funcoes",
+    "hemoglobina-estrutura",
+    "talassemias",
+    "splicing-promotor",
+    "heranca-autossomica"
+  ],
   "patient": {
     "descriptor": "lactente, 10 meses",
     "story": "Palidez progressiva desde os 6 meses, abdome crescendo à custa do baço e ganho de peso insuficiente; a família, de origem mediterrânea, lembra de primos com anemia grave na infância."
@@ -29,8 +36,16 @@
     ]
   },
   "labs": {
-    "altered": ["Hemoglobina 6,8 g/dL", "VCM 58 fL (microcitose)", "HbF 65% na eletroforese"],
-    "normal": ["Plaquetas 310.000/µL", "TTPa 30 s", "Leucócitos 9.200/µL"]
+    "altered": [
+      "Hemoglobina 6,8 g/dL",
+      "VCM 58 fL (microcitose)",
+      "HbF 65% na eletroforese"
+    ],
+    "normal": [
+      "Plaquetas 310.000/µL",
+      "TTPa 30 s",
+      "Leucócitos 9.200/µL"
+    ]
   },
   "smear": {
     "kind": "microcitica-hipocromica",
@@ -41,13 +56,35 @@
     "assembly": {
       "prompt": "A eletroforese deste paciente mostra predomínio de HbF. Montem no modelo a hemoglobina PREDOMINANTE neste sangue.",
       "pieces": [
-        { "id": "alfa", "text": "Cadeia α" },
-        { "id": "beta", "text": "Cadeia β" },
-        { "id": "gama", "text": "Cadeia γ" },
-        { "id": "delta", "text": "Cadeia δ" }
+        {
+          "id": "alfa",
+          "text": "Cadeia α"
+        },
+        {
+          "id": "beta",
+          "text": "Cadeia β"
+        },
+        {
+          "id": "gama",
+          "text": "Cadeia γ"
+        },
+        {
+          "id": "delta",
+          "text": "Cadeia δ"
+        }
       ],
-      "slots": ["Suporte 1", "Suporte 2", "Suporte 3", "Suporte 4"],
-      "answer": ["alfa", "alfa", "gama", "gama"],
+      "slots": [
+        "Suporte 1",
+        "Suporte 2",
+        "Suporte 3",
+        "Suporte 4"
+      ],
+      "answer": [
+        "alfa",
+        "alfa",
+        "gama",
+        "gama"
+      ],
       "hints": [
         "A hemoglobina fetal persiste quando as cadeias β faltam.",
         "HbF = duas cadeias α e duas cadeias γ.",
@@ -69,7 +106,11 @@
     "recurrence": {
       "prompt": "'Nós dois temos o traço talassêmico. Qual a chance em CADA gestação de o bebê ter a forma grave?'",
       "correct": "25%",
-      "wrong": ["50%", "100%", "Nenhuma chance"]
+      "wrong": [
+        "50%",
+        "100%",
+        "Nenhuma chance"
+      ]
     }
   },
   "route": {
@@ -83,8 +124,14 @@
     {
       "prompt": "Cartão na balança: 'Outro paciente produz cadeias β em quantidade insuficiente, com cadeias α em excesso precipitando na célula.' Qual é o grupo de doenças?",
       "correct": "Talassemias (defeito quantitativo)",
-      "wrong": ["Anemia falciforme (defeito qualitativo)", "Hemofilias", "Bernard-Soulier"],
-      "tags": ["talassemias"]
+      "wrong": [
+        "Anemia falciforme (defeito qualitativo)",
+        "Hemofilias",
+        "Bernard-Soulier"
+      ],
+      "tags": [
+        "talassemias"
+      ]
     }
   ],
   "debrief": {

@@ -1,8 +1,14 @@
 {
   "id": "von-willebrand",
   "name": "Doença de von Willebrand (tipo 1)",
+  "medicalId": "von_willebrand_disease",
   "group": "coagulopatias",
-  "topicTags": ["proteinas-funcoes", "hemostasia-primaria", "von-willebrand", "heranca-autossomica"],
+  "topicTags": [
+    "proteinas-funcoes",
+    "hemostasia-primaria",
+    "von-willebrand",
+    "heranca-autossomica"
+  ],
   "patient": {
     "descriptor": "menina, 9 anos",
     "story": "Epistaxes de repetição desde pequena e um sangramento que não parava depois da extração de um dente de leite; a mãe sempre teve fluxo menstrual muito aumentado."
@@ -27,8 +33,16 @@
     ]
   },
   "labs": {
-    "altered": ["Antígeno do FvW 18% (reduzido)", "Cofator de ristocetina reduzido", "TTPa 42 s (discretamente alargado)"],
-    "normal": ["Plaquetas 250.000/µL (número normal)", "TP/INR 1,0", "Hemoglobina 12,8 g/dL"]
+    "altered": [
+      "Antígeno do FvW 18% (reduzido)",
+      "Cofator de ristocetina reduzido",
+      "TTPa 42 s (discretamente alargado)"
+    ],
+    "normal": [
+      "Plaquetas 250.000/µL (número normal)",
+      "TP/INR 1,0",
+      "Hemoglobina 12,8 g/dL"
+    ]
   },
   "smear": {
     "kind": "normal",
@@ -51,7 +65,7 @@
   },
   "gene": {
     "symbol": "VWF",
-    "locus": "12p13.3",
+    "locus": "12p13.31",
     "mutationSummary": "Variantes no gene VWF que reduzem a quantidade de fator de von Willebrand (tipo 1)"
   },
   "inheritance": {
@@ -60,11 +74,15 @@
     "recurrence": {
       "prompt": "'Eu tenho a doença (sou heterozigota). Qual a chance de CADA filho herdar a condição?'",
       "correct": "50%",
-      "wrong": ["25%", "100%", "Nenhuma chance"]
+      "wrong": [
+        "25%",
+        "100%",
+        "Nenhuma chance"
+      ]
     }
   },
   "route": {
-    "gene": "VWF (12p13.3)",
+    "gene": "VWF (12p13.31)",
     "protein": "Fator de von Willebrand",
     "mechanism": "Falha de adesão plaquetária + FVIII instável",
     "phenotype": "Sangramento mucocutâneo",
@@ -74,8 +92,15 @@
     {
       "prompt": "Relatório rasgado: 'Paciente com sangramento mucoso, FvW normal, plaquetas GIGANTES e agregação ausente com ristocetina que NÃO corrige com plasma.' Onde está o defeito?",
       "correct": "No receptor GPIb-IX-V da plaqueta (Bernard-Soulier)",
-      "wrong": ["No próprio fator de von Willebrand", "No fator VIII plasmático", "No colágeno subendotelial"],
-      "tags": ["bernard-soulier", "hemostasia-primaria"]
+      "wrong": [
+        "No próprio fator de von Willebrand",
+        "No fator VIII plasmático",
+        "No colágeno subendotelial"
+      ],
+      "tags": [
+        "bernard-soulier",
+        "hemostasia-primaria"
+      ]
     }
   ],
   "debrief": {

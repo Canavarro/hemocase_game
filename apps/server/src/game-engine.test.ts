@@ -9,7 +9,7 @@ const escapeCase = JSON.parse(fs.readFileSync(path.resolve(process.cwd(), "../..
 
 function setup() {
   let now = 1_000_000;
-  const engine = new GameEngine(content, [escapeCase], [], () => now);
+  const engine = new GameEngine(content, [escapeCase], [], undefined, () => now);
   const session = engine.createSession("http://192.168.0.2:3000");
   const joined = engine.join(session.code, "Equipe Alfa");
   return { engine, session, team: joined.team, now: () => now, elapse: (ms: number) => { now += ms; } };
@@ -17,7 +17,7 @@ function setup() {
 
 function setupEscape() {
   let now = 1_000_000;
-  const engine = new GameEngine(content, [escapeCase], [], () => now);
+  const engine = new GameEngine(content, [escapeCase], [], undefined, () => now);
   const session = engine.createSession("http://192.168.0.2:3000", "ZERO_ROUND", {
     mode: "ESCAPE",
     allowedTopics: [...escapeCase.topicTags, "trombofilias", "talassemias", "imunodeficiencias-plaquetarias"],

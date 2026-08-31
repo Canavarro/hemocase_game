@@ -1,8 +1,15 @@
 {
   "id": "trombofilia-protrombina",
   "name": "Trombofilia por protrombina G20210A",
+  "medicalId": "prothrombin_thrombophilia",
   "group": "trombofilias",
-  "topicTags": ["proteinas-funcoes", "hemostasia-secundaria", "trombofilias", "mutacoes-ponto", "heranca-autossomica"],
+  "topicTags": [
+    "proteinas-funcoes",
+    "hemostasia-secundaria",
+    "trombofilias",
+    "mutacoes-ponto",
+    "heranca-autossomica"
+  ],
   "patient": {
     "descriptor": "mulher jovem, 24 anos",
     "story": "Acordou com dor e inchaço na panturrilha esquerda, sem trauma nem imobilização; a mãe teve embolia pulmonar aos 40 anos."
@@ -27,8 +34,16 @@
     ]
   },
   "labs": {
-    "altered": ["D-dímero elevado", "Doppler: trombo em veia poplítea", "Protrombina funcional aumentada"],
-    "normal": ["Plaquetas 270.000/µL", "TTPa 30 s", "Hemoglobina 13,5 g/dL"]
+    "altered": [
+      "D-dímero elevado",
+      "Doppler: trombo em veia poplítea",
+      "Protrombina funcional aumentada"
+    ],
+    "normal": [
+      "Plaquetas 270.000/µL",
+      "TTPa 30 s",
+      "Hemoglobina 13,5 g/dL"
+    ]
   },
   "smear": {
     "kind": "normal",
@@ -60,7 +75,11 @@
     "recurrence": {
       "prompt": "'Sou heterozigota para a variante. Qual a chance de CADA filho herdá-la?'",
       "correct": "50%",
-      "wrong": ["25%", "100%", "Nenhuma chance"]
+      "wrong": [
+        "25%",
+        "100%",
+        "Nenhuma chance"
+      ]
     }
   },
   "route": {
@@ -74,8 +93,14 @@
     {
       "prompt": "Arquivo antigo: 'Paciente com trombose de repetição e variante que AUMENTA a produção de protrombina.' Qual é a variante?",
       "correct": "Mutação G20210A da protrombina",
-      "wrong": ["Glu6Val da beta-globina", "Inversão do íntron 22 do F8", "Deleção do VWF"],
-      "tags": ["trombofilias"]
+      "wrong": [
+        "Glu6Val da beta-globina",
+        "Inversão do íntron 22 do F8",
+        "Deleção do VWF"
+      ],
+      "tags": [
+        "trombofilias"
+      ]
     }
   ],
   "debrief": {

@@ -1,6 +1,14 @@
-import { randomBytes, randomUUID } from "node:crypto";
+import { randomBytes, randomInt, randomUUID } from "node:crypto";
 import { generateEscapeCase, validateDisease } from "./case-generator.js";
 import {
+  bankQuestionToBlitz, buildBankEmergencyFiles, validateDiseaseAgainstCanon, validateMedicalContent,
+  type EmergencyFileEntry,
+} from "./medical-content.js";
+import {
+  coreMedicalDiseaseIds,
+  type BlitzOptions,
+  type MedicalKnowledgeBase,
+  type QuestionBank,
   ESCAPE_SAFE_LOCK_MS,
   ESCAPE_SAFE_WRONG_COST,
   ESCAPE_START_BASES,
@@ -94,6 +102,8 @@ export interface SessionState {
   durationMin: number;
   escapeCase?: EscapeCase;
   escapeEvents: EscapeEvent[];
+  /** Código Relâmpago sorteado do banco canônico (ausente = roteiro fixo). */
+  blitzQuestions?: Question[];
 }
 
 export interface CreateSessionOptions {
@@ -104,18 +114,28 @@ export interface CreateSessionOptions {
   caseId?: string;
   /** Gera o caso a partir da base de conhecimento (aula inteira, por assunto ou por doença). */
   generator?: EscapeGeneratorRequest;
+  /** Configuração do Código Relâmpago (modo QUIZ): roteiro fixo ou banco canônico filtrado. */
+  blitz?: BlitzOptions;
 }
 
 export class GameEngine {
   readonly sessions = new Map<string, SessionState>();
 
+  private readonly bankEmergencyFiles: EmergencyFileEntry[] = [];
+
   constructor(
     readonly content: GameContent,
     readonly escapeCases: EscapeCase[] = [],
     readonly diseases: DiseaseKnowledge[] = [],
+    readonly medical?: { knowledge: MedicalKnowledgeBase; bank: QuestionBank },
     private readonly now: () => number = Date.now,
   ) {
     for (const disease of diseases) validateDisease(disease);
+    if (medical) {
+      validateMedicalContent(medical.knowledge, medical.bank);
+      for (const disease of diseases) validateDiseaseAgainstCanon(disease, medical.knowledge);
+      this.bankEmergencyFiles = buildBankEmergencyFiles(medical.bank);
+    }
   }
 
   createSession(baseUrl: string, integrityPolicy: IntegrityPolicy = "ZERO_ROUND", options: CreateSessionOptions = {}) {
@@ -126,6 +146,10 @@ export class GameEngine {
       ({ escapeCase, allowedTopics } = options.generator
         ? this.generateCase(options.generator, allowedTopics)
         : this.pickEscapeCase(allowedTopics, options.caseId));
+    }
+    let blitzQuestions: Question[] | undefined;
+    if (mode === "QUIZ" && options.blitz?.source === "bank") {
+      blitzQuestions = this.pickBlitzFromBank(options.blitz);
     }
     let code: string;
     do code = randomBytes(3).toString("hex").toUpperCase(); while (this.sessions.has(code));
@@ -147,6 +171,7 @@ export class GameEngine {
       durationMin: options.durationMin ?? 35,
       escapeCase,
       escapeEvents: [],
+      blitzQuestions,
     };
     this.sessions.set(code, session);
     return session;
@@ -231,7 +256,39 @@ export class GameEngine {
     const profile = candidates[randomBytes(1)[0]! % candidates.length]!;
     const topics = allowedTopics.length ? allowedTopics : [...profile.topicTags];
     const seed = randomBytes(4).readUInt32LE(0);
-    return { allowedTopics: topics, escapeCase: generateEscapeCase(profile, this.diseases, seed, topics) };
+    return { allowedTopics: topics, escapeCase: generateEscapeCase(profile, this.diseases, seed, topics, this.bankEmergencyFiles) };
+  }
+
+  /**
+   * Sorteia o Código Relâmpago no banco canônico, respeitando os filtros do
+   * Host: categorias, dificuldades e inclusão das doenças de expansão.
+   */
+  private pickBlitzFromBank(options: BlitzOptions): Question[] {
+    if (!this.medical) throw new Error("O banco canônico de perguntas não está instalado (content/question-bank.pt-BR.json).");
+    const core = new Set<string>(coreMedicalDiseaseIds);
+    let eligible = this.medical.bank.questions.filter((question) =>
+      (!options.categories?.length || options.categories.includes(question.category))
+      && (!options.difficulties?.length || options.difficulties.includes(question.difficulty))
+      && (options.includeExpansion || !question.diseaseId || core.has(question.diseaseId)),
+    );
+    if (eligible.length < 3) {
+      throw new Error(`Apenas ${eligible.length} pergunta(s) do banco atendem aos filtros escolhidos. Ampliem categorias, dificuldades ou incluam a expansão.`);
+    }
+    // Embaralha perguntas e a ordem das alternativas; o gabarito segue o id da opção.
+    eligible = [...eligible];
+    for (let index = eligible.length - 1; index > 0; index -= 1) {
+      const swap = randomInt(index + 1);
+      [eligible[index], eligible[swap]] = [eligible[swap]!, eligible[index]!];
+    }
+    return eligible.slice(0, options.count).map((question, index) => {
+      const blitz = bankQuestionToBlitz(question, index);
+      const choices = [...blitz.choices];
+      for (let position = choices.length - 1; position > 0; position -= 1) {
+        const swap = randomInt(position + 1);
+        [choices[position], choices[swap]] = [choices[swap]!, choices[position]!];
+      }
+      return { ...blitz, choices };
+    });
   }
 
   /** Casos instalados, para o Host fixar a sessão em um único caso. */
@@ -324,7 +381,7 @@ export class GameEngine {
       if (session.questionIndex === 3) return questions[session.hemophiliaVariant === "A" ? 3 : 4];
       return questions[session.hemophiliaVariant === "A" ? 5 : 6];
     }
-    if (session.phase === "BLITZ") return this.content.blitz[session.questionIndex];
+    if (session.phase === "BLITZ") return (session.blitzQuestions ?? this.content.blitz)[session.questionIndex];
     if (session.phase === "FINAL_CHAIN" && team) {
       const offset = (tracks.indexOf(team.track) + 1) % this.content.finalChains.length;
       return this.content.finalChains[offset];
@@ -335,7 +392,7 @@ export class GameEngine {
   questionCount(session: SessionState) {
     if (session.phase === "WARMUP") return this.content.warmup.length;
     if (session.phase === "CASE_INVESTIGATION") return this.content.cases.A.length;
-    if (session.phase === "BLITZ") return this.content.blitz.length;
+    if (session.phase === "BLITZ") return (session.blitzQuestions ?? this.content.blitz).length;
     if (session.phase === "FINAL_CHAIN") return 1;
     return 0;
   }
@@ -678,7 +735,7 @@ export class GameEngine {
       team.earnedByPhase.set(session.phase, 0);
       team.zeroedPhases.add(session.phase);
       for (const [questionId, answer] of team.answers) {
-        if (this.findQuestion(questionId)?.phase === session.phase && answer.awardedPoints > 0) answer.awardedPoints = 0;
+        if (this.findQuestion(session, questionId)?.phase === session.phase && answer.awardedPoints > 0) answer.awardedPoints = 0;
       }
     }
     const incident: IntegrityIncident = {
@@ -816,7 +873,7 @@ export class GameEngine {
       team.zeroedPhases.delete(incident.phase);
       let restored = 0;
       for (const [questionId, answer] of team.answers) {
-        const questionPhase = this.findQuestion(questionId)?.phase;
+        const questionPhase = this.findQuestion(session, questionId)?.phase;
         if (questionPhase === incident.phase) {
           restored += answer.potentialPoints;
           answer.awardedPoints = answer.potentialPoints;
@@ -832,10 +889,10 @@ export class GameEngine {
     return [...session.teams.values()].find((team) => team.token === token);
   }
 
-  private findQuestion(id: string) {
+  private findQuestion(session: SessionState, id: string) {
     const all = [
       ...this.content.warmup, ...Object.values(this.content.cases).flat(),
-      ...this.content.blitz, ...this.content.finalChains,
+      ...(session.blitzQuestions ?? this.content.blitz), ...this.content.finalChains,
     ];
     return all.find((question) => question.id === id);
   }

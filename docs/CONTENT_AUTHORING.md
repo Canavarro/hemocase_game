@@ -117,6 +117,15 @@ Casos ficam em `content/escape/cases/*.json` seguindo o tipo `EscapeCase` de `@h
 
 Regras editoriais: mesmas do quiz (linguagem pt-BR, precisão científica revisada pelo professor). Um caso novo não exige mudança de código, desde que use os tipos de enigma existentes e objetos de cena já mapeados.
 
+## Bancos canônicos de conteúdo médico
+
+`content/medical-knowledge.pt-BR.json` (fatos médicos) e `content/question-bank.pt-BR.json` (perguntas prontas) são as fontes canônicas — ver `docs/MEDICAL_KNOWLEDGE_BASE.md` para a regra de precedência. A aplicação os usa assim:
+
+- validação estrutural na inicialização do servidor (`validateMedicalContent`): ids duplicados, gabarito sem opção, doença inexistente ou pontuação fora da regra de scoring falham com mensagem clara;
+- o Código Relâmpago pode ser sorteado do banco de perguntas com filtros do Host (dificuldade, categoria, expansão) — ver `docs/API_PROTOCOL.md`;
+- o banco de perguntas também alimenta os arquivos de emergência do modo Escape (filtrados pelos tópicos liberados e excluindo a doença do caso principal);
+- cada perfil do Escape declara `medicalId` apontando para a entidade canônica; genes e padrão de herança são conferidos contra o canônico na inicialização (`validateDiseaseAgainstCanon`) — divergência derruba o servidor, o que torna mecânica a precedência do banco médico.
+
 ## Base de conhecimento de doenças (gerador de casos)
 
 Além dos casos prontos, o servidor gera casos inéditos a partir de perfis de doença em `content/escape/diseases/*.json`, seguindo o tipo `DiseaseKnowledge` de `@hemocase/shared`. Cada perfil descreve a doença uma única vez e o gerador monta as seis salas sorteando paciente, senhas, distratores e ordem das alternativas (nos enigmas de girar, a resposta nunca fica na primeira posição do seletor). Campos principais:

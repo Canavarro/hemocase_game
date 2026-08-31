@@ -1,8 +1,14 @@
 {
   "id": "hemofilia-a",
   "name": "Hemofilia A",
+  "medicalId": "hemophilia_a",
   "group": "coagulopatias",
-  "topicTags": ["proteinas-funcoes", "hemostasia-secundaria", "hemofilias", "heranca-ligada-x"],
+  "topicTags": [
+    "proteinas-funcoes",
+    "hemostasia-secundaria",
+    "hemofilias",
+    "heranca-ligada-x"
+  ],
   "patient": {
     "descriptor": "menino, 4 anos",
     "story": "Depois de uma queda leve no parquinho, o joelho inchou e dói há dois dias; a mãe lembra que o avô materno recebia 'transfusões de fator' desde jovem."
@@ -27,8 +33,16 @@
     ]
   },
   "labs": {
-    "altered": ["TTPa 68 s (alargado)", "Fator VIII 2% (muito reduzido)", "TTPa corrige na mistura com plasma normal"],
-    "normal": ["TP/INR 1,0", "Plaquetas 280.000/µL", "Tempo de sangramento 5 min"]
+    "altered": [
+      "TTPa 68 s (alargado)",
+      "Fator VIII 2% (muito reduzido)",
+      "TTPa corrige na mistura com plasma normal"
+    ],
+    "normal": [
+      "TP/INR 1,0",
+      "Plaquetas 280.000/µL",
+      "Tempo de sangramento 5 min"
+    ]
   },
   "smear": {
     "kind": "normal",
@@ -60,7 +74,11 @@
     "recurrence": {
       "prompt": "'Descobri que sou portadora. Qual a chance de um próximo MENINO nascer afetado?'",
       "correct": "50%",
-      "wrong": ["25%", "100%", "Nenhuma chance"]
+      "wrong": [
+        "25%",
+        "100%",
+        "Nenhuma chance"
+      ]
     }
   },
   "route": {
@@ -74,8 +92,14 @@
     {
       "prompt": "Pasta de outro leito: 'Menino com TTPa alargado, fator VIII normal e fator IX de 3%.' Qual é o diagnóstico?",
       "correct": "Hemofilia B (deficiência de fator IX)",
-      "wrong": ["Hemofilia A (deficiência de fator VIII)", "Doença de von Willebrand", "Deficiência de vitamina K"],
-      "tags": ["hemofilias"]
+      "wrong": [
+        "Hemofilia A (deficiência de fator VIII)",
+        "Doença de von Willebrand",
+        "Deficiência de vitamina K"
+      ],
+      "tags": [
+        "hemofilias"
+      ]
     }
   ],
   "debrief": {
