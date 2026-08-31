@@ -32,8 +32,8 @@
     "normal": ["Plaquetas 290.000/µL", "TTPa 30 s", "TP/INR 1,0"]
   },
   "smear": {
-    "kind": "esferocitos",
-    "finding": "há células densas e esferócitos entre células em alvo — a HbC tende a cristalizar e desidratar a hemácia"
+    "kind": "celulas-alvo",
+    "finding": "predominam células em alvo, com células densas ocasionais — a HbC cristaliza e desidrata a hemácia"
   },
   "protein": {
     "name": "hemoglobina",
@@ -72,7 +72,7 @@
     }
   },
   "route": {
-    "gene": "HBB (11p) · variante C",
+    "gene": "HBB (11p, variante C)",
     "protein": "HbC",
     "mechanism": "Cristalização da hemoglobina na hemácia",
     "phenotype": "Anemia hemolítica leve + células em alvo",

@@ -33,13 +33,15 @@ O projeto usa npm workspaces. Não execute instalações separadas dentro de `ap
 | `npm run test:integration` | Testa o fluxo HTTP/WebSocket contra um servidor já iniciado. |
 | `npm run test:e2e` | Executa os cenários Playwright configurados para desktop e mobile. |
 
-Para E2E em uma máquina nova:
+Para E2E em uma máquina nova (os dois projetos rodam em Chromium; o mobile emula iPhone 13):
 
 ```bash
-npx playwright install chromium webkit
+npx playwright install chromium
 npm run build
 npm run test:e2e
 ```
+
+Em ambientes com Chromium pré-instalado (sem download do Playwright), aponte o binário: `PW_CHROMIUM_PATH=/caminho/do/chrome npm run test:e2e`.
 
 ## Desenvolvimento local
 

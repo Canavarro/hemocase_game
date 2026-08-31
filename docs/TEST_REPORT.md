@@ -1,6 +1,6 @@
 # Relatório de validação
 
-Data da última execução documentada: 30 de agosto de 2026.
+Data da última execução documentada: 31 de agosto de 2026.
 
 ## Resultado
 
@@ -8,32 +8,23 @@ Data da última execução documentada: 30 de agosto de 2026.
 |---|---|
 | `npm run lint` | Passou |
 | `npm run typecheck` | Passou |
-| `npm test` | Passou, 10 testes |
+| `npm test` | Passou, 115 testes (112 servidor, 1 web, 2 shared) |
 | `npm run build` | Passou |
 | `npm audit --omit=dev` | Passou, 0 vulnerabilidades |
 | `npm run test:integration` | Passou |
-| `npm run test:e2e` | Passou, 4 cenários em desktop e mobile |
+| `npm run test:e2e` | Passou, 4 cenários em desktop e mobile (Chromium) |
 
 ## Testes unitários
 
-Servidor, sete testes:
+Servidor (112 testes), destaques:
 
-- distribuição equilibrada dos quatro trilhos;
-- reconexão sem duplicar equipe;
-- transição de estados e relógio oficial;
-- resposta única e bônus limitado a 20%;
-- recusa após prazo;
-- penalidade ZERO_ROUND e reversão;
-- blur isolado sem penalidade automática.
+- máquina de estados, trilhos, reconexão, prazos, ZERO_ROUND e reversão;
+- modo Escape: pontuação, dicas em ordem, trava do cofre, revisão de salas com custo, prontuário obrigatório, fuga com bônus de tempo;
+- gerador de casos: estrutura completa por doença, determinismo por seed, arquivos de emergência dentro dos tópicos, enigmas de girar sem resposta no primeiro giro;
+- conteúdo médico: validação dos bancos canônicos, precedência do `medicalId`, BLITZ pelo banco de questões;
+- **auditoria de continuidade** (`full-playthrough.test.ts`): para TODAS as doenças instaladas × 12 seeds (204 partidas), valida estrutura do caso gerado (sem alternativas duplicadas por id OU texto, lâminas com IDs únicos e morfologias distintas, resposta nunca no primeiro giro) e joga a partida INTEIRA no motor real até a fuga, provando que gabarito e validação nunca divergem; cruza ainda locus/herança de cada perfil com o banco médico canônico.
 
-Shared, dois testes:
-
-- normalização de código e limite de nome;
-- rejeição de resposta sem token e duração inválida de integridade.
-
-Frontend, um teste:
-
-- formatação do relógio, incluindo arredondamento e limite zero.
+Shared, dois testes: normalização de código/nome e rejeições de payload. Frontend, um teste: formatação do relógio.
 
 ## Teste integrado
 
@@ -49,8 +40,6 @@ Frontend, um teste:
 8. desconexão e restauração por token;
 9. exportação autenticada e score persistido em memória.
 
-Última sessão integrada registrada na execução final: `27FE68`.
-
 ## Playwright
 
 `apps/web/e2e/session.spec.ts` cobre:
@@ -62,15 +51,15 @@ Frontend, um teste:
 - submissão e bloqueio da resposta;
 - rejeição de exportação sem token.
 
-A execução final passou em Chromium desktop e WebKit mobile. Em uma máquina nova, instale os navegadores antes de executar:
+Os dois projetos (desktop e mobile) rodam em Chromium — o mobile emula iPhone 13 (viewport + toque). Em uma máquina nova:
 
 ```bash
-npx playwright install chromium webkit
+npx playwright install chromium
 npm run build
 npm run test:e2e
 ```
 
-Resultado final: quatro cenários aprovados, cobrindo o início completo da sessão e a proteção da exportação nos dois projetos.
+Em ambientes gerenciados com Chromium pré-instalado (sem download do Playwright), aponte o binário com `PW_CHROMIUM_PATH=/caminho/do/chrome npm run test:e2e`.
 
 ## Testes manuais ainda necessários
 

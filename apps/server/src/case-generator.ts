@@ -59,11 +59,18 @@ export function validateDisease(profile: DiseaseKnowledge) {
   if (profile.clinical.correct.length < 4) problems.push("clinical.correct precisa de pelo menos 4 achados");
   if (profile.clinical.distractors.length < 4) problems.push("clinical.distractors precisa de pelo menos 4 achados");
   if (profile.labs.altered.length < 2 || profile.labs.altered.length > 5) problems.push("labs.altered precisa de 2 a 5 exames");
-  if (profile.labs.normal.length < 2) problems.push("labs.normal precisa de pelo menos 2 exames");
+  if (profile.labs.normal.length < 2 || profile.labs.normal.length > 7) problems.push("labs.normal precisa de 2 a 7 exames (a contagem vira um dígito do cadeado)");
   if (!escapeSmearKinds.includes(profile.smear.kind)) problems.push(`smear.kind inválido: ${profile.smear.kind}`);
   if (!profile.protein.assembly && !profile.protein.role) problems.push("protein precisa de assembly ou role");
   if (!["ar", "ad", "xr"].includes(profile.inheritance.pattern)) problems.push(`inheritance.pattern inválido: ${profile.inheritance.pattern}`);
   if (profile.inheritance.recurrence.wrong.length < 3) problems.push("inheritance.recurrence.wrong precisa de 3 alternativas");
+  const overlap = (a: string[], b: string[]) => a.filter((text) => b.includes(text));
+  const clinicalOverlap = overlap(profile.clinical.correct, profile.clinical.distractors);
+  if (clinicalOverlap.length) problems.push(`clinical: mesmo texto em correct e distractors (${clinicalOverlap[0]})`);
+  const labsOverlap = overlap(profile.labs.altered, profile.labs.normal);
+  if (labsOverlap.length) problems.push(`labs: mesmo exame em altered e normal (${labsOverlap[0]})`);
+  if (profile.protein.role && profile.protein.role.wrong.includes(profile.protein.role.correct)) problems.push("protein.role.wrong repete a resposta correta");
+  if (profile.inheritance.recurrence.wrong.includes(profile.inheritance.recurrence.correct)) problems.push("inheritance.recurrence.wrong repete a resposta correta");
   if (profile.gene.sequence) {
     const { reference, sample: sampleSeq, divergentIndex } = profile.gene.sequence;
     if (reference.length !== sampleSeq.length) problems.push("gene.sequence: reference e sample precisam do mesmo tamanho");
@@ -89,6 +96,7 @@ const smearLabels: Record<EscapeSmearKind, string> = {
   "plaquetas-gigantes": "plaquetas gigantes e escassas",
   "esferocitos": "esferócitos densos sem palidez central",
   "plaquetas-pequenas": "plaquetas pequenas e raras (microtrombocitopenia)",
+  "celulas-alvo": "células em alvo abundantes com células densas ocasionais",
 };
 
 function generatePatientId(rng: Rng): string {
@@ -138,6 +146,18 @@ function shuffleCycle(rng: Rng, options: EscapeChoice[], correctId: string): Esc
 /** Coleta valores de um campo de rota nas outras doenças, sem repetir texto. */
 function routeDistractors(rng: Rng, others: DiseaseKnowledge[], field: keyof DiseaseKnowledge["route"], exclude: string, count: number) {
   const unique = [...new Set(others.map((other) => other.route[field]).filter((text) => text !== exclude))];
+  return sample(rng, unique, count);
+}
+
+/**
+ * Distratores vindos das outras doenças, NUNCA iguais ao texto correto —
+ * várias doenças compartilham valores (ex.: protein.name "hemoglobina" em
+ * falciforme, HbC e β-talassemia), e um distrator idêntico à resposta criaria
+ * dois seletores iguais dos quais só um valeria.
+ */
+function fieldDistractors(rng: Rng, texts: string[], correct: string, count: number) {
+  const normalize = (value: string) => value.trim().toLocaleLowerCase("pt-BR");
+  const unique = [...new Set(texts)].filter((text) => normalize(text) !== normalize(correct));
   return sample(rng, unique, count);
 }
 
@@ -224,10 +244,15 @@ export function generateEscapeCase(profile: DiseaseKnowledge, installed: Disease
   /* ---------- R2 · Laboratório (lâminas + painel + câmara fria) ---------- */
 
   const wrongKinds = sample(rng, escapeSmearKinds.filter((kind) => kind !== profile.smear.kind), 2);
+  // IDs de lâmina únicos: uma colisão com o paciente real criaria duas lâminas
+  // com o mesmo rótulo e a escolha deixaria de ter resposta única.
+  const slideIds = new Set([patientId]);
+  while (slideIds.size < 3) slideIds.add(generatePatientId(rng));
+  const [wrongId1, wrongId2] = [...slideIds].filter((id) => id !== patientId);
   const slideEntries = shuffle(rng, [
     { id: patientId, smear: profile.smear.kind },
-    { id: generatePatientId(rng), smear: wrongKinds[0]! },
-    { id: generatePatientId(rng), smear: wrongKinds[1]! },
+    { id: wrongId1!, smear: wrongKinds[0]! },
+    { id: wrongId2!, smear: wrongKinds[1]! },
   ]);
   steps.push({
     id: "R2-S1", roomId: "R2", type: "microscope", object: "microscopio",
@@ -302,9 +327,9 @@ export function generateEscapeCase(profile: DiseaseKnowledge, installed: Disease
     answers["R3-S1"] = [built.answer];
   }
 
-  const proteinSlot = buildCycleChoices(rng, profile.protein.name, sample(rng, [...new Set(others.map((other) => other.protein.name))], 2), "ma");
-  const defectSlot = buildCycleChoices(rng, profile.protein.defect, sample(rng, [...new Set(others.map((other) => other.protein.defect))], 2), "mb");
-  const consequenceSlot = buildCycleChoices(rng, profile.protein.consequence, sample(rng, [...new Set(others.map((other) => other.protein.consequence))], 2), "mc");
+  const proteinSlot = buildCycleChoices(rng, profile.protein.name, fieldDistractors(rng, others.map((other) => other.protein.name), profile.protein.name, 2), "ma");
+  const defectSlot = buildCycleChoices(rng, profile.protein.defect, fieldDistractors(rng, others.map((other) => other.protein.defect), profile.protein.defect, 2), "mb");
+  const consequenceSlot = buildCycleChoices(rng, profile.protein.consequence, fieldDistractors(rng, others.map((other) => other.protein.consequence), profile.protein.consequence, 2), "mc");
   steps.push({
     id: "R3-S2", roomId: "R3", type: "mechanism-fill", object: "quadro-negro",
     title: "A frase-mecanismo",
@@ -339,7 +364,7 @@ export function generateEscapeCase(profile: DiseaseKnowledge, installed: Disease
     });
     answers["R4-S1"] = [String(sequence.divergentIndex)];
   } else {
-    const mutationWrong = sample(rng, [...new Set(others.map((other) => other.gene.mutationSummary))], 3);
+    const mutationWrong = fieldDistractors(rng, others.map((other) => other.gene.mutationSummary), profile.gene.mutationSummary, 3);
     const built = buildChoices(rng, profile.gene.mutationSummary, mutationWrong, "g");
     steps.push({
       id: "R4-S1", roomId: "R4", type: "family-question", object: "terminal",

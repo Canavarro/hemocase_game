@@ -113,7 +113,7 @@ export type EscapePuzzleType =
 
 /** Aparência do esfregaço exibido ao focar uma lâmina no enigma "microscope". */
 export const escapeSmearKinds = [
-  "normal", "falciforme", "microcitica-hipocromica", "plaquetas-gigantes", "esferocitos", "plaquetas-pequenas",
+  "normal", "falciforme", "microcitica-hipocromica", "plaquetas-gigantes", "esferocitos", "plaquetas-pequenas", "celulas-alvo",
 ] as const;
 export type EscapeSmearKind = (typeof escapeSmearKinds)[number];
 

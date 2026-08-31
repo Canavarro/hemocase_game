@@ -110,7 +110,7 @@ function BoardSelectPuzzle({ step, sending, onSubmit }: PuzzleProps) {
 /* ---------- Esfregaço do microscópio: um campo distinto por lâmina ---------- */
 
 const smearSeeds: Record<EscapeSmearKind, number> = {
-  "normal": 11, "falciforme": 47, "microcitica-hipocromica": 83, "plaquetas-gigantes": 29, "esferocitos": 61, "plaquetas-pequenas": 97,
+  "normal": 11, "falciforme": 47, "microcitica-hipocromica": 83, "plaquetas-gigantes": 29, "esferocitos": 61, "plaquetas-pequenas": 97, "celulas-alvo": 73,
 };
 
 /** Gerador determinístico: o mesmo esfregaço aparece igual para toda a equipe. */
@@ -191,6 +191,11 @@ export function SmearField({ kind }: { kind: EscapeSmearKind }) {
       case "esferocitos": {
         const cells = scatterCells(random, 24, 8);
         return { blurred, rbc: cells.slice(16, 21), sickle: [], target: [], platelet: cells.slice(21), small: [], sphero: cells.slice(0, 16), giant: [], neutro: [] as SmearCell[], tiny: [] as SmearCell[] };
+      }
+      case "celulas-alvo": {
+        // HbC: células em alvo dominam o campo, com células densas ocasionais.
+        const cells = scatterCells(random, 24, 8);
+        return { blurred, rbc: cells.slice(14, 18), sickle: [], target: cells.slice(0, 14), platelet: cells.slice(22), small: [], sphero: cells.slice(18, 22), giant: [], neutro: [] as SmearCell[], tiny: [] as SmearCell[] };
       }
       case "plaquetas-pequenas": {
         // Microtrombocitopenia: hemácias normais, plaquetas raras e minúsculas.

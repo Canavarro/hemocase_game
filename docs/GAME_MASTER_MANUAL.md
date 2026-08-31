@@ -256,12 +256,12 @@ O gerador monta as mesmas seis salas para qualquer doença: Antecâmara (crachá
 - **Paciente**: menina, 7 anos — Consulta de rotina revelou baço discretamente aumentado e anemia leve que nunca precisou de transfusão; os pais, assintomáticos, têm 'traço de hemoglobina' anotado em exames antigos.
 - **Achados corretos (sorteia 4)**: Anemia leve, sem transfusões; Esplenomegalia discreta; Icterícia leve intermitente; Pais assintomáticos com traço de hemoglobina (HbAC)
 - **Exames alterados**: Hemoglobina 10,5 g/dL (anemia leve); Reticulócitos 6%; Eletroforese: HbC predominante · **Normais**: Plaquetas 290.000/µL; TTPa 30 s; TP/INR 1,0
-- **Lâmina correta**: `esferocitos` — há células densas e esferócitos entre células em alvo — a HbC tende a cristalizar e desidratar a hemácia
+- **Lâmina correta**: `celulas-alvo` — predominam células em alvo, com células densas ocasionais — a HbC cristaliza e desidrata a hemácia
 - **Montagem**: A HbC mantém a composição de cadeias da hemoglobina adulta — a troca é de UM aminoácido na cadeia β. Montem o tetrâmero da hemoglobina deste paciente. → alfa, alfa, beta, beta
 - **Frase-mecanismo**: A proteína **hemoglobina** está **estruturalmente alterada (HbC, com lisina no lugar do glutamato)** e, dentro da hemácia, **tende a cristalizar e desidratar a hemácia, encurtando sua vida**.
 - **Gene**: HBB (11p15.4) — Missense no HBB trocando glutamato por lisina (Glu6Lys tradicional), gerando HbC
 - **Pergunta da família**: 'Nós dois temos o traço HbAC. Qual a chance de um próximo filho ter HbCC?' → **25%**
-- **Cofre**: HBB (11p) · variante C · HbC · Cristalização da hemoglobina na hemácia · Anemia hemolítica leve + células em alvo · Autossômica recessiva
+- **Cofre**: HBB (11p, variante C) · HbC · Cristalização da hemoglobina na hemácia · Anemia hemolítica leve + células em alvo · Autossômica recessiva
 - **Debrief**: HBB com troca Glu6Lys → HbC → cristalização e desidratação da hemácia → hemólise leve com células em alvo → herança autossômica recessiva
 
 ### Doença de von Willebrand (tipo 1) (`von-willebrand`)

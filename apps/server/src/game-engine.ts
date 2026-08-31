@@ -691,7 +691,7 @@ export class GameEngine {
     team.score -= cost;
     team.escape.reviewRoomId = roomId;
     const room = session.escapeCase.rooms[targetIndex]!;
-    this.pushEscapeEvent(session, `${team.name} voltou para rever: ${room.name} (−${ESCAPE_REVIEW_COST} bases).`);
+    this.pushEscapeEvent(session, `${team.name} voltou para rever: ${room.name} (−${cost} bases).`);
     return { session, team, cost };
   }
 
