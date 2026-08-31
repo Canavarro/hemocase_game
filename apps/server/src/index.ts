@@ -40,6 +40,8 @@ const medical = fs.existsSync(medicalKnowledgePath) && fs.existsSync(questionBan
 const engine = new GameEngine(content, escapeCases, diseases, medical);
 // Persistência opcional (Neon · projeto LAGEM). Falha de banco nunca derruba o jogo.
 let db = createDb();
+// Diagnóstico do health: por que a persistência está inativa (sem vazar segredos).
+let dbBootError: string | undefined;
 const persistedSessions = new Set<string>();
 const app = Fastify({ logger: true, bodyLimit: 64 * 1024 });
 const io = new SocketServer(app.server, { maxHttpBufferSize: 64 * 1024 });
@@ -58,7 +60,11 @@ declare module "socket.io" {
   }
 }
 
-app.get("/api/health", async () => ({ ok: true, lanIp, port, db: Boolean(db) }));
+app.get("/api/health", async () => ({
+  ok: true, lanIp, port, db: Boolean(db),
+  dbConfigured: Boolean(process.env.DATABASE_URL),
+  ...(dbBootError ? { dbError: dbBootError } : {}),
+}));
 
 app.get<{ Querystring: { limit?: string } }>("/api/rankings", async (request, reply) => {
   if (!db) return reply.code(503).send({ error: "Ranking indisponível: banco de dados não configurado (DATABASE_URL)." });
@@ -290,6 +296,8 @@ if (db) {
     app.log.info("Persistência ativa (Postgres/Neon): schema verificado.");
   } catch (error) {
     app.log.error(error, "Banco configurado mas inacessível — seguindo 100% em memória.");
+    dbBootError = (error instanceof Error ? error.message : String(error))
+      .replace(/:\/\/[^@\s]+@/g, "://***@").slice(0, 200);
     await db.close().catch(() => undefined);
     db = undefined;
   }
