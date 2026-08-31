@@ -63,7 +63,7 @@ A marca oficial fornecida aparece como silhueta flutuante de destaque no fundo a
 Ao criar a sessão, o organizador escolhe entre:
 
 - **Rodadas ao vivo** (`QUIZ`): o fluxo clássico de fases sincronizadas com perguntas cronometradas;
-- **Escape: Protocolo Hélix** (`ESCAPE`): escape room imersivo em primeira pessoa 2.5D — seis salas de laboratório, enigmas validados no servidor, mãos animadas, prontuário digital e cronômetro de expurgo. O professor marca os tópicos já vistos pela turma e nada fora deles entra no jogo.
+- **Escape: Protocolo Hélix** (`ESCAPE`): escape room imersivo em primeira pessoa 2.5D — seis salas de laboratório, enigmas validados no servidor, mãos animadas, prontuário digital e cronômetro de expurgo. O professor marca os tópicos já vistos pela turma e nada fora deles entra no jogo. Na criação da sessão ele escolhe a **origem do caso**: caso pronto (sorteado ou fixo) ou caso **gerado na hora** pela base de conhecimento de doenças (`content/escape/diseases`) — aula inteira, por assunto ou por doença específica, com paciente, senhas e distratores sorteados a cada sessão.
 
 A especificação completa do modo Escape (salas, enigmas, riscos e roadmap M2/M3) está em `docs/ESCAPE_MODE_SPEC.md`.
 

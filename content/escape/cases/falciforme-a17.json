@@ -38,15 +38,15 @@
           "slotChoices": [
             [],
             [
-              { "id": "rna", "text": "RNA" },
               { "id": "ribossomo", "text": "RIBOSSOMO" },
+              { "id": "rna", "text": "RNA" },
               { "id": "lipidio", "text": "LIPÍDIO" }
             ],
             [],
             [
-              { "id": "funcao", "text": "FUNÇÃO" },
               { "id": "nucleo", "text": "NÚCLEO" },
-              { "id": "membrana", "text": "MEMBRANA" }
+              { "id": "membrana", "text": "MEMBRANA" },
+              { "id": "funcao", "text": "FUNÇÃO" }
             ],
             []
           ],
@@ -245,18 +245,18 @@
           "slots": ["A proteína", "está", "e, em baixa oxigenação,"],
           "slotChoices": [
             [
-              { "id": "hb", "text": "hemoglobina" },
               { "id": "albumina", "text": "albumina" },
+              { "id": "hb", "text": "hemoglobina" },
               { "id": "fviii", "text": "fator VIII" }
             ],
             [
-              { "id": "qualitativa", "text": "estruturalmente alterada" },
               { "id": "reduzida", "text": "produzida em quantidade reduzida" },
-              { "id": "ausente", "text": "totalmente ausente" }
+              { "id": "ausente", "text": "totalmente ausente" },
+              { "id": "qualitativa", "text": "estruturalmente alterada" }
             ],
             [
-              { "id": "polimeriza", "text": "polimeriza e deforma a hemácia" },
               { "id": "coagula", "text": "ativa a cascata de coagulação" },
+              { "id": "polimeriza", "text": "polimeriza e deforma a hemácia" },
               { "id": "adere", "text": "impede a adesão plaquetária" }
             ]
           ],
@@ -401,28 +401,28 @@
           "slots": ["GENE", "PROTEÍNA", "MECANISMO", "FENÓTIPO", "HERANÇA"],
           "slotChoices": [
             [
-              { "id": "hbb", "text": "HBB (11p)" },
               { "id": "f8", "text": "F8 (Xq28)" },
+              { "id": "hbb", "text": "HBB (11p)" },
               { "id": "vwf", "text": "VWF (12p13.3)" }
             ],
             [
-              { "id": "hbs", "text": "HbS" },
               { "id": "fviii", "text": "Fator VIII" },
-              { "id": "fvw", "text": "Fator de von Willebrand" }
+              { "id": "fvw", "text": "Fator de von Willebrand" },
+              { "id": "hbs", "text": "HbS" }
             ],
             [
-              { "id": "polimerizacao", "text": "Polimerização e falcização" },
               { "id": "coagulacao", "text": "Falha da hemostasia secundária" },
-              { "id": "adesao", "text": "Falha de adesão plaquetária" }
+              { "id": "adesao", "text": "Falha de adesão plaquetária" },
+              { "id": "polimerizacao", "text": "Polimerização e falcização" }
             ],
             [
-              { "id": "hemolise", "text": "Anemia hemolítica + crises vaso-oclusivas" },
               { "id": "hemartrose", "text": "Hemartroses e hematomas profundos" },
+              { "id": "hemolise", "text": "Anemia hemolítica + crises vaso-oclusivas" },
               { "id": "mucocutaneo", "text": "Sangramento mucocutâneo" }
             ],
             [
-              { "id": "ar", "text": "Autossômica recessiva" },
               { "id": "xr", "text": "Recessiva ligada ao X" },
+              { "id": "ar", "text": "Autossômica recessiva" },
               { "id": "ad", "text": "Autossômica dominante" }
             ]
           ],

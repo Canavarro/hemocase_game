@@ -116,3 +116,21 @@ Casos ficam em `content/escape/cases/*.json` seguindo o tipo `EscapeCase` de `@h
 - `debrief`: diagnóstico e rota molecular exibidos ao escapar.
 
 Regras editoriais: mesmas do quiz (linguagem pt-BR, precisão científica revisada pelo professor). Um caso novo não exige mudança de código, desde que use os tipos de enigma existentes e objetos de cena já mapeados.
+
+## Base de conhecimento de doenças (gerador de casos)
+
+Além dos casos prontos, o servidor gera casos inéditos a partir de perfis de doença em `content/escape/diseases/*.json`, seguindo o tipo `DiseaseKnowledge` de `@hemocase/shared`. Cada perfil descreve a doença uma única vez e o gerador monta as seis salas sorteando paciente, senhas, distratores e ordem das alternativas (nos enigmas de girar, a resposta nunca fica na primeira posição do seletor). Campos principais:
+
+- `group`: assunto para o filtro "por assunto" do Host (`hemoglobinopatias`, `coagulopatias`, `plaquetopatias`, `trombofilias`);
+- `topicTags`: tags obrigatórias (mesmo vocabulário `escapeTopics` dos casos prontos);
+- `patient`: `descriptor` (ex.: "lactente, 8 meses") e `story` (gancho do briefing);
+- `clinical`: `correct` (≥4 achados verdadeiros; o gerador sorteia 4) e `distractors` (≥4 achados falsos);
+- `labs`: `altered` (2–5 exames com valor) e `normal` (≥2) — o código da câmara fria é derivado dessas contagens;
+- `smear`: `kind` (vocabulário `escapeSmearKinds`) e `finding` — as duas lâminas erradas recebem morfologias diferentes automaticamente;
+- `protein`: `assembly` (enigma de montagem, ex.: tetrâmero da Hb) OU `role` (pergunta de função); mais `defect`, `consequence` e `context` para a frase-mecanismo;
+- `gene`: `sequence` (enigma de apontar o códon divergente) OU apenas `mutationSummary` (vira pergunta de alteração molecular, com distratores das outras doenças);
+- `inheritance`: `pattern` (`ar`/`ad`/`xr`), `familyStory` (heredograma) e `recurrence` (pergunta da família);
+- `route`: as cinco entradas corretas do cofre final — os distratores de cada seletor vêm das `route` das OUTRAS doenças instaladas;
+- `emergencyFiles`: perguntas-bônus que a doença contribui para o pool de arquivos de emergência dos casos das demais (filtradas pelos tópicos liberados).
+
+Quanto mais doenças instaladas, mais ricos ficam os distratores de todas. Um perfil inválido derruba a inicialização com uma mensagem apontando o campo problemático (`validateDisease`).

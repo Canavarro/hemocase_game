@@ -1,0 +1,85 @@
+{
+  "id": "trombofilia-protrombina",
+  "name": "Trombofilia por protrombina G20210A",
+  "group": "trombofilias",
+  "topicTags": ["proteinas-funcoes", "hemostasia-secundaria", "trombofilias", "mutacoes-ponto", "heranca-autossomica"],
+  "patient": {
+    "descriptor": "mulher jovem, 24 anos",
+    "story": "Acordou com dor e inchaço na panturrilha esquerda, sem trauma nem imobilização; a mãe teve embolia pulmonar aos 40 anos."
+  },
+  "clinical": {
+    "correct": [
+      "Edema e dor assimétricos na panturrilha",
+      "Trombose venosa sem fator desencadeante claro",
+      "História familiar de tromboembolismo",
+      "Episódio prévio de tromboflebite superficial"
+    ],
+    "distractors": [
+      "Petéquias difusas",
+      "Hemartroses de repetição",
+      "Epistaxes de repetição",
+      "Icterícia progressiva",
+      "Esplenomegalia"
+    ],
+    "evidence": [
+      "Panturrilha esquerda 4 cm maior que a direita",
+      "Sem uso de anticoncepcional ou imobilização recente"
+    ]
+  },
+  "labs": {
+    "altered": ["D-dímero elevado", "Doppler: trombo em veia poplítea", "Protrombina funcional aumentada"],
+    "normal": ["Plaquetas 270.000/µL", "TTPa 30 s", "Hemoglobina 13,5 g/dL"]
+  },
+  "smear": {
+    "kind": "normal",
+    "finding": "o esfregaço é normal — a pista está no excesso de coagulação, não nas células"
+  },
+  "protein": {
+    "name": "protrombina (fator II)",
+    "role": {
+      "prompt": "O painel destaca a protrombina no centro da cascata. Qual é o papel dessa proteína?",
+      "correct": "Zimogênio que, ativado a trombina, converte fibrinogênio em fibrina",
+      "wrong": [
+        "Receptor de adesão da plaqueta ao colágeno",
+        "Cofator da tenase junto ao fator IXa",
+        "Proteína transportadora de ferro no plasma"
+      ]
+    },
+    "defect": "produzida em EXCESSO (ganho de função)",
+    "consequence": "a geração de trombina aumenta e o sangue tende a coagular demais",
+    "context": "na regulação da coagulação,"
+  },
+  "gene": {
+    "symbol": "F2",
+    "locus": "11p11.2",
+    "mutationSummary": "G20210A na região 3' não traduzida do F2, aumentando o RNA mensageiro e a protrombina"
+  },
+  "inheritance": {
+    "pattern": "ad",
+    "familyStory": "trombose em gerações sucessivas (a mãe com embolia pulmonar), atingindo homens e mulheres",
+    "recurrence": {
+      "prompt": "'Sou heterozigota para a variante. Qual a chance de CADA filho herdá-la?'",
+      "correct": "50%",
+      "wrong": ["25%", "100%", "Nenhuma chance"]
+    }
+  },
+  "route": {
+    "gene": "F2 (11p11.2)",
+    "protein": "Protrombina em excesso",
+    "mechanism": "Ganho de função pró-coagulante",
+    "phenotype": "Trombose venosa de repetição",
+    "inheritance": "Autossômica dominante"
+  },
+  "emergencyFiles": [
+    {
+      "prompt": "Arquivo antigo: 'Paciente com trombose de repetição e variante que AUMENTA a produção de protrombina.' Qual é a variante?",
+      "correct": "Mutação G20210A da protrombina",
+      "wrong": ["Glu6Val da beta-globina", "Inversão do íntron 22 do F8", "Deleção do VWF"],
+      "tags": ["trombofilias"]
+    }
+  ],
+  "debrief": {
+    "diagnosis": "Trombofilia por protrombina G20210A",
+    "route": "F2 com G20210A na 3'UTR → protrombina em excesso → mais trombina gerada → estado pró-coagulante → trombose venosa de repetição → herança autossômica dominante"
+  }
+}

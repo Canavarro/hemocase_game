@@ -1,0 +1,85 @@
+{
+  "id": "hemofilia-a",
+  "name": "Hemofilia A",
+  "group": "coagulopatias",
+  "topicTags": ["proteinas-funcoes", "hemostasia-secundaria", "hemofilias", "heranca-ligada-x"],
+  "patient": {
+    "descriptor": "menino, 4 anos",
+    "story": "Depois de uma queda leve no parquinho, o joelho inchou e dói há dois dias; a mãe lembra que o avô materno recebia 'transfusões de fator' desde jovem."
+  },
+  "clinical": {
+    "correct": [
+      "Hemartrose de joelho após trauma leve",
+      "Hematomas musculares profundos e desproporcionais",
+      "Sangramento prolongado após punção venosa",
+      "Avô materno com sangramentos graves (linha materna)"
+    ],
+    "distractors": [
+      "Petéquias difusas",
+      "Sangramento gengival diário ao escovar",
+      "Esplenomegalia volumosa",
+      "Crises de dor em mãos e pés",
+      "Icterícia progressiva"
+    ],
+    "evidence": [
+      "Joelho direito: derrame articular tenso",
+      "Coagulograma solicitado com urgência"
+    ]
+  },
+  "labs": {
+    "altered": ["TTPa 68 s (alargado)", "Fator VIII 2% (muito reduzido)", "TTPa corrige na mistura com plasma normal"],
+    "normal": ["TP/INR 1,0", "Plaquetas 280.000/µL", "Tempo de sangramento 5 min"]
+  },
+  "smear": {
+    "kind": "normal",
+    "finding": "o esfregaço é normal — o problema não está nas células, está nos fatores solúveis do plasma"
+  },
+  "protein": {
+    "name": "fator VIII",
+    "role": {
+      "prompt": "O holograma da bancada mostra o fator VIII suspenso sobre uma membrana plaquetária. Qual é o papel dessa proteína na hemostasia?",
+      "correct": "Cofator que acelera a ativação do fator X pelo fator IXa (complexo tenase)",
+      "wrong": [
+        "Enzima que converte fibrinogênio em fibrina",
+        "Receptor de adesão da plaqueta ao colágeno",
+        "Transportador de oxigênio no plasma"
+      ]
+    },
+    "defect": "deficiente (atividade muito reduzida)",
+    "consequence": "derruba a geração de trombina e o coágulo de fibrina não se sustenta",
+    "context": "na hemostasia secundária,"
+  },
+  "gene": {
+    "symbol": "F8",
+    "locus": "Xq28",
+    "mutationSummary": "Inversão do íntron 22 do gene F8, rompendo o gene do fator VIII"
+  },
+  "inheritance": {
+    "pattern": "xr",
+    "familyStory": "meninos afetados na linha materna (o avô materno), mães e irmãs saudáveis portadoras",
+    "recurrence": {
+      "prompt": "'Descobri que sou portadora. Qual a chance de um próximo MENINO nascer afetado?'",
+      "correct": "50%",
+      "wrong": ["25%", "100%", "Nenhuma chance"]
+    }
+  },
+  "route": {
+    "gene": "F8 (Xq28)",
+    "protein": "Fator VIII",
+    "mechanism": "Falha da hemostasia secundária (tenase)",
+    "phenotype": "Hemartroses e hematomas profundos",
+    "inheritance": "Recessiva ligada ao X"
+  },
+  "emergencyFiles": [
+    {
+      "prompt": "Pasta de outro leito: 'Menino com TTPa alargado, fator VIII normal e fator IX de 3%.' Qual é o diagnóstico?",
+      "correct": "Hemofilia B (deficiência de fator IX)",
+      "wrong": ["Hemofilia A (deficiência de fator VIII)", "Doença de von Willebrand", "Deficiência de vitamina K"],
+      "tags": ["hemofilias"]
+    }
+  ],
+  "debrief": {
+    "diagnosis": "Hemofilia A",
+    "route": "F8 (Xq28) rompido → fator VIII deficiente → tenase falha e a trombina despenca → coágulo de fibrina instável → hemartroses e hematomas profundos → herança recessiva ligada ao X"
+  }
+}

@@ -50,9 +50,20 @@ function CodePuzzle({ step, sending, onSubmit, onGesture }: PuzzleProps) {
         {Array.from({ length }, (_, index) => <span key={index} className={digits[index] ? "is-filled" : ""}>{digits[index] ?? "•"}</span>)}
       </div>
       <div className="keypad">
-        {["1", "2", "3", "4", "5", "6", "7", "8", "9", "", "0", "⌫"].map((key, index) => key === ""
-          ? <i key={index} />
-          : <button key={index} className="keypad-key" onClick={() => key === "⌫" ? setDigits((current) => current.slice(0, -1)) : press(key)}>{key === "⌫" ? <Delete size={17} /> : key}</button>)}
+        {["1", "2", "3", "4", "5", "6", "7", "8", "9", "C", "0", "⌫"].map((key, index) => (
+          <button
+            key={index}
+            className={`keypad-key ${key === "C" ? "keypad-key--clear" : ""}`}
+            title={key === "C" ? "Limpar tudo" : key === "⌫" ? "Apagar o último dígito" : undefined}
+            onClick={() => {
+              if (key === "C") return setDigits("");
+              if (key === "⌫") return setDigits((current) => current.slice(0, -1));
+              press(key);
+            }}
+          >
+            {key === "⌫" ? <Delete size={17} /> : key}
+          </button>
+        ))}
       </div>
       <button className="button button--danger button--full" disabled={digits.length < length || sending} onClick={() => onSubmit([digits])}>Confirmar código</button>
     </div>

@@ -1,0 +1,85 @@
+{
+  "id": "von-willebrand",
+  "name": "Doença de von Willebrand (tipo 1)",
+  "group": "coagulopatias",
+  "topicTags": ["proteinas-funcoes", "hemostasia-primaria", "von-willebrand", "heranca-autossomica"],
+  "patient": {
+    "descriptor": "menina, 9 anos",
+    "story": "Epistaxes de repetição desde pequena e um sangramento que não parava depois da extração de um dente de leite; a mãe sempre teve fluxo menstrual muito aumentado."
+  },
+  "clinical": {
+    "correct": [
+      "Epistaxes de repetição",
+      "Sangramento gengival ao escovar os dentes",
+      "Sangramento prolongado após extração dentária",
+      "Mãe com sangramentos mucosos (menorragia)"
+    ],
+    "distractors": [
+      "Hemartroses de repetição",
+      "Hematomas musculares profundos",
+      "Esplenomegalia",
+      "Crises de dor óssea",
+      "Icterícia com colúria"
+    ],
+    "evidence": [
+      "Sangramentos sempre em MUCOSAS (nariz, boca)",
+      "Sem histórico de sangramento articular"
+    ]
+  },
+  "labs": {
+    "altered": ["Antígeno do FvW 18% (reduzido)", "Cofator de ristocetina reduzido", "TTPa 42 s (discretamente alargado)"],
+    "normal": ["Plaquetas 250.000/µL (número normal)", "TP/INR 1,0", "Hemoglobina 12,8 g/dL"]
+  },
+  "smear": {
+    "kind": "normal",
+    "finding": "o esfregaço é normal, com plaquetas de número e tamanho preservados — o defeito é de uma proteína adesiva do plasma"
+  },
+  "protein": {
+    "name": "fator de von Willebrand",
+    "role": {
+      "prompt": "A maquete da parede vascular mostra uma plaqueta pairando sobre o colágeno exposto. Qual é o papel do fator de von Willebrand nessa cena?",
+      "correct": "Ponte de adesão entre a GPIb da plaqueta e o colágeno, além de transportar o fator VIII",
+      "wrong": [
+        "Enzima que converte fibrinogênio em fibrina",
+        "Receptor de membrana exclusivo do endotélio",
+        "Cofator da tenase junto ao fator IXa"
+      ]
+    },
+    "defect": "produzido em quantidade reduzida",
+    "consequence": "a plaqueta não adere ao colágeno exposto e o fator VIII circula desprotegido",
+    "context": "na lesão vascular,"
+  },
+  "gene": {
+    "symbol": "VWF",
+    "locus": "12p13.3",
+    "mutationSummary": "Variantes no gene VWF que reduzem a quantidade de fator de von Willebrand (tipo 1)"
+  },
+  "inheritance": {
+    "pattern": "ad",
+    "familyStory": "afetados em todas as gerações (mãe e avô), homens e mulheres, com sangramentos mucosos",
+    "recurrence": {
+      "prompt": "'Eu tenho a doença (sou heterozigota). Qual a chance de CADA filho herdar a condição?'",
+      "correct": "50%",
+      "wrong": ["25%", "100%", "Nenhuma chance"]
+    }
+  },
+  "route": {
+    "gene": "VWF (12p13.3)",
+    "protein": "Fator de von Willebrand",
+    "mechanism": "Falha de adesão plaquetária + FVIII instável",
+    "phenotype": "Sangramento mucocutâneo",
+    "inheritance": "Autossômica dominante"
+  },
+  "emergencyFiles": [
+    {
+      "prompt": "Relatório rasgado: 'Paciente com sangramento mucoso, FvW normal, plaquetas GIGANTES e agregação ausente com ristocetina que NÃO corrige com plasma.' Onde está o defeito?",
+      "correct": "No receptor GPIb-IX-V da plaqueta (Bernard-Soulier)",
+      "wrong": ["No próprio fator de von Willebrand", "No fator VIII plasmático", "No colágeno subendotelial"],
+      "tags": ["bernard-soulier", "hemostasia-primaria"]
+    }
+  ],
+  "debrief": {
+    "diagnosis": "Doença de von Willebrand (tipo 1)",
+    "route": "VWF (12p13.3) com variante quantitativa → FvW reduzido → adesão plaquetária falha e FVIII instável → sangramento mucocutâneo → herança autossômica dominante"
+  }
+}

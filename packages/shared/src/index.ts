@@ -170,6 +170,121 @@ export interface EscapeCaseSummary {
   roomCount: number;
 }
 
+/* ============ Base de conhecimento de doenças (gerador de casos) ============ */
+
+export const diseaseGroups = ["hemoglobinopatias", "coagulopatias", "plaquetopatias", "trombofilias"] as const;
+export type DiseaseGroup = (typeof diseaseGroups)[number];
+
+export const diseaseGroupLabels: Record<DiseaseGroup, string> = {
+  "hemoglobinopatias": "Hemoglobinopatias",
+  "coagulopatias": "Coagulopatias",
+  "plaquetopatias": "Plaquetopatias",
+  "trombofilias": "Trombofilias",
+};
+
+/**
+ * Perfil de uma doença na base de conhecimento (`content/escape/diseases/*.json`).
+ * O gerador transforma um perfil em um `EscapeCase` completo, sorteando
+ * distratores, ordem das alternativas, identificação do paciente e códigos.
+ */
+export interface DiseaseKnowledge {
+  id: string;
+  name: string;
+  group: DiseaseGroup;
+  topicTags: EscapeTopic[];
+  patient: {
+    /** Ex.: "lactente, 8 meses" ou "menino, 4 anos". */
+    descriptor: string;
+    /** Frase do briefing que ancora a suspeita sem entregar o diagnóstico. */
+    story: string;
+  };
+  clinical: {
+    /** Achados verdadeiros do quadro (mínimo 4). */
+    correct: string[];
+    /** Achados que NÃO pertencem ao quadro (mínimo 4). */
+    distractors: string[];
+    /** Evidências laboratoriais mostradas junto do prontuário (opcional). */
+    evidence?: string[];
+  };
+  labs: {
+    /** Exames alterados, já com o valor (mínimo 3). */
+    altered: string[];
+    /** Exames normais, já com o valor (mínimo 3). */
+    normal: string[];
+  };
+  smear: {
+    /** Morfologia da lâmina do paciente. */
+    kind: EscapeSmearKind;
+    /** Descrição do achado, usada em dica e no debrief da sala. */
+    finding: string;
+  };
+  protein: {
+    /** Nome exibível da proteína (ex.: "hemoglobina"). */
+    name: string;
+    /** Enigma de montagem (ex.: tetrâmero da Hb). Ausente → vira pergunta de função. */
+    assembly?: {
+      prompt: string;
+      pieces: Array<{ id: string; text: string }>;
+      slots: string[];
+      answer: string[];
+      hints: [string, string, string];
+    };
+    /** Pergunta de função usada quando não há montagem. */
+    role?: { prompt: string; correct: string; wrong: string[] };
+    /** Frase-mecanismo: "A proteína X está DEFEITO e, CONTEXTO, CONSEQUÊNCIA." */
+    defect: string;
+    consequence: string;
+    /** Contexto da consequência (ex.: "em baixa oxigenação,"). */
+    context: string;
+  };
+  gene: {
+    symbol: string;
+    locus: string;
+    /** Alinhamento para o enigma sequence-spot. Ausente → vira pergunta de mutação. */
+    sequence?: {
+      label: string;
+      reference: string[];
+      sample: string[];
+      divergentIndex: number;
+      chromatogram: string;
+    };
+    /** Resumo da alteração molecular (também usado como alternativa correta no fallback). */
+    mutationSummary: string;
+  };
+  inheritance: {
+    pattern: "ar" | "ad" | "xr";
+    /** História familiar desenhada no heredograma. */
+    familyStory: string;
+    recurrence: { prompt: string; correct: string; wrong: string[] };
+  };
+  /** Entradas corretas do cofre final; distratores vêm dos demais perfis. */
+  route: { gene: string; protein: string; mechanism: string; phenotype: string; inheritance: string };
+  /** Perguntas-bônus que esta doença contribui para o pool de arquivos de emergência. */
+  emergencyFiles?: Array<{ prompt: string; correct: string; wrong: string[]; tags: EscapeTopic[] }>;
+  debrief: { diagnosis: string; route: string };
+}
+
+/** Resumo de uma doença instalada, para o Host montar a sessão. */
+export interface DiseaseSummary {
+  id: string;
+  name: string;
+  group: DiseaseGroup;
+  topicTags: EscapeTopic[];
+}
+
+/** Biblioteca completa exposta ao Host: casos prontos + doenças geráveis. */
+export interface EscapeLibrary {
+  cases: EscapeCaseSummary[];
+  diseases: DiseaseSummary[];
+}
+
+export const escapeGeneratorSchema = z.object({
+  mode: z.enum(["any", "group", "disease"]),
+  group: z.enum(diseaseGroups).optional(),
+  diseaseId: z.string().trim().min(1).max(64).optional(),
+});
+export type EscapeGeneratorRequest = z.infer<typeof escapeGeneratorSchema>;
+
 export type EscapeClientStep = Omit<EscapeStep, "hints">;
 
 export interface EscapeTeamView {
@@ -237,6 +352,7 @@ export const createSessionSchema = z.object({
   allowedTopics: z.array(z.enum(escapeTopics)).max(escapeTopics.length).optional(),
   durationMin: z.number().int().min(15).max(60).default(35),
   caseId: z.string().trim().min(1).max(64).optional(),
+  generator: escapeGeneratorSchema.optional(),
 });
 
 export const escapeHintCosts = [0, 3, 8] as const;

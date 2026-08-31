@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { ArrowLeft, DoorOpen, Download, ExternalLink, Pause, Play, Plus, RotateCcw, ShieldAlert, SlidersHorizontal, Square, SkipForward, Timer } from "lucide-react";
-import { escapeTopicLabels, escapeTopics, type EscapeCaseSummary, type EscapeTopic, type GameMode, type HostAction, type IntegrityPolicy } from "@hemocase/shared";
+import { diseaseGroupLabels, diseaseGroups, escapeTopicLabels, escapeTopics, type DiseaseGroup, type EscapeLibrary, type EscapeTopic, type GameMode, type HostAction, type IntegrityPolicy } from "@hemocase/shared";
 import { ConnectionStatus } from "../components/Status";
 import { formatTime, useSession } from "../lib/socket";
 
@@ -23,22 +23,55 @@ export function HostPage() {
   const [mode, setMode] = useState<GameMode>("QUIZ");
   const [topics, setTopics] = useState<EscapeTopic[]>(topicPresets["Hemoglobinopatias"]!);
   const [durationMin, setDurationMin] = useState(35);
-  const [cases, setCases] = useState<EscapeCaseSummary[]>([]);
-  const [caseId, setCaseId] = useState("");
+  const [library, setLibrary] = useState<EscapeLibrary>({ cases: [], diseases: [] });
+  const [source, setSource] = useState("");
   const { socket, snapshot, connected, error } = useSession("host", code, token);
 
   useEffect(() => {
-    if (mode !== "ESCAPE" || cases.length) return;
-    fetch("/api/escape/cases")
-      .then((response) => response.json() as Promise<{ cases: EscapeCaseSummary[] }>)
-      .then((data) => setCases(data.cases ?? []))
-      .catch(() => setCases([]));
-  }, [mode, cases.length]);
+    if (mode !== "ESCAPE" || library.cases.length || library.diseases.length) return;
+    fetch("/api/escape/library")
+      .then((response) => response.json() as Promise<EscapeLibrary>)
+      .then((data) => setLibrary({ cases: data.cases ?? [], diseases: data.diseases ?? [] }))
+      .catch(() => setLibrary({ cases: [], diseases: [] }));
+  }, [mode, library.cases.length, library.diseases.length]);
 
-  function pickCase(nextId: string) {
-    setCaseId(nextId);
-    const picked = cases.find((item) => item.id === nextId);
-    if (picked) setTopics([...picked.topicTags]);
+  /** Origem do caso: sorteio, caso pronto, doença específica, assunto ou aula inteira. */
+  function pickSource(next: string) {
+    setSource(next);
+    const [kind, id] = next.split(":");
+    if (kind === "case") {
+      const picked = library.cases.find((item) => item.id === id);
+      if (picked) setTopics([...picked.topicTags]);
+    }
+    if (kind === "disease") {
+      const picked = library.diseases.find((item) => item.id === id);
+      if (picked) setTopics([...picked.topicTags]);
+    }
+    if (kind === "group") {
+      const tags = new Set<EscapeTopic>();
+      for (const disease of library.diseases) {
+        if (disease.group === id) for (const tag of disease.topicTags) tags.add(tag);
+      }
+      if (tags.size) setTopics([...tags]);
+    }
+    if (kind === "any") setTopics([...escapeTopics]);
+  }
+
+  function sourceNote(): string | undefined {
+    const [kind, id] = source.split(":");
+    if (kind === "case") {
+      const picked = library.cases.find((item) => item.id === id);
+      return `Sessão fixada em um único caso pronto: todo o jogo gira em torno de ${picked?.diagnosis ?? "uma única doença"}.`;
+    }
+    if (kind === "disease") {
+      const picked = library.diseases.find((item) => item.id === id);
+      return `A SENTINELA vai GERAR um caso inédito de ${picked?.name ?? "uma doença específica"}: paciente, senhas e alternativas mudam a cada sessão, mas todo o jogo é sobre essa doença.`;
+    }
+    if (kind === "group") {
+      return `A SENTINELA sorteia uma doença de ${diseaseGroupLabels[id as DiseaseGroup] ?? "um assunto"} e gera um caso inédito sobre ela.`;
+    }
+    if (kind === "any") return "A SENTINELA sorteia qualquer doença da base de conhecimento (aula inteira) e gera um caso inédito.";
+    return undefined;
   }
 
   function toggleTopic(topic: EscapeTopic) {
@@ -49,8 +82,15 @@ export function HostPage() {
     setBusy(true);
     setNotice(undefined);
     try {
+      const [kind, id] = source.split(":");
+      const caseId = kind === "case" ? id : undefined;
+      const generator = kind === "disease"
+        ? { mode: "disease", diseaseId: id }
+        : kind === "group"
+          ? { mode: "group", group: id }
+          : kind === "any" ? { mode: "any" } : undefined;
       const body = mode === "ESCAPE"
-        ? { mode, integrityPolicy: "ZERO_ROUND", allowedTopics: topics, durationMin, caseId: caseId || undefined }
+        ? { mode, integrityPolicy: "ZERO_ROUND", allowedTopics: topics, durationMin, caseId, generator }
         : { mode, integrityPolicy: "ZERO_ROUND" };
       const response = await fetch("/api/sessions", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(body) });
       const data = await response.json() as { code: string; hostToken: string; error?: string };
@@ -120,21 +160,41 @@ export function HostPage() {
                   </select>
                 </label>
                 <label className="field-label">Predefinição de tópicos
-                  <select defaultValue="Hemoglobinopatias" onChange={(event) => { setCaseId(""); setTopics(topicPresets[event.target.value] ?? []); }}>
+                  <select defaultValue="Hemoglobinopatias" onChange={(event) => { setSource(""); setTopics(topicPresets[event.target.value] ?? []); }}>
                     {Object.keys(topicPresets).map((preset) => <option key={preset} value={preset}>{preset}</option>)}
                   </select>
                 </label>
               </div>
-              <label className="field-label">Caso do protocolo
-                <select value={caseId} onChange={(event) => pickCase(event.target.value)}>
-                  <option value="">Sortear entre os casos elegíveis pelos tópicos</option>
-                  {cases.map((item) => <option key={item.id} value={item.id}>{item.title} · {item.diagnosis}</option>)}
+              <label className="field-label">Origem do caso
+                <select value={source} onChange={(event) => pickSource(event.target.value)}>
+                  <option value="">Sortear caso pronto pelos tópicos liberados</option>
+                  {library.diseases.length > 0 && <option value="any">Gerar caso inédito · aula inteira (qualquer doença)</option>}
+                  {library.diseases.length > 0 && (
+                    <optgroup label="Gerar por assunto">
+                      {diseaseGroups.filter((group) => library.diseases.some((disease) => disease.group === group)).map((group) => (
+                        <option key={group} value={`group:${group}`}>Sortear doença de {diseaseGroupLabels[group]}</option>
+                      ))}
+                    </optgroup>
+                  )}
+                  {library.diseases.length > 0 && (
+                    <optgroup label="Gerar por doença específica">
+                      {library.diseases.map((disease) => (
+                        <option key={disease.id} value={`disease:${disease.id}`}>{disease.name} · {diseaseGroupLabels[disease.group]}</option>
+                      ))}
+                    </optgroup>
+                  )}
+                  {library.cases.length > 0 && (
+                    <optgroup label="Casos prontos (roteiro fixo)">
+                      {library.cases.map((item) => (
+                        <option key={item.id} value={`case:${item.id}`}>{item.title} · {item.diagnosis}</option>
+                      ))}
+                    </optgroup>
+                  )}
                 </select>
               </label>
-              {caseId && (
+              {sourceNote() && (
                 <p className="puzzle-note">
-                  Sessão fixada em um único caso: todo o jogo gira em torno de {cases.find((item) => item.id === caseId)?.diagnosis ?? "uma única doença"}.
-                  Os tópicos abaixo foram ajustados para os conteúdos desse caso; desmarque o que a turma ainda não viu.
+                  {sourceNote()} Os tópicos abaixo foram pré-ajustados; desmarque o que a turma ainda não viu.
                 </p>
               )}
               <fieldset className="topic-grid">

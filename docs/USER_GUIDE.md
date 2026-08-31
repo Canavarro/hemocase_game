@@ -133,7 +133,13 @@ Todas as superfícies usam logo LAGEM e DNA animado em baixa opacidade. Sistemas
 
 Ao criar a sessão, o facilitador escolhe entre **Rodadas ao vivo** (fluxo clássico) e **Escape: Protocolo Hélix**. No modo Escape:
 
-1. o facilitador marca a duração (25/35/45 min) e os **tópicos já vistos pela turma** — nada fora deles entra no jogo. Em **Caso do protocolo**, ele deixa o sorteio entre os casos elegíveis ou **fixa a sessão em um caso específico**: aí o jogo inteiro gira em torno daquela doença e os tópicos são pré-ajustados para os conteúdos do caso (ainda podendo desmarcar o que a turma não viu);
+1. o facilitador marca a duração (25/35/45 min) e os **tópicos já vistos pela turma** — nada fora deles entra no jogo. Em **Origem do caso**, ele escolhe entre as variações:
+   - **Sortear caso pronto** pelos tópicos liberados (roteiro fixo, revisado);
+   - **Gerar caso inédito · aula inteira**: a SENTINELA sorteia qualquer doença da base de conhecimento;
+   - **Gerar por assunto**: sorteia uma doença do grupo escolhido (hemoglobinopatias, coagulopatias, plaquetopatias, trombofilias);
+   - **Gerar por doença específica**: todo o jogo gira em torno daquela doença (paciente, senhas e alternativas mudam a cada sessão);
+   - **Caso pronto específico**: fixa um caso autoral.
+   Em todas as variações os tópicos são pré-ajustados e continuam editáveis — desmarcar um tópico tira do sorteio as doenças que dependem dele e filtra os enigmas-bônus;
 2. as equipes entram pelo mesmo QR Code; ao avançar, veem o briefing da SENTINELA e depois o laboratório em primeira pessoa;
 3. cada sala tem objetos interativos (hotspots). Tocar aproxima a câmera e abre o enigma; as mãos do personagem aparecem nas interações;
 4. as salas seguem a rota fenótipo -> laboratório -> proteína -> gene -> diagnóstico. Salas 1 a 4 exigem registrar a hipótese no **prontuário digital** antes de a porta abrir;

@@ -1,0 +1,94 @@
+{
+  "id": "talassemia-beta",
+  "name": "Beta-talassemia maior",
+  "group": "hemoglobinopatias",
+  "topicTags": ["proteinas-funcoes", "hemoglobina-estrutura", "talassemias", "splicing-promotor", "heranca-autossomica"],
+  "patient": {
+    "descriptor": "lactente, 10 meses",
+    "story": "Palidez progressiva desde os 6 meses, abdome crescendo à custa do baço e ganho de peso insuficiente; a família, de origem mediterrânea, lembra de primos com anemia grave na infância."
+  },
+  "clinical": {
+    "correct": [
+      "Palidez progressiva desde o primeiro semestre",
+      "Esplenomegalia volumosa",
+      "Atraso de crescimento e ganho ponderal",
+      "Icterícia leve",
+      "História familiar de anemia na infância"
+    ],
+    "distractors": [
+      "Hemartroses de repetição",
+      "Petéquias e púrpura",
+      "Sangramento gengival ao escovar",
+      "Trombose venosa profunda",
+      "Crises de dor em mãos e pés"
+    ],
+    "evidence": [
+      "Hemoglobina: 6,8 g/dL",
+      "VCM: 58 fL",
+      "Eletroforese: HbF muito aumentada"
+    ]
+  },
+  "labs": {
+    "altered": ["Hemoglobina 6,8 g/dL", "VCM 58 fL (microcitose)", "HbF 65% na eletroforese"],
+    "normal": ["Plaquetas 310.000/µL", "TTPa 30 s", "Leucócitos 9.200/µL"]
+  },
+  "smear": {
+    "kind": "microcitica-hipocromica",
+    "finding": "as hemácias são pequenas e pálidas (microcitose e hipocromia), com células em alvo"
+  },
+  "protein": {
+    "name": "hemoglobina",
+    "assembly": {
+      "prompt": "A eletroforese deste paciente mostra predomínio de HbF. Montem no modelo a hemoglobina PREDOMINANTE neste sangue.",
+      "pieces": [
+        { "id": "alfa", "text": "Cadeia α" },
+        { "id": "beta", "text": "Cadeia β" },
+        { "id": "gama", "text": "Cadeia γ" },
+        { "id": "delta", "text": "Cadeia δ" }
+      ],
+      "slots": ["Suporte 1", "Suporte 2", "Suporte 3", "Suporte 4"],
+      "answer": ["alfa", "alfa", "gama", "gama"],
+      "hints": [
+        "A hemoglobina fetal persiste quando as cadeias β faltam.",
+        "HbF = duas cadeias α e duas cadeias γ.",
+        "α, α, γ, γ — o tetrâmero α2γ2 (HbF)."
+      ]
+    },
+    "defect": "produzida em quantidade muito reduzida (cadeias β escassas)",
+    "consequence": "deixa cadeias α em excesso precipitarem, destruindo os precursores na medula",
+    "context": "no desequilíbrio de cadeias,"
+  },
+  "gene": {
+    "symbol": "HBB",
+    "locus": "11p15.4",
+    "mutationSummary": "Mutação de splicing no gene HBB (ex.: IVS-I-110 G→A) que reduz o RNA mensageiro maduro"
+  },
+  "inheritance": {
+    "pattern": "ar",
+    "familyStory": "pais saudáveis (ambos com traço talassêmico e microcitose leve), paciente afetado e uma prima afetada",
+    "recurrence": {
+      "prompt": "'Nós dois temos o traço talassêmico. Qual a chance em CADA gestação de o bebê ter a forma grave?'",
+      "correct": "25%",
+      "wrong": ["50%", "100%", "Nenhuma chance"]
+    }
+  },
+  "route": {
+    "gene": "HBB (11p)",
+    "protein": "Cadeia β em quantidade reduzida",
+    "mechanism": "Desequilíbrio de cadeias e eritropoese ineficaz",
+    "phenotype": "Anemia microcítica grave + esplenomegalia",
+    "inheritance": "Autossômica recessiva"
+  },
+  "emergencyFiles": [
+    {
+      "prompt": "Cartão na balança: 'Outro paciente produz cadeias β em quantidade insuficiente, com cadeias α em excesso precipitando na célula.' Qual é o grupo de doenças?",
+      "correct": "Talassemias (defeito quantitativo)",
+      "wrong": ["Anemia falciforme (defeito qualitativo)", "Hemofilias", "Bernard-Soulier"],
+      "tags": ["talassemias"]
+    }
+  ],
+  "debrief": {
+    "diagnosis": "Beta-talassemia maior",
+    "route": "HBB com mutação de splicing → cadeias β escassas → excesso de cadeias α precipita → eritropoese ineficaz e hemólise → anemia microcítica grave + esplenomegalia → herança autossômica recessiva"
+  }
+}

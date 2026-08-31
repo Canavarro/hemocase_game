@@ -1,0 +1,101 @@
+{
+  "id": "anemia-falciforme",
+  "name": "Anemia falciforme",
+  "group": "hemoglobinopatias",
+  "topicTags": ["proteinas-funcoes", "hemoglobina-estrutura", "anemia-falciforme", "mutacoes-ponto", "heranca-autossomica"],
+  "patient": {
+    "descriptor": "lactente, 8 meses",
+    "story": "Desde os 6 meses chora à manipulação das mãos e dos pés, está pálido e o baço cresceu; um tio materno tem 'doença do sangue' desde criança."
+  },
+  "clinical": {
+    "correct": [
+      "Crises de dor em mãos e pés (dactilite)",
+      "Palidez cutaneomucosa intensa",
+      "Icterícia discreta",
+      "Esplenomegalia palpável",
+      "História familiar de doença falcêmica"
+    ],
+    "distractors": [
+      "Hematomas musculares profundos",
+      "Epistaxes de repetição",
+      "Sangramento gengival ao escovar",
+      "Hemartrose de joelho",
+      "Petéquias difusas"
+    ],
+    "evidence": [
+      "Hemoglobina: 7,5 g/dL",
+      "Reticulócitos: 12%",
+      "Bilirrubina indireta discretamente elevada"
+    ]
+  },
+  "labs": {
+    "altered": ["Hemoglobina 7,5 g/dL", "Reticulócitos 12%", "Bilirrubina indireta 2,1 mg/dL"],
+    "normal": ["VCM 84 fL", "Plaquetas 260.000/µL", "TTPa 31 s"]
+  },
+  "smear": {
+    "kind": "falciforme",
+    "finding": "aparecem numerosas hemácias alongadas em forma de foice (drepanócitos) entre hemácias normais"
+  },
+  "protein": {
+    "name": "hemoglobina",
+    "assembly": {
+      "prompt": "O modelo molecular da hemoglobina adulta (HbA) está desmontado. Encaixem as QUATRO cadeias corretas nos quatro suportes.",
+      "pieces": [
+        { "id": "alfa", "text": "Cadeia α" },
+        { "id": "beta", "text": "Cadeia β" },
+        { "id": "gama", "text": "Cadeia γ" },
+        { "id": "delta", "text": "Cadeia δ" }
+      ],
+      "slots": ["Suporte 1", "Suporte 2", "Suporte 3", "Suporte 4"],
+      "answer": ["alfa", "alfa", "beta", "beta"],
+      "hints": [
+        "A HbA predominante do adulto tem duas cadeias de cada tipo.",
+        "γ pertence à hemoglobina fetal; δ, à HbA2 minoritária.",
+        "α, α, β, β — o tetrâmero α2β2."
+      ]
+    },
+    "defect": "estruturalmente alterada (HbS)",
+    "consequence": "polimeriza e deforma a hemácia em foice",
+    "context": "em baixa oxigenação,"
+  },
+  "gene": {
+    "symbol": "HBB",
+    "locus": "11p15.4",
+    "sequence": {
+      "label": "Códons 4–9 da beta-globina",
+      "reference": ["ACT", "CCT", "GAG", "GAG", "AAG", "TCT"],
+      "sample": ["ACT", "CCT", "GTG", "GAG", "AAG", "TCT"],
+      "divergentIndex": 2,
+      "chromatogram": "troca de A por T no segundo nucleotídeo do códon 6 (GAG → GTG): glutamato → valina"
+    },
+    "mutationSummary": "Mutação de ponto Glu6Val (GAG→GTG) no gene HBB, gerando HbS"
+  },
+  "inheritance": {
+    "pattern": "ar",
+    "familyStory": "pais saudáveis (ambos com traço falcêmico), paciente afetado e um tio materno afetado",
+    "recurrence": {
+      "prompt": "'Nós dois temos o traço. Qual a chance de um próximo filho nascer com a doença?'",
+      "correct": "25%",
+      "wrong": ["50%", "100%", "Nenhuma chance"]
+    }
+  },
+  "route": {
+    "gene": "HBB (11p)",
+    "protein": "HbS",
+    "mechanism": "Polimerização e falcização",
+    "phenotype": "Anemia hemolítica + crises vaso-oclusivas",
+    "inheritance": "Autossômica recessiva"
+  },
+  "emergencyFiles": [
+    {
+      "prompt": "Pasta esquecida: 'Criança com dor óssea em crises e esfregaço com hemácias em foice.' Qual é a hemoglobina anômala?",
+      "correct": "HbS (Glu6Val da cadeia β)",
+      "wrong": ["HbF (fetal)", "HbA2 (α2δ2)", "Hemoglobina glicada (HbA1c)"],
+      "tags": ["anemia-falciforme"]
+    }
+  ],
+  "debrief": {
+    "diagnosis": "Anemia falciforme",
+    "route": "HBB com troca Glu6Val → HbS → polimerização em baixa oxigenação → falcização e hemólise → anemia + crises vaso-oclusivas → herança autossômica recessiva"
+  }
+}

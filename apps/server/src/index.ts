@@ -8,7 +8,7 @@ import { Server as SocketServer, type Socket } from "socket.io";
 import {
   answerSchema, createSessionSchema, escapeAttemptSchema, escapeHintSchema, escapeNoteSchema,
   hostActionSchema, integritySchema, joinSessionSchema, watchSessionSchema,
-  type EscapeCase, type GameContent,
+  type DiseaseKnowledge, type EscapeCase, type GameContent,
 } from "@hemocase/shared";
 import { GameEngine, type SessionState } from "./game-engine.js";
 import { findPrivateIpv4 } from "./network.js";
@@ -22,7 +22,12 @@ const escapeCases: EscapeCase[] = fs.existsSync(escapeCasesDir)
   ? fs.readdirSync(escapeCasesDir).filter((file) => file.endsWith(".json"))
     .map((file) => JSON.parse(fs.readFileSync(path.join(escapeCasesDir, file), "utf8")) as EscapeCase)
   : [];
-const engine = new GameEngine(content, escapeCases);
+const diseasesDir = path.resolve(rootDir, "content/escape/diseases");
+const diseases: DiseaseKnowledge[] = fs.existsSync(diseasesDir)
+  ? fs.readdirSync(diseasesDir).filter((file) => file.endsWith(".json"))
+    .map((file) => JSON.parse(fs.readFileSync(path.join(diseasesDir, file), "utf8")) as DiseaseKnowledge)
+  : [];
+const engine = new GameEngine(content, escapeCases, diseases);
 const app = Fastify({ logger: true, bodyLimit: 64 * 1024 });
 const io = new SocketServer(app.server, { maxHttpBufferSize: 64 * 1024 });
 const port = Number(process.env.PORT ?? 3000);
@@ -44,6 +49,8 @@ app.get("/api/health", async () => ({ ok: true, lanIp, port }));
 
 app.get("/api/escape/cases", async () => ({ cases: engine.listEscapeCases() }));
 
+app.get("/api/escape/library", async () => engine.listLibrary());
+
 app.post<{ Body: unknown }>("/api/sessions", async (request, reply) => {
   const parsed = createSessionSchema.safeParse(request.body ?? {});
   if (!parsed.success) return reply.code(400).send({ error: "Parâmetros de sessão inválidos." });
@@ -53,6 +60,7 @@ app.post<{ Body: unknown }>("/api/sessions", async (request, reply) => {
       allowedTopics: parsed.data.allowedTopics,
       durationMin: parsed.data.durationMin,
       caseId: parsed.data.caseId,
+      generator: parsed.data.generator,
     });
     reply.code(201);
     return { code: session.code, hostToken: session.hostToken, joinUrl: session.joinUrl, mode: session.mode, screenUrl: `${publicBaseUrl}/screen/${session.code}` };

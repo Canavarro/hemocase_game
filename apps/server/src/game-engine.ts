@@ -1,4 +1,5 @@
 import { randomBytes, randomUUID } from "node:crypto";
+import { generateEscapeCase, validateDisease } from "./case-generator.js";
 import {
   ESCAPE_SAFE_LOCK_MS,
   ESCAPE_SAFE_WRONG_COST,
@@ -11,6 +12,9 @@ import {
   type EscapeHostTeamRow,
   type EscapeRoomContent,
   type EscapeRoomId,
+  type DiseaseKnowledge,
+  type EscapeGeneratorRequest,
+  type EscapeLibrary,
   type EscapeStep,
   type EscapeTeamView,
   type EscapeTopic,
@@ -98,6 +102,8 @@ export interface CreateSessionOptions {
   durationMin?: number;
   /** Fixa a sessão neste caso: o jogo inteiro gira em torno de uma única doença. */
   caseId?: string;
+  /** Gera o caso a partir da base de conhecimento (aula inteira, por assunto ou por doença). */
+  generator?: EscapeGeneratorRequest;
 }
 
 export class GameEngine {
@@ -106,15 +112,20 @@ export class GameEngine {
   constructor(
     readonly content: GameContent,
     readonly escapeCases: EscapeCase[] = [],
+    readonly diseases: DiseaseKnowledge[] = [],
     private readonly now: () => number = Date.now,
-  ) {}
+  ) {
+    for (const disease of diseases) validateDisease(disease);
+  }
 
   createSession(baseUrl: string, integrityPolicy: IntegrityPolicy = "ZERO_ROUND", options: CreateSessionOptions = {}) {
     const mode = options.mode ?? "QUIZ";
     let allowedTopics = options.allowedTopics ?? [];
     let escapeCase: EscapeCase | undefined;
     if (mode === "ESCAPE") {
-      ({ escapeCase, allowedTopics } = this.pickEscapeCase(allowedTopics, options.caseId));
+      ({ escapeCase, allowedTopics } = options.generator
+        ? this.generateCase(options.generator, allowedTopics)
+        : this.pickEscapeCase(allowedTopics, options.caseId));
     }
     let code: string;
     do code = randomBytes(3).toString("hex").toUpperCase(); while (this.sessions.has(code));
@@ -185,6 +196,44 @@ export class GameEngine {
     };
   }
 
+  /**
+   * Gera um caso a partir da base de conhecimento de doenças, conforme o modo:
+   * - `disease`: todo o jogo sobre a doença escolhida;
+   * - `group`: sorteia uma doença do assunto (grupo) escolhido;
+   * - `any`: sorteia entre todas as doenças instaladas (aula inteira).
+   * Sem tópicos explícitos, os tópicos herdam os da doença sorteada.
+   */
+  private generateCase(request: EscapeGeneratorRequest, allowedTopics: EscapeTopic[]): { escapeCase: EscapeCase; allowedTopics: EscapeTopic[] } {
+    if (!this.diseases.length) throw new Error("Nenhuma doença está instalada em content/escape/diseases.");
+    let candidates = this.diseases;
+    if (request.mode === "disease") {
+      if (!request.diseaseId) throw new Error("Informe a doença (diseaseId) para gerar o caso.");
+      candidates = this.diseases.filter((disease) => disease.id === request.diseaseId);
+      if (!candidates.length) throw new Error(`A doença "${request.diseaseId}" não está instalada em content/escape/diseases.`);
+    }
+    if (request.mode === "group") {
+      if (!request.group) throw new Error("Informe o assunto (group) para gerar o caso.");
+      candidates = this.diseases.filter((disease) => disease.group === request.group);
+      if (!candidates.length) throw new Error(`Nenhuma doença do assunto "${request.group}" está instalada.`);
+    }
+    if (allowedTopics.length) {
+      const allowed = new Set(allowedTopics);
+      const eligible = candidates.filter((disease) => disease.topicTags.every((tag) => allowed.has(tag)));
+      if (!eligible.length) {
+        const missing = new Set<string>();
+        for (const disease of candidates) {
+          for (const tag of disease.topicTags) if (!allowed.has(tag)) missing.add(tag);
+        }
+        throw new Error(`Nenhuma doença cabe nos tópicos liberados. Tópicos exigidos: ${[...missing].join(", ")}.`);
+      }
+      candidates = eligible;
+    }
+    const profile = candidates[randomBytes(1)[0]! % candidates.length]!;
+    const topics = allowedTopics.length ? allowedTopics : [...profile.topicTags];
+    const seed = randomBytes(4).readUInt32LE(0);
+    return { allowedTopics: topics, escapeCase: generateEscapeCase(profile, this.diseases, seed, topics) };
+  }
+
   /** Casos instalados, para o Host fixar a sessão em um único caso. */
   listEscapeCases() {
     return this.escapeCases.map((candidate) => ({
@@ -195,6 +244,19 @@ export class GameEngine {
       topicTags: candidate.topicTags,
       roomCount: candidate.rooms.length,
     }));
+  }
+
+  /** Biblioteca completa para o Host montar a sessão: casos prontos + doenças geráveis. */
+  listLibrary(): EscapeLibrary {
+    return {
+      cases: this.listEscapeCases(),
+      diseases: this.diseases.map((disease) => ({
+        id: disease.id,
+        name: disease.name,
+        group: disease.group,
+        topicTags: disease.topicTags,
+      })),
+    };
   }
 
   getSession(code: string) {

@@ -1,0 +1,85 @@
+{
+  "id": "hemofilia-b",
+  "name": "Hemofilia B",
+  "group": "coagulopatias",
+  "topicTags": ["proteinas-funcoes", "hemostasia-secundaria", "hemofilias", "heranca-ligada-x"],
+  "patient": {
+    "descriptor": "menino, 6 anos",
+    "story": "Após uma vacina intramuscular, formou-se um hematoma volumoso e endurecido na coxa; um tio materno tem 'problema nas juntas' desde a infância."
+  },
+  "clinical": {
+    "correct": [
+      "Hematoma muscular volumoso após injeção",
+      "Episódio prévio de hemartrose de tornozelo",
+      "Sangramento prolongado após corte pequeno",
+      "Tio materno com sangramentos articulares"
+    ],
+    "distractors": [
+      "Petéquias e púrpura difusas",
+      "Epistaxes diárias",
+      "Esplenomegalia",
+      "Dor óssea em crises",
+      "Palidez com icterícia"
+    ],
+    "evidence": [
+      "Coxa esquerda: hematoma tenso de 8 cm",
+      "Vacinação em dia; sem uso de medicações"
+    ]
+  },
+  "labs": {
+    "altered": ["TTPa 62 s (alargado)", "Fator IX 4% (muito reduzido)", "TTPa corrige na mistura com plasma normal"],
+    "normal": ["TP/INR 1,0", "Plaquetas 300.000/µL", "Fator VIII 95%"]
+  },
+  "smear": {
+    "kind": "normal",
+    "finding": "o esfregaço é normal — células íntegras apontam para um defeito de fator plasmático"
+  },
+  "protein": {
+    "name": "fator IX",
+    "role": {
+      "prompt": "O painel da bancada destaca o fator IX. Qual é o papel dessa proteína na cascata da coagulação?",
+      "correct": "Serinoprotease que, ativada, forma a tenase com o fator VIIIa para ativar o fator X",
+      "wrong": [
+        "Cofator estrutural sem atividade enzimática",
+        "Proteína que estabiliza o tampão plaquetário pela GPIIb/IIIa",
+        "Transportador do fator de von Willebrand"
+      ]
+    },
+    "defect": "deficiente (atividade muito reduzida)",
+    "consequence": "impede a formação da tenase e a ativação eficiente do fator X",
+    "context": "na hemostasia secundária,"
+  },
+  "gene": {
+    "symbol": "F9",
+    "locus": "Xq27.1",
+    "mutationSummary": "Mutações de ponto no gene F9 reduzindo a atividade do fator IX"
+  },
+  "inheritance": {
+    "pattern": "xr",
+    "familyStory": "meninos afetados na linha materna (o tio materno), mulheres da família saudáveis",
+    "recurrence": {
+      "prompt": "'Se eu for portadora, qual a chance de um próximo MENINO nascer afetado?'",
+      "correct": "50%",
+      "wrong": ["25%", "100%", "Nenhuma chance"]
+    }
+  },
+  "route": {
+    "gene": "F9 (Xq27.1)",
+    "protein": "Fator IX",
+    "mechanism": "Falha da hemostasia secundária (tenase incompleta)",
+    "phenotype": "Hematomas profundos e hemartroses",
+    "inheritance": "Recessiva ligada ao X"
+  },
+  "emergencyFiles": [
+    {
+      "prompt": "Etiqueta antiga: 'Doença de Christmas' — este é o outro nome histórico de qual condição?",
+      "correct": "Hemofilia B (deficiência de fator IX)",
+      "wrong": ["Hemofilia A (deficiência de fator VIII)", "Doença de von Willebrand", "Púrpura trombocitopênica"],
+      "tags": ["hemofilias"]
+    }
+  ],
+  "debrief": {
+    "diagnosis": "Hemofilia B",
+    "route": "F9 (Xq27.1) mutado → fator IX deficiente → tenase incompleta → geração de trombina insuficiente → hematomas profundos e hemartroses → herança recessiva ligada ao X"
+  }
+}

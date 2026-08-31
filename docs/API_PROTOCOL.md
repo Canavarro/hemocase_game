@@ -194,9 +194,16 @@ Limpar esses valores remove a credencial local, mas não altera a sessão no ser
 - `mode` padrão é `QUIZ` (fluxo antigo inalterado);
 - em `ESCAPE` sem `caseId`, o servidor sorteia um caso elegível: todas as `topicTags` obrigatórias do caso precisam estar em `allowedTopics`, senão responde `422` listando os tópicos exigidos;
 - com `caseId`, a sessão fica fixada naquele caso (jogo inteiro sobre uma única doença). Sem `allowedTopics`, os tópicos herdam as `topicTags` do próprio caso; com `allowedTopics`, os tópicos obrigatórios do caso precisam estar presentes, senão `422`;
+- com `generator`, o servidor GERA um caso inédito a partir da base de conhecimento (`content/escape/diseases`):
+  - `{ "generator": { "mode": "disease", "diseaseId": "hemofilia-a" } }` — todo o jogo sobre a doença escolhida;
+  - `{ "generator": { "mode": "group", "group": "coagulopatias" } }` — sorteia uma doença do assunto;
+  - `{ "generator": { "mode": "any" } }` — sorteia qualquer doença instalada (aula inteira).
+  Em todos os modos, `allowedTopics` (quando enviado) filtra as doenças elegíveis e os arquivos de emergência; sem ele, os tópicos herdam os da doença sorteada. Paciente, senhas, distratores e ordem das alternativas mudam a cada geração (seed aleatório por sessão), e nos enigmas de girar a combinação correta nunca fica na primeira posição dos seletores;
 - enigmas opcionais com tags não liberadas são removidos da cópia da sessão e nunca chegam a nenhum cliente.
 
 `GET /api/escape/cases` lista os casos instalados para o Host escolher: `{ cases: [{ id, title, patientLabel, diagnosis, topicTags, roomCount }] }`.
+
+`GET /api/escape/library` devolve a biblioteca completa para o Host: `{ cases: [...], diseases: [{ id, name, group, topicTags }] }`.
 
 ### Fases
 

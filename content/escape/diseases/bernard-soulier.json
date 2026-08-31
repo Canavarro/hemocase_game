@@ -1,0 +1,85 @@
+{
+  "id": "bernard-soulier",
+  "name": "Síndrome de Bernard-Soulier",
+  "group": "plaquetopatias",
+  "topicTags": ["proteinas-funcoes", "hemostasia-primaria", "bernard-soulier", "heranca-autossomica"],
+  "patient": {
+    "descriptor": "menino, 3 anos",
+    "story": "Púrpura e epistaxes desde o primeiro ano de vida, com um sangramento nasal que precisou de tamponamento; os pais são primos entre si."
+  },
+  "clinical": {
+    "correct": [
+      "Epistaxes graves de repetição",
+      "Petéquias e púrpura",
+      "Sangramento gengival",
+      "Pais consanguíneos"
+    ],
+    "distractors": [
+      "Hemartroses de repetição",
+      "Hematomas musculares profundos",
+      "Esplenomegalia volumosa",
+      "Crises de dor em mãos e pés",
+      "Trombose venosa profunda"
+    ],
+    "evidence": [
+      "Sangramentos mucocutâneos desde o 1º ano",
+      "Consanguinidade parental relatada"
+    ]
+  },
+  "labs": {
+    "altered": ["Plaquetas 45.000/µL (reduzidas)", "Plaquetas GIGANTES no esfregaço", "Agregação ausente com ristocetina, SEM correção com plasma"],
+    "normal": ["TP/INR 1,0", "TTPa 32 s", "Fator de von Willebrand 95%"]
+  },
+  "smear": {
+    "kind": "plaquetas-gigantes",
+    "finding": "as plaquetas são gigantes (do tamanho de hemácias) e estão em número reduzido"
+  },
+  "protein": {
+    "name": "complexo GPIb-IX-V",
+    "role": {
+      "prompt": "O modelo da membrana plaquetária destaca um receptor de superfície. Qual é o papel do complexo GPIb-IX-V?",
+      "correct": "Receptor da plaqueta que se liga ao fator de von Willebrand para aderir ao subendotélio",
+      "wrong": [
+        "Enzima que ativa a protrombina em trombina",
+        "Canal de cálcio da membrana plaquetária",
+        "Receptor de fibrinogênio para agregação (GPIIb/IIIa)"
+      ]
+    },
+    "defect": "ausente ou disfuncional na membrana da plaqueta",
+    "consequence": "a plaqueta não se liga ao FvW e não adere à parede lesada",
+    "context": "no vaso lesado,"
+  },
+  "gene": {
+    "symbol": "GP1BA/GP1BB/GP9",
+    "locus": "17p13 / 22q11 / 3q21",
+    "mutationSummary": "Mutações bialélicas em GP1BA, GP1BB ou GP9, desmontando o complexo GPIb-IX-V"
+  },
+  "inheritance": {
+    "pattern": "ar",
+    "familyStory": "pais consanguíneos saudáveis e paciente afetado, sem outros casos nas gerações anteriores",
+    "recurrence": {
+      "prompt": "'Somos primos e nosso filho nasceu com a síndrome. Qual a chance em um próximo filho?'",
+      "correct": "25%",
+      "wrong": ["50%", "100%", "Nenhuma chance"]
+    }
+  },
+  "route": {
+    "gene": "GP1BA/GP9",
+    "protein": "Complexo GPIb-IX-V",
+    "mechanism": "Falha de adesão plaquetária ao FvW",
+    "phenotype": "Sangramento mucocutâneo + plaquetas gigantes",
+    "inheritance": "Autossômica recessiva"
+  },
+  "emergencyFiles": [
+    {
+      "prompt": "Etiqueta no freezer −80 °C: 'Menino com plaquetas PEQUENAS e baixas, eczema e infecções de repetição.' Qual é a síndrome?",
+      "correct": "Síndrome de Wiskott-Aldrich",
+      "wrong": ["Bernard-Soulier", "Doença de von Willebrand", "Telangiectasia hemorrágica hereditária"],
+      "tags": ["imunodeficiencias-plaquetarias"]
+    }
+  ],
+  "debrief": {
+    "diagnosis": "Síndrome de Bernard-Soulier",
+    "route": "GP1BA/GP1BB/GP9 mutados → complexo GPIb-IX-V ausente → plaqueta não adere ao FvW → sangramento mucocutâneo com plaquetas gigantes → herança autossômica recessiva"
+  }
+}
