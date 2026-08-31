@@ -124,6 +124,15 @@ export function SceneBackdrop({ roomId }: { roomId: EscapeRoomId }) {
           <feColorMatrix type="matrix" values="0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 .05 0" />
           <feComposite operator="in" in2="SourceGraphic" />
         </filter>
+        <linearGradient id="ao-left" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0" stopColor="rgba(0,0,0,.55)" /><stop offset="1" stopColor="transparent" />
+        </linearGradient>
+        <linearGradient id="ao-right" x1="1" y1="0" x2="0" y2="0">
+          <stop offset="0" stopColor="rgba(0,0,0,.55)" /><stop offset="1" stopColor="transparent" />
+        </linearGradient>
+        <radialGradient id="floor-pool" cx=".5" cy=".5" r=".5">
+          <stop offset="0" stopColor="rgba(150,210,205,.12)" /><stop offset="1" stopColor="transparent" />
+        </radialGradient>
       </defs>
 
       {/* estrutura comum: teto técnico, parede com painéis, piso em fuga */}
@@ -139,6 +148,26 @@ export function SceneBackdrop({ roomId }: { roomId: EscapeRoomId }) {
       <line x1="0" y1="46" x2="100" y2="46" stroke="#2a3232" strokeWidth=".3" />
       <path d="M0 62 L16 46 M100 62 L84 46 M28 62 L37 46 M72 62 L63 46 M50 62 L50 46" stroke="#1c2322" strokeWidth=".2" />
       <path d="M8 50.5 h84 M17 56 h66" stroke="#1a2120" strokeWidth=".2" opacity=".8" />
+      {/* infraestrutura do teto: tubulações, braçadeiras e um cabo pendente */}
+      <path d="M0 3 h100" stroke="#20282c" strokeWidth="1.1" />
+      <path d="M0 3 h100" stroke="#39444a" strokeWidth=".25" opacity=".7" />
+      <path d="M0 4.8 h100" stroke="#161d20" strokeWidth=".7" />
+      <path d="M12 2.4 v1.6 M34 2.4 v1.6 M68 2.4 v1.6 M90 2.4 v1.6" stroke="#39444a" strokeWidth=".45" />
+      <path d="M74 3.4 q4 4.6 9 3.4" fill="none" stroke="#11181b" strokeWidth=".35" />
+      {/* poeira em suspensão na luz */}
+      <g className="dust-motes" opacity=".85">
+        <circle cx="44" cy="16" r=".32" fill="rgba(220,240,235,.5)" />
+        <circle cx="52" cy="24" r=".26" fill="rgba(220,240,235,.42)" style={{ animationDelay: "-1.6s" }} />
+        <circle cx="48" cy="32" r=".38" fill="rgba(220,240,235,.36)" style={{ animationDelay: "-3.1s" }} />
+        <circle cx="57" cy="14" r=".24" fill="rgba(220,240,235,.45)" style={{ animationDelay: "-4.4s" }} />
+        <circle cx="40" cy="27" r=".22" fill="rgba(220,240,235,.4)" style={{ animationDelay: "-5.7s" }} />
+        <circle cx="54" cy="37" r=".3" fill="rgba(220,240,235,.32)" style={{ animationDelay: "-6.9s" }} />
+        <circle cx="46" cy="21" r=".2" fill="rgba(220,240,235,.45)" style={{ animationDelay: "-2.4s" }} />
+      </g>
+      {/* reflexo da luz principal no piso e oclusão dos cantos */}
+      <ellipse cx="50" cy="49.5" rx="17" ry="2.6" fill="url(#floor-pool)" />
+      <rect x="0" y="0" width="9" height="62" fill="url(#ao-left)" />
+      <rect x="91" y="0" width="9" height="62" fill="url(#ao-right)" />
 
       {roomId === "R0" && (
         <g>

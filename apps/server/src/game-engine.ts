@@ -9,6 +9,7 @@ import {
   type BlitzOptions,
   type MedicalKnowledgeBase,
   type QuestionBank,
+  ESCAPE_REVIEW_COST,
   ESCAPE_SAFE_LOCK_MS,
   ESCAPE_SAFE_WRONG_COST,
   ESCAPE_START_BASES,
@@ -65,6 +66,8 @@ export interface TeamEscapeState {
   notes: Map<EscapeRoomId, string>;
   lockedUntil?: number;
   finishedAt?: number;
+  /** Sala já visitada que a equipe está revendo (custo de −2 bases por retorno). */
+  reviewRoomId?: EscapeRoomId;
 }
 
 export interface TeamState {
@@ -514,6 +517,7 @@ export class GameEngine {
         const room = session.escapeCase.rooms[team.escape.roomIndex]!;
         for (const step of room.steps) if (!step.optional) team.escape.solved.add(step.id);
         team.escape.roomIndex += 1;
+        team.escape.reviewRoomId = undefined;
         this.pushEscapeEvent(session, `O Host destravou a porta para ${team.name}.`);
       }
     }
@@ -639,6 +643,7 @@ export class GameEngine {
       return;
     }
     team.escape.roomIndex += 1;
+    team.escape.reviewRoomId = undefined;
     const nextRoom = session.escapeCase.rooms[team.escape.roomIndex]!;
     this.pushEscapeEvent(session, `${team.name} entrou em: ${nextRoom.name}.`);
   }
@@ -661,6 +666,35 @@ export class GameEngine {
     return { session, team, hint: step.hints[level - 1]!, cost };
   }
 
+  /**
+   * Volta a uma sala já visitada para rever evidências (modo revisão), ou
+   * retorna à sala atual. Cada RETORNO a uma sala anterior custa 2 bases;
+   * voltar à investigação (sala atual) é grátis.
+   */
+  escapeReview(code: string, teamToken: string, roomId: EscapeRoomId) {
+    const session = this.getSession(code);
+    if (!session) throw new Error("Sessão não encontrada.");
+    if (session.mode !== "ESCAPE" || session.phase !== "ESCAPE") throw new Error("A revisão só funciona durante a corrida.");
+    const team = this.findTeam(session, teamToken);
+    if (!team?.escape || !session.escapeCase) throw new Error("Equipe não encontrada.");
+    if (team.escape.finishedAt) throw new Error("A equipe já escapou.");
+    const targetIndex = session.escapeCase.rooms.findIndex((room) => room.id === roomId);
+    if (targetIndex === -1) throw new Error("Sala desconhecida.");
+    if (targetIndex > team.escape.roomIndex) throw new Error("Essa porta ainda está trancada.");
+    if (targetIndex === team.escape.roomIndex) {
+      // Retorno à investigação: grátis.
+      team.escape.reviewRoomId = undefined;
+      return { session, team, cost: 0 };
+    }
+    if (team.escape.reviewRoomId === roomId) return { session, team, cost: 0 };
+    const cost = Math.min(team.score, ESCAPE_REVIEW_COST);
+    team.score -= cost;
+    team.escape.reviewRoomId = roomId;
+    const room = session.escapeCase.rooms[targetIndex]!;
+    this.pushEscapeEvent(session, `${team.name} voltou para rever: ${room.name} (−${ESCAPE_REVIEW_COST} bases).`);
+    return { session, team, cost };
+  }
+
   escapeNote(code: string, teamToken: string, roomId: EscapeRoomId, text: string) {
     const session = this.getSession(code);
     if (!session) throw new Error("Sessão não encontrada.");
@@ -676,19 +710,24 @@ export class GameEngine {
 
   escapeView(session: SessionState, team: TeamState): EscapeTeamView | undefined {
     if (!session.escapeCase || !team.escape) return undefined;
-    const room = this.escapeRoom(session, team);
-    const mandatory = this.mandatorySteps(room);
+    const progressRoom = this.escapeRoom(session, team);
+    const reviewRoom = team.escape.reviewRoomId
+      ? session.escapeCase.rooms.find((item) => item.id === team.escape!.reviewRoomId)
+      : undefined;
+    const reviewing = Boolean(reviewRoom);
+    const room = reviewRoom ?? progressRoom;
+    const mandatory = this.mandatorySteps(progressRoom);
     const step = mandatory.find((item) => !team.escape!.solved.has(item.id));
-    const optionalStep = room.steps.find((item) => item.optional && !team.escape!.solved.has(item.id));
+    const optionalStep = progressRoom.steps.find((item) => item.optional && !team.escape!.solved.has(item.id));
     const solvedMandatory = mandatory.filter((item) => team.escape!.solved.has(item.id)).length;
     const revealedHints: Partial<Record<string, string[]>> = {};
     for (const [hintStepId, level] of team.escape.hintsUsed) {
       const source = room.steps.find((item) => item.id === hintStepId);
       if (source) revealedHints[hintStepId] = source.hints.slice(0, level);
     }
-    const noteRequired = room.id !== "R0" && room.id !== "R5"
+    const noteRequired = !reviewing && progressRoom.id !== "R0" && progressRoom.id !== "R5"
       && mandatory.every((item) => team.escape!.solved.has(item.id))
-      && !team.escape.notes.get(room.id);
+      && !team.escape.notes.get(progressRoom.id);
     return {
       caseTitle: session.escapeCase.title,
       patientLabel: session.escapeCase.patientLabel,
@@ -701,8 +740,15 @@ export class GameEngine {
       roomIndex: team.escape.roomIndex,
       stepIndex: solvedMandatory,
       mandatoryCount: mandatory.length,
-      step: step ? this.toClientStep(step) : undefined,
-      optionalStep: optionalStep ? this.toClientStep(optionalStep) : undefined,
+      step: !reviewing && step ? this.toClientStep(step) : undefined,
+      optionalStep: !reviewing && optionalStep ? this.toClientStep(optionalStep) : undefined,
+      reviewing: reviewing || undefined,
+      reviewSteps: reviewing
+        ? room.steps.filter((item) => team.escape!.solved.has(item.id)).map((item) => this.toClientStep(item))
+        : undefined,
+      visitedRooms: session.escapeCase.rooms
+        .slice(0, team.escape.roomIndex + 1)
+        .map((item, index) => ({ id: item.id, name: item.name, current: index === team.escape!.roomIndex })),
       solvedStepIds: [...team.escape.solved],
       inventory: [...team.escape.inventory],
       revealedHints,

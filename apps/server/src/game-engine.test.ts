@@ -163,6 +163,33 @@ describe("GameEngine · modo Escape", () => {
     expect(view.step?.id).toBe("R0-S2");
   });
 
+  it("permite rever salas visitadas por 2 bases; retornar à investigação é grátis", () => {
+    const { engine, session, team } = setupEscape();
+    engine.escapeAttempt(session.code, team.token, "R0-S1", ["usar"]);
+    engine.escapeAttempt(session.code, team.token, "R0-S2", ["rna", "funcao"]);
+    expect(engine.escapeView(session, team)!.roomId).toBe("R1");
+    const scoreBefore = team.score;
+    // Voltar à Antecâmara custa 2 bases e entra em modo revisão (só leitura).
+    const back = engine.escapeReview(session.code, team.token, "R0");
+    expect(back.cost).toBe(2);
+    expect(team.score).toBe(scoreBefore - 2);
+    const view = engine.escapeView(session, team)!;
+    expect(view.reviewing).toBe(true);
+    expect(view.roomId).toBe("R0");
+    expect(view.step).toBeUndefined();
+    expect(view.reviewSteps!.map((step) => step.id)).toEqual(["R0-S1", "R0-S2"]);
+    expect(view.visitedRooms!.map((item) => item.id)).toEqual(["R0", "R1"]);
+    // Repetir a mesma sala não cobra de novo; retornar à sala atual é grátis.
+    expect(engine.escapeReview(session.code, team.token, "R0").cost).toBe(0);
+    expect(engine.escapeReview(session.code, team.token, "R1").cost).toBe(0);
+    expect(team.score).toBe(scoreBefore - 2);
+    const returned = engine.escapeView(session, team)!;
+    expect(returned.reviewing).toBeUndefined();
+    expect(returned.roomId).toBe("R1");
+    // Portas futuras continuam trancadas.
+    expect(() => engine.escapeReview(session.code, team.token, "R2")).toThrow(/trancada/i);
+  });
+
   it("penaliza tentativa errada e avança de sala com prontuário preenchido", () => {
     const { engine, session, team } = setupEscape();
     engine.escapeAttempt(session.code, team.token, "R0-S1", ["usar"]);

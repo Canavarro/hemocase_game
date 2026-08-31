@@ -403,6 +403,12 @@ export interface EscapeTeamView {
   lockedUntilMs?: number;
   finishedAt?: number;
   debrief?: { diagnosis: string; route: string };
+  /** Modo revisão: a equipe voltou a uma sala já visitada para rever evidências. */
+  reviewing?: boolean;
+  /** Enigmas já resolvidos da sala em revisão (somente leitura). */
+  reviewSteps?: EscapeClientStep[];
+  /** Salas visitadas (para a régua de navegação); `current` marca a sala do progresso. */
+  visitedRooms?: Array<{ id: EscapeRoomId; name: string; current: boolean }>;
 }
 
 export interface EscapeHostTeamRow {
@@ -433,6 +439,12 @@ export const escapeHintSchema = z.object({
   level: z.number().int().min(1).max(3),
 });
 
+export const escapeReviewSchema = z.object({
+  code: z.string().trim().min(4).max(8).transform((value) => value.toUpperCase()),
+  teamToken: z.string().min(16),
+  roomId: z.enum(escapeRoomIds),
+});
+
 export const escapeNoteSchema = z.object({
   code: z.string().trim().min(4).max(8).transform((value) => value.toUpperCase()),
   teamToken: z.string().min(16),
@@ -455,6 +467,8 @@ export const ESCAPE_START_BASES = 100;
 export const ESCAPE_WRONG_ATTEMPT_COST = 2;
 export const ESCAPE_SAFE_WRONG_COST = 5;
 export const ESCAPE_SAFE_LOCK_MS = 45_000;
+/** Custo de voltar a uma sala já visitada para rever evidências. */
+export const ESCAPE_REVIEW_COST = 2;
 
 export const escapeTopicLabels: Record<EscapeTopic, string> = {
   "proteinas-funcoes": "Proteínas e funções",

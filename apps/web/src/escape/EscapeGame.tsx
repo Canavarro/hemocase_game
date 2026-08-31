@@ -1,10 +1,11 @@
 import { useEffect, useRef, useState } from "react";
 import type { RefObject } from "react";
 import type { Socket } from "socket.io-client";
-import { BookOpenText, DoorOpen, Lightbulb, PackageOpen, X } from "lucide-react";
-import type { EscapeClientStep, SessionSnapshot } from "@hemocase/shared";
+import { BookOpenText, DoorOpen, Lightbulb, PackageOpen, Undo2, X } from "lucide-react";
+import { ESCAPE_REVIEW_COST, escapeRoomIds, type EscapeClientStep, type EscapeRoomId, type SessionSnapshot } from "@hemocase/shared";
 import { ScoreTicker } from "../components/ScoreTicker";
 import { formatTime } from "../lib/socket";
+import { DoorTransition } from "./DoorTransition";
 import { Hands, type HandGesture } from "./Hands";
 import { PuzzleBody } from "./puzzles";
 import { SceneBackdrop, sceneSpots } from "./scenes";
@@ -27,26 +28,28 @@ export default function EscapeGame({ code, token, snapshot, socket }: EscapeGame
   const [localHints, setLocalHints] = useState<Record<string, string[]>>({});
   const [notebookOpen, setNotebookOpen] = useState(false);
   const [noteDraft, setNoteDraft] = useState("");
-  const [doorAnimating, setDoorAnimating] = useState(false);
+  const [transition, setTransition] = useState<{ name: string; back: boolean }>();
   const sceneRef = useRef<HTMLDivElement>(null);
   const previousRoom = useRef<string>(undefined);
   const gestureTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
 
-  // Transição de porta quando a sala muda.
+  // Transição de porta (abrir + atravessar) quando a sala exibida muda.
   useEffect(() => {
     const roomId = escape?.roomId;
     if (!roomId) return;
-    if (previousRoom.current && previousRoom.current !== roomId) {
+    const previous = previousRoom.current;
+    previousRoom.current = roomId;
+    if (previous && previous !== roomId) {
       setOpenStep(undefined);
       setNotebookOpen(false);
       setNoteDraft("");
-      setDoorAnimating(true);
-      const timer = setTimeout(() => setDoorAnimating(false), 1100);
+      const back = escapeRoomIds.indexOf(roomId as EscapeRoomId) < escapeRoomIds.indexOf(previous as EscapeRoomId);
+      setTransition({ name: escape!.roomName, back });
+      const timer = setTimeout(() => setTransition(undefined), 1900);
       return () => clearTimeout(timer);
     }
-    previousRoom.current = roomId;
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- roomName muda junto com roomId
   }, [escape?.roomId]);
-  useEffect(() => { previousRoom.current = escape?.roomId; }, [escape?.roomId]);
 
   // Parallax pelo toque/mouse e pelo giroscópio quando existir.
   useEffect(() => {
@@ -104,12 +107,24 @@ export default function EscapeGame({ code, token, snapshot, socket }: EscapeGame
     });
   }
 
+  /** Sala do PROGRESSO (mesmo durante a revisão de uma sala anterior). */
+  function progressRoomId(): EscapeRoomId {
+    return escape!.visitedRooms?.find((item) => item.current)?.id ?? escape!.roomId;
+  }
+
   function submitNote() {
     if (noteDraft.trim().length < 3) return;
-    socket.current?.emit("escape:note", { code, teamToken: token, roomId: escape!.roomId, text: noteDraft.trim() }, (result: { ok: boolean; error?: string }) => {
+    socket.current?.emit("escape:note", { code, teamToken: token, roomId: progressRoomId(), text: noteDraft.trim() }, (result: { ok: boolean; error?: string }) => {
       if (!result.ok) return setFeedback({ kind: "erro", text: result.error ?? "O prontuário não foi salvo." });
       setNotebookOpen(false);
       setNoteDraft("");
+    });
+  }
+
+  /** Navega para uma sala já visitada (−2 bases) ou volta à investigação (grátis). */
+  function goToRoom(roomId: EscapeRoomId) {
+    socket.current?.emit("escape:review", { code, teamToken: token, roomId }, (result: { ok: boolean; error?: string }) => {
+      if (!result.ok) setFeedback({ kind: "erro", text: result.error ?? "Não foi possível voltar." });
     });
   }
 
@@ -149,11 +164,14 @@ export default function EscapeGame({ code, token, snapshot, socket }: EscapeGame
 
   const room = escape.roomId;
   const spots = sceneSpots[room];
-  const activeSpots = [escape.step, escape.optionalStep].filter((step): step is EscapeClientStep => Boolean(step));
+  const reviewing = Boolean(escape.reviewing);
+  const activeSpots = reviewing
+    ? (escape.reviewSteps ?? [])
+    : [escape.step, escape.optionalStep].filter((step): step is EscapeClientStep => Boolean(step));
   const usedHints = openStep ? (localHints[openStep.id] ?? escape.revealedHints[openStep.id] ?? []) : [];
 
   return (
-    <section className={`escape-stage ${doorAnimating ? "is-entering" : ""}`}>
+    <section className={`escape-stage ${transition ? "is-entering" : ""}`}>
       <div className="escape-scene" ref={sceneRef} key={room}>
         <div className="scene-parallax scene-parallax--far"><SceneBackdrop roomId={room} /></div>
         <div className="scene-hotspots scene-parallax scene-parallax--near">
@@ -179,6 +197,7 @@ export default function EscapeGame({ code, token, snapshot, socket }: EscapeGame
         </div>
         <div className="scene-grade" />
         <Hands gesture={gesture} />
+        {transition && <DoorTransition roomName={transition.name} back={transition.back} />}
       </div>
 
       <header className="escape-hud">
@@ -190,10 +209,37 @@ export default function EscapeGame({ code, token, snapshot, socket }: EscapeGame
         <div className="hud-bases"><span>bases</span><ScoreTicker value={snapshot.score ?? 0} /></div>
       </header>
 
-      <p className="sentinela-line">{escape.roomIntro}</p>
+      {(escape.visitedRooms?.length ?? 0) > 1 && (
+        <nav className="room-strip" aria-label="Salas visitadas">
+          <span className="strip-label">Salas</span>
+          {escape.visitedRooms!.map((visited) => {
+            const isShown = visited.id === room;
+            return (
+              <button
+                key={visited.id}
+                className={`room-pill ${visited.current ? "is-current" : ""} ${isShown && reviewing ? "is-reviewing" : ""}`}
+                disabled={isShown}
+                title={visited.current ? "Sala atual da investigação" : `Rever ${visited.name} (−${ESCAPE_REVIEW_COST} bases)`}
+                onClick={() => goToRoom(visited.id)}
+              >
+                {visited.name}{!visited.current && !isShown && <em>−{ESCAPE_REVIEW_COST}</em>}
+              </button>
+            );
+          })}
+        </nav>
+      )}
+
+      {reviewing ? (
+        <div className="review-banner">
+          <span>Modo revisão: os enigmas desta sala já foram resolvidos — toquem nos objetos para reler as evidências.</span>
+          <button className="button button--quiet" onClick={() => goToRoom(progressRoomId())}><Undo2 size={15} /> Voltar à investigação</button>
+        </div>
+      ) : (
+        <p className="sentinela-line">{escape.roomIntro}</p>
+      )}
 
       <footer className="escape-toolbar">
-        <button className="button button--quiet" onClick={() => { setNoteDraft(escape.notes[room] ?? ""); setNotebookOpen(true); }}><BookOpenText size={17} /> Prontuário</button>
+        <button className="button button--quiet" onClick={() => { setNoteDraft(escape.notes[progressRoomId()] ?? ""); setNotebookOpen(true); }}><BookOpenText size={17} /> Prontuário</button>
         <div className="inventory-strip" aria-label="Inventário">
           <PackageOpen size={16} />
           {escape.inventory.length ? escape.inventory.map((item) => <span key={item}>{item}</span>) : <span className="empty">vazio</span>}
@@ -209,7 +255,9 @@ export default function EscapeGame({ code, token, snapshot, socket }: EscapeGame
             </header>
             <p className="detail-prompt">{openStep.prompt}</p>
             {openStep.evidence?.map((line) => <p className="evidence-line" key={line}>{line}</p>)}
-            {escape.lockedUntilMs && openStep.type === "dial-safe" ? (
+            {reviewing ? (
+              <p className="success-text">Enigma já resolvido — revisão apenas das evidências.</p>
+            ) : escape.lockedUntilMs && openStep.type === "dial-safe" ? (
               <p className="alert-text">Cofre travado por erro. Liberação em {Math.ceil(escape.lockedUntilMs / 1000)} s.</p>
             ) : (
               <PuzzleBody step={openStep} sending={sending} onSubmit={(answer) => submitAttempt(openStep, answer)} onGesture={pulseGesture} />
@@ -217,7 +265,7 @@ export default function EscapeGame({ code, token, snapshot, socket }: EscapeGame
             {feedback && <p className={feedback.kind === "ok" ? "success-text" : "alert-text"}>{feedback.text}</p>}
             <div className="hint-zone">
               {usedHints.map((hint, index) => <p key={index} className="hint-line"><Lightbulb size={14} /> {hint}</p>)}
-              {usedHints.length < 3 && (
+              {!reviewing && usedHints.length < 3 && (
                 <button className="text-button" onClick={() => askHint(openStep)}>
                   Pedir dica {usedHints.length + 1} ({hintCostLabels[usedHints.length]})
                 </button>

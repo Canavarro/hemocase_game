@@ -321,7 +321,42 @@ select { padding: 0 12px; }
 
 /* Cena em primeira pessoa */
 .escape-stage { position: relative; display: flex; flex-direction: column; min-height: calc(100dvh - 68px); }
-.escape-stage.is-entering .escape-scene { animation: door-dolly 1.1s cubic-bezier(.3, .7, .2, 1); }
+.escape-stage.is-entering .escape-scene { animation: door-dolly 1.9s cubic-bezier(.3, .7, .2, 1); }
+
+/* ---- Transição de porta: abre, atravessa, clarão ---- */
+.door-transition { position: absolute; inset: 0; z-index: 6; overflow: hidden; background: #060909; animation: dt-overlay 1.9s ease forwards; pointer-events: none; }
+.door-transition svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+.door-transition__label { position: absolute; left: 50%; bottom: 9%; transform: translateX(-50%); color: #bfe6df; font-size: .72rem; font-weight: 800; text-transform: uppercase; letter-spacing: .22em; text-shadow: 0 0 12px rgba(25, 167, 166, .6); white-space: nowrap; animation: dt-label 1.9s ease both; }
+.door-transition--back .door-transition__label { color: #e9d29a; text-shadow: 0 0 12px rgba(213, 169, 64, .6); }
+.dt-door { animation-duration: 1.9s; animation-timing-function: cubic-bezier(.6, 0, .3, 1); animation-fill-mode: both; }
+.dt-door--left { animation-name: dt-door-left; }
+.dt-door--right { animation-name: dt-door-right; }
+.dt-light { transform-origin: 50px 30px; animation: dt-light 1.9s ease both; }
+.dt-walker { animation: dt-walker 1.9s cubic-bezier(.45, .1, .6, .9) both; }
+.dt-leg--a { transform-origin: 0px -4.8px; animation: dt-swing-a 0.44s ease-in-out infinite; }
+.dt-leg--b { transform-origin: 0px -4.8px; animation: dt-swing-b 0.44s ease-in-out infinite; }
+.dt-arm--a { transform-origin: 0px -13.4px; animation: dt-swing-b 0.44s ease-in-out infinite; }
+.dt-arm--b { transform-origin: 0px -13.4px; animation: dt-swing-a 0.44s ease-in-out infinite; }
+.dt-flash { opacity: 0; animation: dt-flash 1.9s ease both; }
+@keyframes dt-overlay { 0% { opacity: 0; } 6% { opacity: 1; } 82% { opacity: 1; } 100% { opacity: 0; } }
+@keyframes dt-label { 0%, 8% { opacity: 0; transform: translateX(-50%) translateY(8px); } 20%, 74% { opacity: 1; transform: translateX(-50%) translateY(0); } 92%, 100% { opacity: 0; } }
+@keyframes dt-door-left { 0%, 12% { transform: translateX(0); } 55%, 100% { transform: translateX(-16.4px); } }
+@keyframes dt-door-right { 0%, 12% { transform: translateX(0); } 55%, 100% { transform: translateX(16.4px); } }
+@keyframes dt-light { 0%, 10% { transform: scaleX(.08); opacity: 0; } 30% { transform: scaleX(1); opacity: .55; } 70% { transform: scaleX(7); opacity: .85; } 100% { transform: scaleX(10); opacity: 1; } }
+@keyframes dt-walker { 0%, 10% { transform: translate(50px, 59px) scale(1.18); opacity: 0; } 18% { opacity: 1; } 78% { transform: translate(50px, 46.5px) scale(.6); opacity: 1; } 90%, 100% { transform: translate(50px, 45.5px) scale(.52); opacity: 0; } }
+@keyframes dt-swing-a { 0%, 100% { transform: rotate(-24deg); } 50% { transform: rotate(24deg); } }
+@keyframes dt-swing-b { 0%, 100% { transform: rotate(24deg); } 50% { transform: rotate(-24deg); } }
+@keyframes dt-flash { 0%, 70% { opacity: 0; } 84% { opacity: .95; } 100% { opacity: 0; } }
+
+/* ---- Régua de salas e modo revisão ---- */
+.room-strip { display: flex; align-items: center; gap: 6px; padding: 6px 12px; overflow-x: auto; }
+.room-strip span.strip-label { font-size: .62rem; color: #71807b; text-transform: uppercase; letter-spacing: .08em; flex: 0 0 auto; }
+.room-pill { flex: 0 0 auto; padding: 4px 9px; border: 1px solid var(--line); border-radius: 999px; background: rgba(14, 17, 17, .9); color: #9fb0aa; font-size: .66rem; font-weight: 750; cursor: pointer; }
+.room-pill em { font-style: normal; color: #e5c56d; margin-left: 4px; }
+.room-pill.is-current { border-color: var(--signal); color: #bfe6df; cursor: default; }
+.room-pill.is-reviewing { border-color: rgba(213, 169, 64, .7); color: #e9d29a; animation: hotspot-breathe 2.2s ease-in-out infinite; }
+.review-banner { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin: 0 12px; padding: 7px 11px; border: 1px dashed rgba(213, 169, 64, .55); border-radius: 6px; background: rgba(38, 30, 10, .5); color: #e9d29a; font-size: .72rem; }
+.review-banner button { flex: 0 0 auto; }
 .escape-scene { position: relative; flex: 1 1 auto; min-height: 46dvh; overflow: hidden; background: #050606; touch-action: manipulation; }
 .scene-svg { position: absolute; inset: -4%; width: 108%; height: 108%; }
 .scene-parallax { position: absolute; inset: 0; transition: transform 300ms ease-out; }
@@ -487,6 +522,8 @@ select { padding: 0 12px; }
 @keyframes model-sway { from { transform: rotate(-2deg); } to { transform: rotate(2.5deg); } }
 @keyframes safe-loom { from { transform: scale(1); } to { transform: scale(1.02); } }
 @keyframes watch-glow { from { opacity: .4; } to { opacity: .9; } }
+.dust-motes circle { animation: dust-drift 8s linear infinite; }
+@keyframes dust-drift { 0% { transform: translate(0, 0); opacity: 0; } 15% { opacity: .8; } 80% { opacity: .45; } 100% { transform: translate(2.6px, -7.5px); opacity: 0; } }
 
 @media (max-width: 900px) {
   .escape-screen { grid-template-columns: 1fr; }

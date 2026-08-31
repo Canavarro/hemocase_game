@@ -7,7 +7,7 @@ import QRCode from "qrcode";
 import { Server as SocketServer, type Socket } from "socket.io";
 import {
   answerSchema, createSessionSchema, escapeAttemptSchema, escapeHintSchema, escapeNoteSchema,
-  hostActionSchema, integritySchema, joinSessionSchema, watchSessionSchema,
+  escapeReviewSchema, hostActionSchema, integritySchema, joinSessionSchema, watchSessionSchema,
   type DiseaseKnowledge, type EscapeCase, type GameContent, type MedicalKnowledgeBase, type QuestionBank,
 } from "@hemocase/shared";
 import { GameEngine, type SessionState } from "./game-engine.js";
@@ -174,6 +174,17 @@ io.on("connection", (socket) => {
       const payload = escapeHintSchema.parse(raw);
       const result = engine.escapeHint(payload.code, payload.teamToken, payload.stepId, payload.level);
       acknowledge({ ok: true, hint: result.hint, cost: result.cost });
+      await broadcast(result.session);
+    } catch (error) {
+      acknowledge({ ok: false, error: message(error) });
+    }
+  });
+
+  socket.on("escape:review", async (raw, acknowledge) => {
+    try {
+      const payload = escapeReviewSchema.parse(raw);
+      const result = engine.escapeReview(payload.code, payload.teamToken, payload.roomId);
+      acknowledge({ ok: true, cost: result.cost });
       await broadcast(result.session);
     } catch (error) {
       acknowledge({ ok: false, error: message(error) });
